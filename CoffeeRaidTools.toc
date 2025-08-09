@@ -1,0 +1,17 @@
+## Interface: 110107
+## Title: CoffeeRaidTools
+## Version: @project-version@
+## Author: Waffle
+## DefaultState: enabled
+## Group: Coffee
+## Category: Coffee
+## Dependencies: WeakAuras
+
+externals.xml
+CoffeeRaidTools.lua
+
+Interface/Frame.lua
+Interface/Tabs/Self.lua
+Interface/Tabs/Raid.lua
+Interface/Tabs/Guild.lua
+Interface/Tabs/Settings.lua

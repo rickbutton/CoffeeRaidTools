@@ -1,0 +1,4 @@
+- component that represents a version snapshot
+  - bag of versions and comparison utilities
+- each view shows a different set of snapshots
+- additional validation for some views? raid ignores? MRT note only matters in raid
