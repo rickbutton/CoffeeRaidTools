@@ -1,8 +1,8 @@
 ---@type string
 local AddonName = ...
 
----@class CoffeeRaidTools : AceAddon-3.0, AceConsole-3.0
-CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0")
+---@class CoffeeRaidTools : AceAddon-3.0, AceConsole-3.0, AceComm-3.0
+CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0", "AceComm-3.0")
 
 ---@class TabDescription
 ---@field key string

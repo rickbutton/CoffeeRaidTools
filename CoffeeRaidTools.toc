@@ -10,6 +10,8 @@
 externals.xml
 CoffeeRaidTools.lua
 
+Versions.lua
+
 Interface/Frame.lua
 Interface/Tabs/Self.lua
 Interface/Tabs/Raid.lua
