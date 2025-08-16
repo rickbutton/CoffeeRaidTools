@@ -29,4 +29,7 @@
         "LE_PARTY_CATEGORY_HOME",
         "AuraUpdater",
     ],
+    "search.exclude": {
+        "**/.luaTypes": true
+    },
 }

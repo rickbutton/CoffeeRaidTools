@@ -1,5 +1,4 @@
 ---@class Private
-local AddonName = ...
 local Private = select(2, ...)
 
 local LibSerialize = LibStub("LibSerialize")
@@ -19,7 +18,7 @@ local Matchers = {
 ---@field transformVersion? fun(v: string?): string?
 
 ---@type TrackedAddonMetadata[]
-local AddonsToTrack = {
+Private.AddonsToTrack = {
     {
         name = "WeakAuras",
         shortcode = "WA",
@@ -61,9 +60,9 @@ local AddonsToTrack = {
 ---@field shortcode string
 
 ---@type TrackedWeakAuraMetadata[]
-local WeakAurasToTrack = {
+Private.WeakAurasToTrack = {
     { name = "Coffee - Utilities", shortcode = "CUTIL" },
-    -- { name = "Coffee - Manaforge Omega", shortcode = "CRAID" },
+    { name = "Coffee - Manaforge Omega", shortcode = "CRAID" },
     { name = "LiquidWeakAuras", shortcode = "LUTIL" },
     { name = "Liquid Anchors", shortcode = "LANC" },
     { name = "Manaforge Omega", shortcode = "LRAID" },
@@ -89,7 +88,7 @@ local function GetMRTNoteHash()
             local hashed = StringHash(text)
             return hashed
         end
-        return "UNK"
+        return "NONE"
     end
     return "NONE"
 end
@@ -101,16 +100,20 @@ local function GetAddonVersion(name)
     -- 1 == enabled for other characters
     -- 2 == enabled globally (or for this character when specified)
     if C_AddOns.GetAddOnEnableState(name, cn) == 2 then
-        return C_AddOns.GetAddOnMetadata(name, "Version") or "UNK"
+        return C_AddOns.GetAddOnMetadata(name, "Version") or "NONE"
     end
     return "NONE"
 end
 
+---@class VersionTable
+---@field [string] string
+
+---@return VersionTable
 local function CollectLocalVersionTable()
     local versions = {}
 
     -- addon versions
-    for i, addon in ipairs(AddonsToTrack) do
+    for i, addon in ipairs(Private.AddonsToTrack) do
         ---@type string?
         local version = GetAddonVersion(addon.name)
         if addon.transformVersion then
@@ -123,8 +126,8 @@ local function CollectLocalVersionTable()
     local auraVersions = (AuraUpdater and
         AuraUpdater.GetManagedWeakAuraVersions and
         AuraUpdater:GetManagedWeakAuraVersions()) or {}
-    for _, wa in ipairs(WeakAurasToTrack) do
-        versions[wa.shortcode] = auraVersions[wa.name] or "UNK"
+    for _, wa in ipairs(Private.WeakAurasToTrack) do
+        versions[wa.shortcode] = auraVersions[wa.name] or "NONE"
     end
 
     -- hash mrt note
@@ -132,6 +135,24 @@ local function CollectLocalVersionTable()
 
     return versions
 end
+
+---@type VersionTable?
+local localVersions = nil
+---@return VersionTable
+function Private.GetLocalVersionTable()
+    if not localVersions then
+        localVersions = CollectLocalVersionTable()
+    end
+    return localVersions
+end
+
+---@param shortcode string
+---@return string
+function Private.GetLocalVersion(shortcode)
+    local tbl = Private.GetLocalVersionTable()
+    return tbl[shortcode] or error("invalid version shortcode " .. shortcode)
+end
+
 
 local function GetBroadcastTarget()
     local type

@@ -18,5 +18,6 @@ ignore:
     - .luaTypes/*
     - scripts/*
     - TODO
+    - *.md
     - package.json
     - pnpm-lock.yaml

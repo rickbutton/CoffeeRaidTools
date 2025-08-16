@@ -42,6 +42,7 @@ if (mode === "watch") {
         ignored: (p) => {
             if (p === ".") return false;
 
+            if (p.startsWith(".luaTypes")) return true;
             if (p.startsWith("node_modules")) return true;
             if (p.startsWith(".git")) return true;
             if (p.startsWith(".release")) return true;
@@ -53,6 +54,7 @@ if (mode === "watch") {
             if (p === "package.json") return true;
             if (p === "pnpm-lock.yaml") return true;
             if (p === "TODO") return true;
+            if (p === "CLAUDE.md") return false;
 
             if (p.endsWith(".lua")) return false;
             if (p === ".pkgmeta") return false;
@@ -60,7 +62,8 @@ if (mode === "watch") {
             if (p === "externals.xml") return false;
             if (fs.lstatSync(p).isDirectory()) return false;
 
-            throw new Error(`unexpected file detected by watcher: ${p}.`);
+            console.warn(`unexpected file detected by watcher: ${p}.`);
+            return true;
         },
         awaitWriteFinish: true,
     });

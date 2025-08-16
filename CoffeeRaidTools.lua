@@ -1,5 +1,7 @@
 ---@type string
 local AddonName = ...
+---@class Private
+local Private = select(2, ...)
 
 ---@class CoffeeRaidTools : AceAddon-3.0, AceConsole-3.0, AceComm-3.0
 CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0", "AceComm-3.0")
@@ -12,11 +14,7 @@ CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0", 
 ---@class TabRegistry
 ---@field [number] TabDescription
 
----@class Private
----@field frame AceGUIFrame?
----@field tabs TabRegistry
-local Private = select(2, ...)
-
+---@type TabRegistry
 Private.tabs = {}
 
 function Private:RegisterTab(key, title, draw)
