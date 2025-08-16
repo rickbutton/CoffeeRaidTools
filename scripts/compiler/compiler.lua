@@ -1,5 +1,5 @@
-local LibDeflate = dofile("LibDeflate.lua")
-local LibSerialize = dofile("LibSerialize.lua")
+local LibDeflate = dofile("scripts/compiler/LibDeflate.lua")
+local LibSerialize = dofile("scripts/compiler/LibSerialize.lua")
 
 local configForDeflate = { level = 9 }
 local configForLS = { errorOnUnserializableType = false }

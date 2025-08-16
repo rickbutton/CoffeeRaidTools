@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node scripts/build.js",
     "build:full": "node scripts/build.js full",
-    "build:watch": "node scripts/build.js watch"
+    "build:watch": "node scripts/build.js watch",
+    "test:compiler": "lua scripts/compiler/test.lua"
   },
   "dependencies": {
     "chokidar": "^4.0.3",
