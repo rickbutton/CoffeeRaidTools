@@ -51,6 +51,38 @@ Defined in `CoffeeRaidTools.toc`:
 3. Version system
 4. Interface components (Frame → Tabs)
 
+## Type Definitions (.luaTypes)
+
+The `.luaTypes` directory contains LuaLS (Lua Language Server) type annotations for WoW APIs and libraries. These provide IDE support for autocomplete, type checking, and documentation.
+
+### Directory Structure
+
+#### Core/
+- **Blizzard_APIDocumentationGenerated/**: Auto-generated docs for C_ namespaced APIs (C_AuctionHouse, C_Achievement, etc.)
+- **Data/**: Various WoW global data types and Enums - useful when APIs require specific enum values
+- **FrameXML/**: Implementation types for FrameXML features
+- **Libraries/**: Type definitions for common addon libraries
+  - **IMPORTANT**: Only libraries listed in `.pkgmeta` are available (Ace3 components, LibDeflate, LibSerialize, CallbackHandler)
+  - Other library types are present but should not be referenced unless adding them as dependencies
+- **Lua/**: Standard Lua 5.1 library types
+- **Type/**: Core WoW type definitions consumed by APIs
+- **Widget/**: Raw WoW widget types (Frame, Button, EditBox, etc.)
+  - Ace3GUI wraps these - prefer Ace3GUI unless you need direct widget access
+
+#### FrameXML/
+- **Annotations/**: Frame templates and mixin definitions from NumyAddon/FramexmlAnnotations
+- **AddOns/**: Full source of WoW's built-in UI (implemented as privileged addons)
+  - Useful when interacting with existing game UI
+  - Not needed when creating new UI - use Core APIs instead
+
+### Usage Guidelines
+
+- Type definitions are automatically loaded by LuaLS via `.vscode/settings.json`
+- When using WoW APIs, reference the types in `Core/Blizzard_APIDocumentationGenerated/`
+- For enum values, check `Core/Data/` for the appropriate Enum definitions
+- Only use library types for libraries we actually have (check `.pkgmeta`)
+- Prefer Ace3 abstractions over raw widgets unless absolutely necessary
+
 ## Development Guidelines
 
 ### Communication Style
