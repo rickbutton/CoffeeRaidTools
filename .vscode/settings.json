@@ -1,5 +1,11 @@
 {
+    "files.eol": "\n",
+    "wowAPI.luals.frameXML": true,
     "Lua.runtime.version": "Lua 5.1",
+    "Lua.workspace.ignoreDir": [
+        ".vscode",
+        ".luaTypes",
+    ],
     "Lua.runtime.builtin": {
         "basic": "disable",
         "debug": "disable",
@@ -15,8 +21,6 @@
         "~\\.vscode\\extensions\\ketho.wow-api-0.20.8\\Annotations\\Core",
         "~\\.vscode\\extensions\\ketho.wow-api-0.20.8\\Annotations\\FrameXML"
     ],
-    "files.eol": "\n",
-    "wowAPI.luals.frameXML": true,
     "Lua.diagnostics.disable": [
         "assign-type-mismatch"
     ],
@@ -24,6 +28,5 @@
         "LE_PARTY_CATEGORY_INSTANCE",
         "LE_PARTY_CATEGORY_HOME",
         "AuraUpdater",
-        "VMRT"
     ],
 }

@@ -15,6 +15,7 @@ externals:
   Libs/LibDeflate: https://github.com/SafeteeWoW/LibDeflate
   Libs/LibSerialize: https://github.com/rossnichols/LibSerialize
 ignore:
+    - .luaTypes/*
     - scripts/*
     - TODO
     - package.json
