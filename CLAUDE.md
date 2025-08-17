@@ -44,6 +44,18 @@ The build process uses `scripts/release.sh` (Unix) or `scripts/release.bat` (Win
 - Uses LibDeflate and LibSerialize for compression
 - Aura templates stored in `scripts/compiler/auras/`
 
+### Saved Variables (Persistent State)
+- **Configuration**: `CoffeeRaidToolsSaved` is saved per-account (defined in TOC)
+- **Early Loading**: Uses `LoadSavedVariablesFirst: 1` directive
+  - Saved variables are loaded BEFORE addon scripts execute
+  - No need to wait for `ADDON_LOADED` event - variables available immediately
+- **Data Limitations**: Only strings, booleans, numbers, and tables can be saved
+  - Cannot save functions, userdata, or coroutines
+  - Tables can contain nested tables and supported types
+- **Best Practices**: Initialize variables directly in main addon file
+  - Check if `CoffeeRaidToolsSaved` exists and provide defaults if nil
+  - Modifications persist automatically between sessions
+
 ## File Loading Order
 Defined in `CoffeeRaidTools.toc`:
 1. External libraries (`externals.xml`)
@@ -105,6 +117,7 @@ The `.luaTypes` directory contains LuaLS (Lua Language Server) type annotations 
 #### Lua Conventions (5.1)
 - **Always use local** for variables and functions unless they must be global
 - **Type annotations**: Use LuaLS annotations for all table shapes, function parameters, and complex return types
+- **AceGUI type annotations**: Always annotate `AceGUI:Create()` calls with the specific widget type (e.g., `---@type AceGUILabel`)
 - **Error handling**: Return `(result, error)` tuples only when errors are recoverable/reportable. Otherwise let errors propagate naturally
 - **No premature optimization**: Don't cache globals for performance
 
@@ -115,6 +128,7 @@ The `.luaTypes` directory contains LuaLS (Lua Language Server) type annotations 
 
 #### WoW Integration
 - **Always prefer Ace3** over direct WoW API calls when available
+- **Check Ace3 API first**: Before accessing private fields (e.g., `widget.frame`), search `.luaTypes/Libraries/Ace3` for public methods
 - **Global namespace**: Only add to `CoffeeRaidTools` global for public API
 - **Internal code**: Use `Private` namespace for all internal state and functions
 

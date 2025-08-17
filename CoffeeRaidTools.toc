@@ -6,6 +6,8 @@
 ## Group: Coffee
 ## Category: Coffee
 ## Dependencies: WeakAuras
+## SavedVariables: CoffeeRaidToolsSaved
+## LoadSavedVariablesFirst: 1
 
 externals.xml
 CoffeeRaidTools.lua
@@ -15,5 +17,4 @@ Versions.lua
 Interface/Frame.lua
 Interface/Tabs/Self.lua
 Interface/Tabs/Raid.lua
-Interface/Tabs/Guild.lua
 Interface/Tabs/Settings.lua

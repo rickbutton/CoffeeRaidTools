@@ -15,6 +15,7 @@ local function CreateFrame()
     frame:SetTitle("Coffee Raid Tools")
     frame:SetStatusText("v@project-version@")
     frame:SetCallback("OnClose", DestroyFrame)
+    frame:EnableResize(false)
 
     ---@type AceGUITabGroup
     local tabGroup = AceGUI:Create("TabGroup")

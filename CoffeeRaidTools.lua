@@ -6,6 +6,15 @@ local Private = select(2, ...)
 ---@class CoffeeRaidTools : AceAddon-3.0, AceConsole-3.0, AceComm-3.0
 CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0", "AceComm-3.0")
 
+---@class CoffeeRaidToolsSaved
+CoffeeRaidToolsSaved = CoffeeRaidToolsSaved or {}
+---@class CoffeeRaidToolsSaved
+Private.db = CoffeeRaidToolsSaved
+
+if Private.db.debug == nil then
+    Private.db.debug = false
+end
+
 ---@class TabDescription
 ---@field key string
 ---@field title string
@@ -30,6 +39,12 @@ function Private:GetTabDescription(key)
 end
 function Private:IterateTabDescriptions()
     return ipairs(Private.tabs)
+end
+
+function Private:DebugPrint(...)
+    if Private.db.debug then
+        CoffeeRaidTools:Print("|cffff0000DEBUG|r", ...)
+    end
 end
 
 function CoffeeRaidTools:OnInitialize()

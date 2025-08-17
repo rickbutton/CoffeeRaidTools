@@ -3,11 +3,15 @@ local Private = select(2, ...)
 local AceGUI = LibStub("AceGUI-3.0")
 
 local function DrawTab(container)
-    ---@type AceGUILabel
-    local lbl = AceGUI:Create("Label")
-    lbl:SetText("settings")
-    lbl:SetFullWidth(true)
-    container:AddChild(lbl)
+    ---@type AceGUICheckBox
+    local debugCheckbox = AceGUI:Create("CheckBox")
+    debugCheckbox:SetLabel("Enable Debug Logs")
+    debugCheckbox:SetValue(Private.db.debug)
+    debugCheckbox:SetCallback("OnValueChanged", function(widget, event, value)
+        Private.db.debug = value
+    end)
+    debugCheckbox:SetFullWidth(true)
+    container:AddChild(debugCheckbox)
 end
 
 Private:RegisterTab("settings", "Settings", DrawTab)

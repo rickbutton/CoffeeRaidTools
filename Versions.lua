@@ -139,7 +139,7 @@ end
 ---@type VersionTable?
 local localVersions = nil
 ---@return VersionTable
-function Private.GetLocalVersionTable()
+function Private:GetLocalVersionTable()
     if not localVersions then
         localVersions = CollectLocalVersionTable()
     end
@@ -148,8 +148,8 @@ end
 
 ---@param shortcode string
 ---@return string
-function Private.GetLocalVersion(shortcode)
-    local tbl = Private.GetLocalVersionTable()
+function Private:GetLocalVersion(shortcode)
+    local tbl = Private:GetLocalVersionTable()
     return tbl[shortcode] or error("invalid version shortcode " .. shortcode)
 end
 

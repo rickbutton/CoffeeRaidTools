@@ -66,7 +66,7 @@ local function DrawTab(container)
     container:AddChild(CreateSeparator())
 
     for _, addon in ipairs(Private.AddonsToTrack) do
-        local version = Private.GetLocalVersion(addon.shortcode)
+        local version = Private:GetLocalVersion(addon.shortcode)
         if addon.shortcode == "AU" then version = "NONE" end
         container:AddChild(CreateAddonRow(addon.name, FormatVersion(version)))
     end
@@ -77,7 +77,7 @@ local function DrawTab(container)
     container:AddChild(CreateSectionTitle("Installed WeakAuras"))
 
     for _, aura in ipairs(Private.WeakAurasToTrack) do
-        local version = Private.GetLocalVersion(aura.shortcode)
+        local version = Private:GetLocalVersion(aura.shortcode)
         container:AddChild(CreateAddonRow(aura.name, FormatVersion(version)))
     end
 end
