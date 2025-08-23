@@ -2,8 +2,39 @@
 local Private = select(2, ...)
 local AceGUI = LibStub("AceGUI-3.0")
 
+local function CreateSectionTitle(text)
+    ---@type AceGUILabel
+    local label = AceGUI:Create("Label")
+    label:SetText(text)
+    label:SetFullWidth(true)
+    label:SetFont(GameFontNormalLarge:GetFont())
+    label:SetColor(1, 0.82, 0)
+    return label
+end
+
+local function CreateSpacer()
+    ---@type AceGUILabel
+    local spacer = AceGUI:Create("Label")
+    spacer:SetText(" ")
+    spacer:SetFullWidth(true)
+    return spacer
+end
+
+local function CreateSeparator()
+    ---@type AceGUIHeading
+    local sep = AceGUI:Create("Heading")
+    sep:SetFullWidth(true)
+    return sep
+end
+
+---@param playerVersions VersionTable?
+---@param expectedVersions VersionTable
 local function GenerateStatusText(playerVersions, expectedVersions)
     local failures = {}
+
+    if not playerVersions then
+        return "|cffff0000" .. "NO RESPONSE" .. "|r"
+    end
     
     for _, addon in ipairs(Private.AddonsToTrack) do
         local playerVersion = playerVersions[addon.shortcode]
@@ -49,6 +80,10 @@ end
 local function GenerateTooltipText(playerVersions)
     local entries = {}
     
+    if not playerVersions then
+        return "NO RESPONSE"
+    end
+
     for _, addon in ipairs(Private.AddonsToTrack) do
         table.insert(entries, addon.shortcode .. "=" .. (playerVersions[addon.shortcode] or "NONE"))
     end
@@ -97,7 +132,12 @@ local function CreateTableRow(playerName, statusText, tooltipText)
     return row
 end
 
+---@class PlayerData
+---@field name string
+---@field versions VersionTable?
+
 local function GenerateMockPlayerData(expectedVersions)
+    ---@type [PlayerData]
     local players = {}
     
     for i = 1, 20 do
@@ -150,6 +190,26 @@ local function GenerateMockPlayerData(expectedVersions)
     return players
 end
 
+local function GetPlayerData()
+    local groupVersions = Private:GetGroupVersionsTable()
+
+    ---@type [PlayerData]
+    local players = {}
+    for unit in Private:IterateGroupMembers() do
+        local playerName, nameFormat = CoffeeRaidTools:GetNickname(unit)
+        local guid = UnitGUID(unit)
+        if guid and Private:UnitIsRealPlayer(unit) then
+            local versions = groupVersions[guid]
+            if versions then
+                table.insert(players, { name = string.format(nameFormat, playerName), versions = versions })
+            else
+                table.insert(players, { name = string.format(nameFormat, playerName), versions = nil })
+            end
+        end
+    end
+    return players
+end
+
 local function CreateTableHeader()
     ---@type AceGUISimpleGroup
     local header = AceGUI:Create("SimpleGroup")
@@ -173,24 +233,39 @@ local function CreateTableHeader()
     return header
 end
 
+local currentContainer = nil
+
 local function DrawTab(container)
-    container:SetLayout("List")
+    currentContainer = container
+
+    container:SetLayout("Flow")
     
-    container:AddChild(CreateTableHeader())
+    ---@type AceGUISimpleGroup
+    local headerGroup = AceGUI:Create("SimpleGroup")
+    headerGroup:SetFullWidth(true)
+    headerGroup:SetLayout("List")
     
-    ---@type AceGUIHeading
-    local headerSeparator = AceGUI:Create("Heading")
-    headerSeparator:SetFullWidth(true)
-    container:AddChild(headerSeparator)
+    headerGroup:AddChild(CreateSpacer())
+    headerGroup:AddChild(CreateSectionTitle("Raid Configuration"))
+    headerGroup:AddChild(CreateSpacer())
+    headerGroup:AddChild(CreateTableHeader())
+    headerGroup:AddChild(CreateSeparator())
+    
+    container:AddChild(headerGroup)
     
     ---@type AceGUIScrollFrame
     local scrollFrame = AceGUI:Create("ScrollFrame")
     scrollFrame:SetFullWidth(true)
     scrollFrame:SetFullHeight(true)
     scrollFrame:SetLayout("List")
-    
+
     local expectedVersions = Private:GetLocalVersionTable()
-    local players = GenerateMockPlayerData(expectedVersions)
+    local players = {}
+    if Private.db.testGroupVersionList then
+        players = GenerateMockPlayerData(expectedVersions)
+    else
+        players = GetPlayerData()
+    end
     
     for i, player in ipairs(players) do
         local statusText = GenerateStatusText(player.versions, expectedVersions)
@@ -199,15 +274,23 @@ local function DrawTab(container)
         scrollFrame:AddChild(CreateTableRow(player.name, statusText, tooltipText))
         
         if i < #players then
-            ---@type AceGUIHeading
-            local separator = AceGUI:Create("Heading")
-            separator:SetFullWidth(true)
-            scrollFrame:AddChild(separator)
+            scrollFrame:AddChild(CreateSeparator())
         end
     end
-    
     container:AddChild(scrollFrame)
 end
 
-Private:RegisterTab("raid", "Raid", DrawTab)
+---@param container AceGUIContainer
+local function ReleaseTab(container)
+    currentContainer = nil
+end
 
+local function HandleVersionsChanged()
+    if currentContainer then
+        currentContainer:ReleaseChildren()
+        DrawTab(currentContainer)
+    end
+end
+
+Private:RegisterTab("raid", "Raid", DrawTab, ReleaseTab)
+Private:RegisterMessage("VERSIONS_CHANGED", HandleVersionsChanged)

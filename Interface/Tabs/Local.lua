@@ -12,13 +12,6 @@ local function CreateSectionTitle(text)
     return label
 end
 
-local function CreateSeparator()
-    ---@type AceGUIHeading
-    local separator = AceGUI:Create("Heading")
-    separator:SetFullWidth(true)
-    return separator
-end
-
 local function CreateSpacer()
     ---@type AceGUILabel
     local spacer = AceGUI:Create("Label")
@@ -61,20 +54,26 @@ end
 local function DrawTab(container)
     container:SetLayout("List")
 
-    -- Addons section
+    container:AddChild(CreateSpacer())
+    container:AddChild(CreateSectionTitle("Local Configuration"))
+    container:AddChild(CreateSpacer())
+
+    local nickname, format = CoffeeRaidTools:GetNickname("player")
+    container:AddChild(CreateAddonRow("Character Name", CoffeeRaidTools:GetCharacterNameWithRealm("player")))
+    container:AddChild(CreateAddonRow("Nickname", string.format(format, nickname)))
+
+    container:AddChild(CreateSpacer())
     container:AddChild(CreateSectionTitle("Installed AddOns"))
-    container:AddChild(CreateSeparator())
+    container:AddChild(CreateSpacer())
 
     for _, addon in ipairs(Private.AddonsToTrack) do
         local version = Private:GetLocalVersion(addon.shortcode)
-        if addon.shortcode == "AU" then version = "NONE" end
         container:AddChild(CreateAddonRow(addon.name, FormatVersion(version)))
     end
     
     container:AddChild(CreateSpacer())
-    
-    -- WeakAuras section
     container:AddChild(CreateSectionTitle("Installed WeakAuras"))
+    container:AddChild(CreateSpacer())
 
     for _, aura in ipairs(Private.WeakAurasToTrack) do
         local version = Private:GetLocalVersion(aura.shortcode)
@@ -82,4 +81,4 @@ local function DrawTab(container)
     end
 end
 
-Private:RegisterTab("self", "Self", DrawTab)
+Private:RegisterTab("local", "Local", DrawTab)

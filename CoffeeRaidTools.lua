@@ -1,7 +1,10 @@
 ---@type string
 local AddonName = ...
----@class Private
+
+---@class Private : AceEvent-3.0
 local Private = select(2, ...)
+local AceEvent = LibStub("AceEvent-3.0")
+AceEvent:Embed(Private)
 
 ---@class CoffeeRaidTools : AceAddon-3.0, AceConsole-3.0, AceComm-3.0
 CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0", "AceComm-3.0")
@@ -15,10 +18,15 @@ if Private.db.debug == nil then
     Private.db.debug = false
 end
 
+if Private.db.testGroupVersionList == nil then
+    Private.db.testGroupVersionList = false
+end
+
 ---@class TabDescription
 ---@field key string
 ---@field title string
 ---@field draw fun(container: AceGUIContainer)
+---@field release? fun(container: AceGUIContainer)
 
 ---@class TabRegistry
 ---@field [number] TabDescription
@@ -26,8 +34,12 @@ end
 ---@type TabRegistry
 Private.tabs = {}
 
-function Private:RegisterTab(key, title, draw)
-    tinsert(Private.tabs, { key = key, title = title, draw = draw })
+---@param key string
+---@param title string
+---@param draw fun(container: AceGUIContainer)
+---@param release? fun(container: AceGUIContainer)
+function Private:RegisterTab(key, title, draw, release)
+    tinsert(Private.tabs, { key = key, title = title, draw = draw, release = release })
 end
 function Private:GetTabDescription(key)
     for _, v in Private:IterateTabDescriptions() do
@@ -48,7 +60,6 @@ function Private:DebugPrint(...)
 end
 
 function CoffeeRaidTools:OnInitialize()
-    --CoffeeRaidTools:OpenFrame()
 end
 
 function CoffeeRaidTools:OnEnable()

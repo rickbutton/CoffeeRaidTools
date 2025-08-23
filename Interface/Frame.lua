@@ -8,6 +8,9 @@ local function DestroyFrame(w)
     Private.frame = nil
 end
 
+---@type TabDescription?
+local currentTab = nil
+
 local function CreateFrame()
     ---@type AceGUIFrame
     local frame = AceGUI:Create("Frame")
@@ -27,10 +30,16 @@ local function CreateFrame()
     tabGroup:SetTabs(tabs)
 
     local function SelectGroup(container, event, group)
-        container:ReleaseChildren()
-        local desc = Private:GetTabDescription(group)
-        if desc then
-            desc.draw(container)
+        if currentTab then
+            if currentTab.release ~= nil then
+                currentTab.release(container)
+            end
+            container:ReleaseChildren()
+        end
+
+        currentTab = Private:GetTabDescription(group)
+        if currentTab then
+            currentTab.draw(container)
         end
     end
 

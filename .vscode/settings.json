@@ -28,7 +28,12 @@
         "LE_PARTY_CATEGORY_INSTANCE",
         "LE_PARTY_CATEGORY_HOME",
         "AuraUpdater",
-        "CoffeeRaidToolsSaved"
+        "CoffeeRaidToolsSaved",
+        "INT",
+        "VMRT",
+        "RAID",
+        "PARTY",
+        "INSTANCE_CHAT"
     ],
     "search.exclude": {
         "**/.luaTypes": true

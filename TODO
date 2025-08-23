@@ -1,4 +1,6 @@
-- component that represents a version snapshot
-  - bag of versions and comparison utilities
-- each view shows a different set of snapshots
-- additional validation for some views? raid ignores? MRT note only matters in raid
+- instead of version != version, find latest version for set?
+- cooldown tracker when in encounter rooms
+  - do what ns addon does, warn on ready check if not ready
+  - prep list of cooldowns for each class, no customization on first pass
+- externals?
+- auto import weakauras
