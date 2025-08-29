@@ -119,6 +119,7 @@ local function CreateTableRow(playerName, statusText, tooltipText)
     
     if tooltipText and tooltipText ~= "" then
         statusLabel:SetCallback("OnEnter", function()
+            ---@diagnostic disable-next-line:invisible
             GameTooltip:SetOwner(statusLabel.frame, "ANCHOR_RIGHT")
             GameTooltip:SetText(tooltipText)
             GameTooltip:Show()

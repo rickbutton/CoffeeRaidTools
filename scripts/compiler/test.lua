@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line:undefined-global
 local codec = dofile("scripts/compiler/compiler.lua")
 
 local test_results = {
@@ -64,6 +65,7 @@ local function deep_equals(t1, t2, path, differences)
 end
 
 local function read_file(path)
+    ---@diagnostic disable-next-line:undefined-global
     local file = io.open(path, "r")
     if not file then
         return nil, "Could not open file: " .. path
@@ -75,6 +77,7 @@ end
 
 local function list_directory(path, pattern)
     local files = {}
+    ---@diagnostic disable-next-line:undefined-global
     local separator = package.config:sub(1,1) -- Gets path separator (\ on Windows, / on Unix)
     
     local command
@@ -88,6 +91,7 @@ local function list_directory(path, pattern)
         command = 'ls "' .. path .. '"/' .. pattern .. ' 2>/dev/null'
     end
     
+    ---@diagnostic disable-next-line:undefined-global
     local handle = io.popen(command)
     if handle then
         for filename in handle:lines() do
@@ -251,7 +255,9 @@ run_tests()
 
 -- Exit with appropriate code
 if test_results.failed == 0 then
+    ---@diagnostic disable-next-line:undefined-global
     os.exit(0)
 else
+    ---@diagnostic disable-next-line:undefined-global
     os.exit(1)
 end

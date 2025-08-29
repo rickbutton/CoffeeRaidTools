@@ -1,3 +1,4 @@
+---@diagnostic disable
 --[[
 Copyright (c) 2020 Ross Nichols
 

@@ -1,3 +1,4 @@
+---@diagnostic disable
 --[[--
 LibDeflate 1.0.2-release <br>
 Pure Lua compressor and decompressor with high compression ratio using

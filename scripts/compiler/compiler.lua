@@ -1,4 +1,6 @@
+---@diagnostic disable-next-line:undefined-global
 local LibDeflate = dofile("scripts/compiler/LibDeflate.lua")
+---@diagnostic disable-next-line:undefined-global
 local LibSerialize = dofile("scripts/compiler/LibSerialize.lua")
 
 local configForDeflate = { level = 9 }
