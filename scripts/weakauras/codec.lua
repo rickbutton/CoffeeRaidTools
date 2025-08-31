@@ -1,13 +1,16 @@
+---@module "scripts.weakauras.relimport"
 ---@diagnostic disable-next-line:undefined-global
-local LibDeflate = dofile("scripts/compiler/LibDeflate.lua")
----@diagnostic disable-next-line:undefined-global
-local LibSerialize = dofile("scripts/compiler/LibSerialize.lua")
+local relImport = require("scripts.weakauras.relimport")
+
+local LibDeflate = relImport("libs.LibDeflate")
+local LibSerialize = relImport("libs.LibSerialize")
 
 local configForDeflate = { level = 9 }
 local configForLS = { errorOnUnserializableType = false }
 
 -- Table to string encoding
 local function TableToString(inTable)
+    ---@type string
     local serialized = LibSerialize:SerializeEx(configForLS, inTable)
     local compressed = LibDeflate:CompressDeflate(serialized, configForDeflate)
     return "!WA:2!" .. LibDeflate:EncodeForPrint(compressed)
@@ -61,9 +64,9 @@ local function StringToTable(inString)
 end
 
 -- Export the API
-WeakAuraCompiler = {
+WeakAuraCodec = {
     StringToTable = StringToTable,
     TableToString = TableToString,
 }
 
-return WeakAuraCompiler
+return WeakAuraCodec
