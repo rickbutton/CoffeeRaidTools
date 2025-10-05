@@ -55,17 +55,6 @@ local function GenerateStatusText(playerVersions, expectedVersions)
         end
     end
     
-    for _, aura in ipairs(Private.WeakAurasToTrack) do
-        if playerVersions[aura.shortcode] ~= expectedVersions[aura.shortcode] then
-            local playerVersion = playerVersions[aura.shortcode]
-            if playerVersion == "NONE" or not playerVersion then
-                table.insert(failures, aura.shortcode)
-            else
-                table.insert(failures, aura.shortcode .. "=" .. playerVersion)
-            end
-        end
-    end
-    
     if playerVersions["MRTHASH"] ~= expectedVersions["MRTHASH"] then
         table.insert(failures, "NOTE")
     end
@@ -86,10 +75,6 @@ local function GenerateTooltipText(playerVersions)
 
     for _, addon in ipairs(Private.AddonsToTrack) do
         table.insert(entries, addon.shortcode .. "=" .. (playerVersions[addon.shortcode] or "NONE"))
-    end
-    
-    for _, aura in ipairs(Private.WeakAurasToTrack) do
-        table.insert(entries, aura.shortcode .. "=" .. (playerVersions[aura.shortcode] or "NONE"))
     end
     
     table.insert(entries, "MRTHASH=" .. (playerVersions["MRTHASH"] or "NONE"))
@@ -160,22 +145,6 @@ local function GenerateMockPlayerData(expectedVersions)
                 end
             else
                 playerVersions[addon.shortcode] = "NONE"
-            end
-        end
-        
-        for _, aura in ipairs(Private.WeakAurasToTrack) do
-            if scenario == 1 then
-                playerVersions[aura.shortcode] = expectedVersions[aura.shortcode]
-            elseif scenario == 2 then
-                playerVersions[aura.shortcode] = math.random() > 0.7 and "NONE" or expectedVersions[aura.shortcode]
-            elseif scenario == 3 then
-                if math.random() > 0.5 then
-                    playerVersions[aura.shortcode] = expectedVersions[aura.shortcode]
-                else
-                    playerVersions[aura.shortcode] = math.random() > 0.5 and "NONE" or "20241201"
-                end
-            else
-                playerVersions[aura.shortcode] = "NONE"
             end
         end
         

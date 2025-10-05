@@ -70,15 +70,6 @@ local function DrawTab(container)
         local version = Private:GetLocalVersion(addon.shortcode)
         container:AddChild(CreateAddonRow(addon.name, FormatVersion(version)))
     end
-    
-    container:AddChild(CreateSpacer())
-    container:AddChild(CreateSectionTitle("Installed WeakAuras"))
-    container:AddChild(CreateSpacer())
-
-    for _, aura in ipairs(Private.WeakAurasToTrack) do
-        local version = Private:GetLocalVersion(aura.shortcode)
-        container:AddChild(CreateAddonRow(aura.name, FormatVersion(version)))
-    end
 end
 
 Private:RegisterTab("local", "Local", DrawTab)

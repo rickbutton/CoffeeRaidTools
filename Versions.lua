@@ -4,9 +4,8 @@ local Private = select(2, ...)
 local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
 
----@alias AddonShortcode "WA" | "MRT" | "BW" | "TR" | "AU" | "RCLC" | "CRT"
----@alias WeakAuraShortcode "CUTIL" | "CRAID" | "LUTIL" | "LRAID" | "LANC" | "INT"
----@alias TrackedShortcode AddonShortcode | WeakAuraShortcode | "MRTHASH"
+---@alias AddonShortcode "MRT" | "TR" | "RCLC" | "CRT"
+---@alias TrackedShortcode AddonShortcode | "MRTHASH"
 
 local BROADCAST_INTERVAL = 3
 
@@ -14,7 +13,6 @@ local BROADCAST_INTERVAL = 3
 local Matchers = {
     EXISTS = "EXISTS",
     EQUAL = "EQUAL",
-    OPTIONAL = "OPTIONAL"
 }
 
 ---@class TrackedAddonMetadata
@@ -31,19 +29,9 @@ Private.AddonsToTrack = {
         matcher = Matchers.EQUAL,
     },
     {
-        name = "WeakAuras",
-        shortcode = "WA",
-        matcher = Matchers.EXISTS,
-    },
-    {
         name = "MRT",
         shortcode = "MRT",
         matcher = Matchers.EXISTS
-    },
-    { 
-        name = "BigWigs",
-        shortcode = "BW",
-        matcher = Matchers.EXISTS,
     },
     { 
         name = "TimelineReminders",
@@ -51,33 +39,10 @@ Private.AddonsToTrack = {
         matcher = Matchers.EQUAL,
     },
     { 
-        name = "AuraUpdater",
-        shortcode = "AU",
-        matcher = Matchers.EQUAL,
-        transformVersion = function(v)
-            if v then return v:match("(v%d+)")
-            else return nil end
-        end,
-    },
-    { 
         name = "RCLootCouncil",
         shortcode = "RCLC",
         matcher = Matchers.EXISTS,
     },
-}
-
----@class TrackedWeakAuraMetadata
----@field name string
----@field shortcode WeakAuraShortcode
-
----@type TrackedWeakAuraMetadata[]
-Private.WeakAurasToTrack = {
-    { name = "Coffee - Utilities", shortcode = "CUTIL" },
-    { name = "Coffee - Manaforge Omega", shortcode = "CRAID" },
-    { name = "LiquidWeakAuras", shortcode = "LUTIL" },
-    { name = "Liquid Anchors", shortcode = "LANC" },
-    { name = "Manaforge Omega", shortcode = "LRAID" },
-    { name = "Interrupt Anchor", shortcode = "INT" },
 }
 
 local function StringHash(text)
@@ -128,14 +93,6 @@ local function CollectLocalVersionTable()
             version = addon.transformVersion(version)
         end
         versions[addon.shortcode] = version
-    end
-
-    -- weakaura versions
-    local auraVersions = (AuraUpdater and
-        AuraUpdater.GetManagedWeakAuraVersions and
-        AuraUpdater:GetManagedWeakAuraVersions()) or {}
-    for _, wa in ipairs(Private.WeakAurasToTrack) do
-        versions[wa.shortcode] = auraVersions[wa.name] or "NONE"
     end
 
     -- hash mrt note

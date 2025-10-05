@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-CoffeeRaidTools is a World of Warcraft addon that provides raid management utilities. It's built using the Ace3 framework and integrates with WeakAuras.
+CoffeeRaidTools is a World of Warcraft addon that provides raid management utilities. It's built using the Ace3 framework.
 
 ## Build Commands
 
@@ -38,11 +38,6 @@ The build process uses `scripts/release.sh` (Unix) or `scripts/release.bat` (Win
 - Tab registration system via `Private:RegisterTab()`
 - Chat command: `/crt` opens the main frame
 - Dependencies loaded via `externals.xml`
-
-### WeakAuras Integration
-- `scripts/compiler/` contains WeakAuras string encoding/decoding tools
-- Uses LibDeflate and LibSerialize for compression
-- Aura templates stored in `scripts/compiler/auras/`
 
 ### Saved Variables (Persistent State)
 - **Configuration**: `CoffeeRaidToolsSaved` is saved per-account (defined in TOC)

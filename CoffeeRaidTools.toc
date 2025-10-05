@@ -1,11 +1,10 @@
-## Interface: 110107
+## Interface: 110200
 ## Title: CoffeeRaidTools
 ## Version: @project-version@
 ## Author: Waffle
 ## DefaultState: enabled
 ## Group: Coffee
 ## Category: Coffee
-## Dependencies: WeakAuras
 ## SavedVariables: CoffeeRaidToolsSaved
 ## LoadSavedVariablesFirst: 1
 
