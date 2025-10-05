@@ -40,5 +40,5 @@
     ],
     "search.exclude": {
         "**/.luaTypes": true
-    },
+    }
 }
