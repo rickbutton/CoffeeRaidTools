@@ -87,6 +87,10 @@ local ChatCommands = {
     testmissing = function()
         TogglePopup("CRT_MISSING_ADDONS", "TestAddon1\nTestAddon2")
     end,
+    debug = function()
+        Private.db.debug = not Private.db.debug
+        CoffeeRaidTools:Print("Debug mode " .. (Private.db.debug and "enabled" or "disabled"))
+    end,
 }
 
 function CoffeeRaidTools:ChatCommandHandler(input)
