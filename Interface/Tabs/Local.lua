@@ -72,4 +72,4 @@ local function DrawTab(container)
     end
 end
 
-Private:RegisterTab("local", "Local", DrawTab)
+Private:RegisterTab("local", "Player", DrawTab)

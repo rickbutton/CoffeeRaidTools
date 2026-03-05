@@ -1,6 +1,1 @@
-- instead of version != version, find latest version for set?
-- cooldown tracker when in encounter rooms
-  - do what ns addon does, warn on ready check if not ready
-  - prep list of cooldowns for each class, no customization on first pass
-- externals?
-- request nickname set
+- minimap icon turns red when group/player has invalid or non-matching state

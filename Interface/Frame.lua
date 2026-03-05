@@ -11,6 +11,14 @@ end
 ---@type TabDescription?
 local currentTab = nil
 
+---@type AceGUITabGroup?
+local frameTabGroup = nil
+
+---@return string?
+function Private:GetCurrentTab()
+    return currentTab and currentTab.key or nil
+end
+
 local function CreateFrame()
     ---@type AceGUIFrame
     local frame = AceGUI:Create("Frame")
@@ -27,6 +35,7 @@ local function CreateFrame()
 
     ---@type AceGUITabGroup
     local tabGroup = AceGUI:Create("TabGroup")
+    frameTabGroup = tabGroup
 
     local tabs = {}
     for i, desc in Private:IterateTabDescriptions() do
@@ -55,9 +64,13 @@ local function CreateFrame()
     return frame
 end
 
-function CoffeeRaidTools:OpenFrame()
+---@param tab? string
+function CoffeeRaidTools:OpenFrame(tab)
     if Private.frame == nil then
         Private.frame = CreateFrame()
+    end
+    if tab and frameTabGroup then
+        frameTabGroup:SelectTab(tab)
     end
 end
 

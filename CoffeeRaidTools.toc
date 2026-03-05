@@ -16,6 +16,7 @@ Nicknames.lua
 Versions.lua
 ForceAddonSettings.lua
 
+Interface/Minimap.lua
 Interface/Frame.lua
 Interface/Tabs/Local.lua
 Interface/Tabs/Raid.lua
