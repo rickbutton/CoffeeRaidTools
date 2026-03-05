@@ -15,6 +15,7 @@ Util.lua
 Nicknames.lua
 Versions.lua
 NSRTImport.lua
+TRImport.lua
 
 Interface/Frame.lua
 Interface/Tabs/Local.lua
