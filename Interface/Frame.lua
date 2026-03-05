@@ -20,6 +20,11 @@ local function CreateFrame()
     frame:SetCallback("OnClose", DestroyFrame)
     frame:EnableResize(false)
 
+    local frameName = "CoffeeRaidToolsFrame"
+    ---@diagnostic disable-next-line: invisible
+    _G[frameName] = frame.frame
+    tinsert(UISpecialFrames, frameName)
+
     ---@type AceGUITabGroup
     local tabGroup = AceGUI:Create("TabGroup")
 
