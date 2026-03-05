@@ -30,8 +30,8 @@ function CoffeeRaidTools:GetNickname(unit, noFormat)
         format = CoffeeRaidTools:GetNameFormatString(unit)
     end
 
-    if AuraUpdater then
-        local name = AuraUpdater:GetNickname(unit)
+    if TimelineReminders then
+        local name = TimelineReminders:GetNickname(unit)
         return name, format
     else
         local name = CoffeeRaidTools:GetCharacterNameWithRealm(unit)
