@@ -14,8 +14,7 @@ CoffeeRaidTools.lua
 Util.lua
 Nicknames.lua
 Versions.lua
-NSRTImport.lua
-TRImport.lua
+ForceAddonSettings.lua
 
 Interface/Frame.lua
 Interface/Tabs/Local.lua

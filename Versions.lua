@@ -162,7 +162,7 @@ local function GetGroupBroadcastTarget()
     end
 end
 
----@alias MessageOpcode "VREQ" | "VRES"
+---@alias MessageOpcode "VREQ" | "VRES" | "RELOAD"
 
 ---@param op MessageOpcode
 ---@param target BroadcastTarget
@@ -257,6 +257,8 @@ local function HandleAddonMessage(prefix, payload, dist, sender)
         HandleVersionRequest(sender)
     elseif msg.op == "VRES" then
         HandleVersionResponse(sender, msg.data)
+    elseif msg.op == "RELOAD" then
+        StaticPopup_Show("CRT_FORCE_RELOAD")
     else
         Private:DebugPrint("invalid msg opcode", msg.op)
     end
@@ -294,6 +296,10 @@ end
 
 function Private:GetGroupVersionsTable()
     return groupVersions
+end
+
+function Private:BroadcastGroupMessage(op, data)
+    BroadcastMessage(op, GetGroupBroadcastTarget(), data)
 end
 
 CoffeeRaidTools:RegisterComm("CRT", HandleAddonMessage)

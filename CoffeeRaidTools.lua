@@ -68,8 +68,40 @@ end
 function CoffeeRaidTools:OnDisable()
 end
 
-function CoffeeRaidTools:ChatCommandHandler()
-    CoffeeRaidTools:ToggleFrame()
+local function TogglePopup(name, ...)
+    if StaticPopup_Visible(name) then
+        StaticPopup_Hide(name)
+    else
+        StaticPopup_Show(name, ...)
+    end
+end
+
+local ChatCommands = {
+    reload = function()
+        TogglePopup("CRT_FORCE_RELOAD")
+    end,
+    greload = function()
+        StaticPopup_Show("CRT_FORCE_RELOAD")
+        Private:BroadcastGroupMessage("RELOAD", {})
+    end,
+    testmissing = function()
+        TogglePopup("CRT_MISSING_ADDONS", "TestAddon1\nTestAddon2")
+    end,
+}
+
+function CoffeeRaidTools:ChatCommandHandler(input)
+    local cmd = input and input:trim():lower() or ""
+    if cmd == "" then
+        CoffeeRaidTools:ToggleFrame()
+        return
+    end
+
+    local handler = ChatCommands[cmd]
+    if handler then
+        handler()
+    else
+        CoffeeRaidTools:Print("Unknown command: " .. cmd)
+    end
 end
 
 CoffeeRaidTools:RegisterChatCommand("crt", "ChatCommandHandler")
