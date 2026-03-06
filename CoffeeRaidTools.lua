@@ -22,6 +22,10 @@ if Private.db.testGroupVersionList == nil then
     Private.db.testGroupVersionList = false
 end
 
+if Private.db.readyCheckPopup == nil then
+    Private.db.readyCheckPopup = "never"
+end
+
 ---@class TabDescription
 ---@field key string
 ---@field title string
@@ -76,6 +80,18 @@ local function TogglePopup(name, ...)
     end
 end
 
+local TestCommands = {
+    missingaddon = function()
+        TogglePopup("CRT_MISSING_ADDONS", "TestAddon1\nTestAddon2")
+    end,
+    readycheck = function()
+        Private:OpenReadyCheckPopup(true)
+    end,
+    closereadycheck = function()
+        Private:CloseReadyCheckPopup()
+    end,
+}
+
 local ChatCommands = {
     reload = function()
         TogglePopup("CRT_FORCE_RELOAD")
@@ -83,9 +99,6 @@ local ChatCommands = {
     greload = function()
         StaticPopup_Show("CRT_FORCE_RELOAD")
         Private:BroadcastGroupMessage("RELOAD", {})
-    end,
-    testmissing = function()
-        TogglePopup("CRT_MISSING_ADDONS", "TestAddon1\nTestAddon2")
     end,
     debug = function()
         Private.db.debug = not Private.db.debug
@@ -100,7 +113,19 @@ function CoffeeRaidTools:ChatCommandHandler(input)
         return
     end
 
-    local handler = ChatCommands[cmd]
+    local first, rest = cmd:match("^(%S+)%s*(.*)$")
+    if first == "test" then
+        local subcommand = rest and rest:trim() or ""
+        local handler = TestCommands[subcommand]
+        if handler then
+            handler()
+        else
+            CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
+        end
+        return
+    end
+
+    local handler = ChatCommands[first]
     if handler then
         handler()
     else

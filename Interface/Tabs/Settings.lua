@@ -32,13 +32,46 @@ local function CreateSettingsCheckbox(key, label)
     return checkbox
 end
 
+---@param key string
+---@param label string
+---@param values table<string, string>
+---@param order string[]
+local function CreateSettingsDropdown(key, label, values, order)
+    ---@type AceGUIDropdown
+    local dropdown = AceGUI:Create("Dropdown")
+    dropdown:SetLabel(label)
+    dropdown:SetList(values, order)
+    dropdown:SetValue(Private.db[key])
+    dropdown:SetCallback("OnValueChanged", function(widget, event, value)
+        Private.db[key] = value
+    end)
+    dropdown:SetFullWidth(true)
+    return dropdown
+end
+
 local function DrawTab(container)
     container:AddChild(CreateSpacer())
-    container:AddChild(CreateSectionTitle("Settings"))
+    container:AddChild(CreateSectionTitle("General"))
     container:AddChild(CreateSpacer())
 
     container:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
     container:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
+
+    container:AddChild(CreateSpacer())
+    container:AddChild(CreateSectionTitle("Ready Check"))
+    container:AddChild(CreateSpacer())
+
+    container:AddChild(CreateSettingsDropdown(
+        "readyCheckPopup",
+        "Check Players on Ready Check",
+        {
+            never = "Never",
+            always = "Always",
+            inraid = "In Raid",
+            inraidcoffee = "In Raid with Coffee Players",
+        },
+        { "never", "inraid", "inraidcoffee", "always" }
+    ))
 end
 
 Private:RegisterTab("settings", "Settings", DrawTab)

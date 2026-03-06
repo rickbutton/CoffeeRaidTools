@@ -1,1 +1,6 @@
 - minimap icon turns red when group/player has invalid or non-matching state
+- break timers with old weakaura images
+- settings dropdown too wide
+- versions in player tab not offset correctly
+- Local Configuration -> Player Info
+- Settings first title -> General

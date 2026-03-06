@@ -55,7 +55,7 @@ local function DrawTab(container)
     container:SetLayout("List")
 
     container:AddChild(CreateSpacer())
-    container:AddChild(CreateSectionTitle("Local Configuration"))
+    container:AddChild(CreateSectionTitle("Player Info"))
     container:AddChild(CreateSpacer())
 
     local nickname, format = CoffeeRaidTools:GetNickname("player")

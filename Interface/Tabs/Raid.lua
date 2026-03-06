@@ -35,11 +35,11 @@ local function GenerateStatusText(playerVersions, expectedVersions)
     if not playerVersions then
         return "|cffff0000" .. "NO RESPONSE" .. "|r"
     end
-    
+
     for _, addon in ipairs(Private.AddonsToTrack) do
         local playerVersion = playerVersions[addon.shortcode]
         local expectedVersion = expectedVersions[addon.shortcode]
-        
+
         if addon.matcher == "EXISTS" then
             if playerVersion == "NONE" or not playerVersion then
                 table.insert(failures, addon.shortcode)
@@ -54,11 +54,11 @@ local function GenerateStatusText(playerVersions, expectedVersions)
             end
         end
     end
-    
+
     if playerVersions["MRTHASH"] ~= expectedVersions["MRTHASH"] then
         table.insert(failures, "NOTE")
     end
-    
+
     if #failures == 0 then
         return "|cff00ff00GOOD|r"
     else
@@ -68,7 +68,7 @@ end
 
 local function GenerateTooltipText(playerVersions)
     local entries = {}
-    
+
     if not playerVersions then
         return "NO RESPONSE"
     end
@@ -76,32 +76,38 @@ local function GenerateTooltipText(playerVersions)
     for _, addon in ipairs(Private.AddonsToTrack) do
         table.insert(entries, addon.shortcode .. "=" .. (playerVersions[addon.shortcode] or "NONE"))
     end
-    
+
     table.insert(entries, "MRTHASH=" .. (playerVersions["MRTHASH"] or "NONE"))
-    
+
     return table.concat(entries, "\n")
 end
 
+-- Relative widths must sum to < 1.0 to avoid AceGUI Flow layout wrapping due
+-- to IEEE 754 floating point rounding (width*0.2 + width*0.8 can exceed width
+-- for certain pixel widths).
+local NAME_COL_WIDTH = 0.2
+local STATUS_COL_WIDTH = 0.79
 
 local function CreateTableRow(playerName, statusText, tooltipText)
     ---@type AceGUISimpleGroup
     local row = AceGUI:Create("SimpleGroup")
     row:SetLayout("Flow")
     row:SetFullWidth(true)
-    
+
     ---@type AceGUILabel
     local nameLabel = AceGUI:Create("Label")
     nameLabel:SetText(playerName)
     nameLabel:SetFont(GameFontHighlightSmall:GetFont())
-    nameLabel:SetRelativeWidth(0.2)
+    nameLabel:SetRelativeWidth(NAME_COL_WIDTH)
+
     row:AddChild(nameLabel)
-    
+
     ---@type AceGUIInteractiveLabel
     local statusLabel = AceGUI:Create("InteractiveLabel")
     statusLabel:SetText(statusText)
     statusLabel:SetFont(GameFontHighlightSmall:GetFont())
-    statusLabel:SetRelativeWidth(0.8)
-    
+    statusLabel:SetRelativeWidth(STATUS_COL_WIDTH)
+
     if tooltipText and tooltipText ~= "" then
         statusLabel:SetCallback("OnEnter", function()
             ---@diagnostic disable-next-line:invisible
@@ -113,7 +119,7 @@ local function CreateTableRow(playerName, statusText, tooltipText)
             GameTooltip:Hide()
         end)
     end
-    
+
     row:AddChild(statusLabel)
     return row
 end
@@ -125,13 +131,13 @@ end
 local function GenerateMockPlayerData(expectedVersions)
     ---@type [PlayerData]
     local players = {}
-    
+
     for i = 1, 20 do
         local playerName = "Player" .. i
         local playerVersions = {}
-        
+
         local scenario = math.random(1, 4)
-        
+
         for _, addon in ipairs(Private.AddonsToTrack) do
             if scenario == 1 then
                 playerVersions[addon.shortcode] = expectedVersions[addon.shortcode]
@@ -147,16 +153,16 @@ local function GenerateMockPlayerData(expectedVersions)
                 playerVersions[addon.shortcode] = "NONE"
             end
         end
-        
+
         if scenario == 1 then
             playerVersions["MRTHASH"] = expectedVersions["MRTHASH"]
         else
             playerVersions["MRTHASH"] = math.random() > 0.6 and expectedVersions["MRTHASH"] or "different_hash"
         end
-        
+
         table.insert(players, {name = playerName, versions = playerVersions})
     end
-    
+
     return players
 end
 
@@ -185,69 +191,87 @@ local function CreateTableHeader()
     local header = AceGUI:Create("SimpleGroup")
     header:SetLayout("Flow")
     header:SetFullWidth(true)
-    
+
     ---@type AceGUILabel
     local playerLabel = AceGUI:Create("Label")
     playerLabel:SetText("|cffffd700Player|r")
     playerLabel:SetFont(GameFontNormalSmall:GetFont())
-    playerLabel:SetRelativeWidth(0.2)
+    playerLabel:SetRelativeWidth(NAME_COL_WIDTH)
     header:AddChild(playerLabel)
-    
+
     ---@type AceGUILabel
     local statusLabel = AceGUI:Create("Label")
     statusLabel:SetText("|cffffd700Status|r")
     statusLabel:SetFont(GameFontNormalSmall:GetFont())
-    statusLabel:SetRelativeWidth(0.8)
+    statusLabel:SetRelativeWidth(STATUS_COL_WIDTH)
     header:AddChild(statusLabel)
-    
+
     return header
 end
 
 local currentContainer = nil
 
-local function DrawTab(container)
-    currentContainer = container
+---@class DrawRaidContentOptions
+---@field useTestData boolean?
+---@field showTitle boolean?
+
+---@param container AceGUIContainer
+---@param opts DrawRaidContentOptions?
+function Private:DrawRaidContent(container, opts)
+    local useTestData = opts and opts.useTestData or false
+    local showTitle = not opts or opts.showTitle ~= false
 
     container:SetLayout("Flow")
-    
+
     ---@type AceGUISimpleGroup
     local headerGroup = AceGUI:Create("SimpleGroup")
     headerGroup:SetFullWidth(true)
     headerGroup:SetLayout("List")
-    
-    headerGroup:AddChild(CreateSpacer())
-    headerGroup:AddChild(CreateSectionTitle("Raid Configuration"))
-    headerGroup:AddChild(CreateSpacer())
+
+    if showTitle then
+        headerGroup:AddChild(CreateSpacer())
+        headerGroup:AddChild(CreateSectionTitle("Raid Configuration"))
+        headerGroup:AddChild(CreateSpacer())
+    end
     headerGroup:AddChild(CreateTableHeader())
     headerGroup:AddChild(CreateSeparator())
-    
+
     container:AddChild(headerGroup)
-    
+
     ---@type AceGUIScrollFrame
     local scrollFrame = AceGUI:Create("ScrollFrame")
     scrollFrame:SetFullWidth(true)
     scrollFrame:SetFullHeight(true)
     scrollFrame:SetLayout("List")
 
+    -- Add scrollFrame to container BEFORE adding rows so that it receives
+    -- a valid content.width from the parent layout. Without this, rows are
+    -- initially laid out at width 0 and may not re-layout correctly.
+    container:AddChild(scrollFrame)
+
     local expectedVersions = Private:GetLocalVersionTable()
-    local players = {}
-    if Private.db.testGroupVersionList then
+    local players
+    if useTestData then
         players = GenerateMockPlayerData(expectedVersions)
     else
         players = GetPlayerData()
     end
-    
+
     for i, player in ipairs(players) do
         local statusText = GenerateStatusText(player.versions, expectedVersions)
         local tooltipText = GenerateTooltipText(player.versions)
-        
+
         scrollFrame:AddChild(CreateTableRow(player.name, statusText, tooltipText))
-        
+
         if i < #players then
             scrollFrame:AddChild(CreateSeparator())
         end
     end
-    container:AddChild(scrollFrame)
+end
+
+local function DrawTab(container)
+    currentContainer = container
+    Private:DrawRaidContent(container, { useTestData = Private.db.testGroupVersionList })
 end
 
 ---@param container AceGUIContainer

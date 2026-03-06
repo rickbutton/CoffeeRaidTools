@@ -19,7 +19,8 @@
         "VMRT",
         "RAID",
         "PARTY",
-        "INSTANCE_CHAT"
+        "INSTANCE_CHAT",
+        "CLOSE"
     ],
     "wowAPI.luals.configurationScope": "User"
 }

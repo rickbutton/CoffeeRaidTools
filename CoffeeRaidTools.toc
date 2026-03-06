@@ -20,4 +20,5 @@ Interface/Minimap.lua
 Interface/Frame.lua
 Interface/Tabs/Local.lua
 Interface/Tabs/Raid.lua
+ReadyCheck.lua
 Interface/Tabs/Settings.lua
