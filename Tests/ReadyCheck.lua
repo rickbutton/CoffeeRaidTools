@@ -16,33 +16,47 @@ end
 
 function Tests:ShouldShowPopupInRaidWhenInRaid()
     Private.db.readyCheckPopup = "inraid"
-    Replace(Private, "IsInRaid", function() return true end)
+    Replace(Private, "IsInRaid", function()
+        return true
+    end)
     IsTrue(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidWhenNotInRaid()
     Private.db.readyCheckPopup = "inraid"
-    Replace(Private, "IsInRaid", function() return false end)
+    Replace(Private, "IsInRaid", function()
+        return false
+    end)
     IsFalse(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenBothTrue()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace(Private, "IsInRaid", function() return true end)
-    Replace(Private, "IsInCoffeeRaid", function() return true end)
+    Replace(Private, "IsInRaid", function()
+        return true
+    end)
+    Replace(Private, "IsInCoffeeRaid", function()
+        return true
+    end)
     IsTrue(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenNotCoffee()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace(Private, "IsInRaid", function() return true end)
-    Replace(Private, "IsInCoffeeRaid", function() return false end)
+    Replace(Private, "IsInRaid", function()
+        return true
+    end)
+    Replace(Private, "IsInCoffeeRaid", function()
+        return false
+    end)
     IsFalse(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenNotInRaid()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace(Private, "IsInRaid", function() return false end)
+    Replace(Private, "IsInRaid", function()
+        return false
+    end)
     IsFalse(Private.ShouldShowPopup())
 end
 
@@ -63,9 +77,15 @@ function Tests:IsInCoffeeRaidMajorityCoffee()
             return units[i]
         end
     end)
-    Replace(Private, "UnitIsRealPlayer", function() return true end)
-    Replace(Private, "GetGuildInfo", function(unit) return guildInfo[unit] end)
-    Replace(Private, "UnitGUID", function(unit) return guids[unit] end)
+    Replace(Private, "UnitIsRealPlayer", function()
+        return true
+    end)
+    Replace(Private, "GetGuildInfo", function(unit)
+        return guildInfo[unit]
+    end)
+    Replace(Private, "UnitGUID", function(unit)
+        return guids[unit]
+    end)
     IsTrue(Private.IsInCoffeeRaid())
 end
 
@@ -81,15 +101,23 @@ function Tests:IsInCoffeeRaidMinorityCoffee()
             return units[i]
         end
     end)
-    Replace(Private, "UnitIsRealPlayer", function() return true end)
-    Replace(Private, "GetGuildInfo", function(unit) return guildInfo[unit] end)
-    Replace(Private, "UnitGUID", function(unit) return guids[unit] end)
+    Replace(Private, "UnitIsRealPlayer", function()
+        return true
+    end)
+    Replace(Private, "GetGuildInfo", function(unit)
+        return guildInfo[unit]
+    end)
+    Replace(Private, "UnitGUID", function(unit)
+        return guids[unit]
+    end)
     IsFalse(Private.IsInCoffeeRaid())
 end
 
 function Tests:IsInCoffeeRaidEmptyGroup()
     Replace(Private, "IterateGroupMembers", function()
-        return function() return nil end
+        return function()
+            return nil
+        end
     end)
     IsFalse(Private.IsInCoffeeRaid())
 end

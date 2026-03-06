@@ -6,14 +6,18 @@ local AreEqual, IsTrue, Replace = Asserts.AreEqual, Asserts.IsTrue, Asserts.Repl
 
 function Tests:EmptyInputTogglesFrame()
     local toggled = false
-    Replace(CoffeeRaidTools, "ToggleFrame", function() toggled = true end)
+    Replace(CoffeeRaidTools, "ToggleFrame", function()
+        toggled = true
+    end)
     CoffeeRaidTools:ChatCommandHandler("")
     IsTrue(toggled)
 end
 
 function Tests:NilInputTogglesFrame()
     local toggled = false
-    Replace(CoffeeRaidTools, "ToggleFrame", function() toggled = true end)
+    Replace(CoffeeRaidTools, "ToggleFrame", function()
+        toggled = true
+    end)
     CoffeeRaidTools:ChatCommandHandler(nil)
     IsTrue(toggled)
 end
@@ -28,14 +32,18 @@ end
 
 function Tests:UnknownCommandPrints()
     local printed = false
-    Replace(CoffeeRaidTools, "Print", function() printed = true end)
+    Replace(CoffeeRaidTools, "Print", function()
+        printed = true
+    end)
     CoffeeRaidTools:ChatCommandHandler("nonexistentcommand")
     IsTrue(printed)
 end
 
 function Tests:UnknownTestSubcommandPrints()
     local printed = false
-    Replace(CoffeeRaidTools, "Print", function() printed = true end)
+    Replace(CoffeeRaidTools, "Print", function()
+        printed = true
+    end)
     CoffeeRaidTools:ChatCommandHandler("test nonexistent")
     IsTrue(printed)
 end

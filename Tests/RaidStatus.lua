@@ -41,7 +41,8 @@ end
 
 function Tests:StatusTextMRTHashMismatch()
     local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local player = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "different" }
+    local player =
+        { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "different" }
     local result = Private.GenerateStatusText(player, expected)
     IsTrue(result:find("NOTE") ~= nil)
 end

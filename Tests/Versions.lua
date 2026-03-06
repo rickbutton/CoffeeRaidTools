@@ -40,29 +40,41 @@ function Tests:GetAddonVersionLoaded()
 end
 
 function Tests:GetAddonVersionNotLoaded()
-    Replace(C_AddOns, "IsAddOnLoaded", function() return false end)
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return false
+    end)
     AreEqual("NONE", Private.GetAddonVersion("FakeAddon"))
 end
 
 function Tests:GetAddonVersionNilMetadata()
-    Replace(C_AddOns, "IsAddOnLoaded", function() return true end)
-    Replace(C_AddOns, "GetAddOnMetadata", function() return nil end)
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
+    Replace(C_AddOns, "GetAddOnMetadata", function()
+        return nil
+    end)
     AreEqual("NONE", Private.GetAddonVersion("TestAddon"))
 end
 
 function Tests:GetMRTNoteHashNotLoaded()
-    Replace(C_AddOns, "IsAddOnLoaded", function() return false end)
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return false
+    end)
     AreEqual("NONE", Private.GetMRTNoteHash())
 end
 
 function Tests:GetMRTNoteHashLoadedNoNote()
-    Replace(C_AddOns, "IsAddOnLoaded", function() return true end)
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
     Replace("VMRT", nil)
     AreEqual("NONE", Private.GetMRTNoteHash())
 end
 
 function Tests:GetMRTNoteHashLoadedWithNote()
-    Replace(C_AddOns, "IsAddOnLoaded", function() return true end)
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
     Replace("VMRT", { Note = { Text1 = "test note content" } })
     local hash = Private.GetMRTNoteHash()
     IsTrue(hash ~= "NONE")
@@ -71,8 +83,12 @@ function Tests:GetMRTNoteHashLoadedWithNote()
 end
 
 function Tests:CollectLocalVersionTableHasAllShortcodes()
-    Replace(C_AddOns, "IsAddOnLoaded", function() return true end)
-    Replace(C_AddOns, "GetAddOnMetadata", function() return "1.0.0" end)
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
+    Replace(C_AddOns, "GetAddOnMetadata", function()
+        return "1.0.0"
+    end)
     Replace("VMRT", { Note = { Text1 = "note" } })
 
     local versions = Private.CollectLocalVersionTable()
@@ -84,8 +100,12 @@ function Tests:CollectLocalVersionTableHasAllShortcodes()
 end
 
 function Tests:CollectLocalVersionTableMRTHASHMatchesNote()
-    Replace(C_AddOns, "IsAddOnLoaded", function() return true end)
-    Replace(C_AddOns, "GetAddOnMetadata", function() return "1.0.0" end)
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
+    Replace(C_AddOns, "GetAddOnMetadata", function()
+        return "1.0.0"
+    end)
     Replace("VMRT", { Note = { Text1 = "my raid note" } })
 
     local versions = Private.CollectLocalVersionTable()

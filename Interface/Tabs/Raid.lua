@@ -112,6 +112,7 @@ local function CreateTableRow(playerName, statusText, tooltipText)
         statusLabel:SetCallback("OnEnter", function()
             ---@diagnostic disable-next-line:invisible
             GameTooltip:SetOwner(statusLabel.frame, "ANCHOR_RIGHT")
+            ---@diagnostic disable-next-line: missing-parameter
             GameTooltip:SetText(tooltipText)
             GameTooltip:Show()
         end)
@@ -160,7 +161,7 @@ local function GenerateMockPlayerData(expectedVersions)
             playerVersions["MRTHASH"] = math.random() > 0.6 and expectedVersions["MRTHASH"] or "different_hash"
         end
 
-        table.insert(players, {name = playerName, versions = playerVersions})
+        table.insert(players, { name = playerName, versions = playerVersions })
     end
 
     return players

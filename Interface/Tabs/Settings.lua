@@ -61,17 +61,12 @@ local function DrawTab(container)
     container:AddChild(CreateSectionTitle("Ready Check"))
     container:AddChild(CreateSpacer())
 
-    container:AddChild(CreateSettingsDropdown(
-        "readyCheckPopup",
-        "Check Players on Ready Check",
-        {
-            never = "Never",
-            always = "Always",
-            inraid = "In Raid",
-            inraidcoffee = "In Raid with Coffee Players",
-        },
-        { "never", "inraid", "inraidcoffee", "always" }
-    ))
+    container:AddChild(CreateSettingsDropdown("readyCheckPopup", "Check Players on Ready Check", {
+        never = "Never",
+        always = "Always",
+        inraid = "In Raid",
+        inraidcoffee = "In Raid with Coffee Players",
+    }, { "never", "inraid", "inraidcoffee", "always" }))
 
     if Private.db.devMode then
         container:AddChild(CreateSpacer())
@@ -82,6 +77,3 @@ local function DrawTab(container)
 end
 
 Private:RegisterTab("settings", "Settings", DrawTab)
-
-
-

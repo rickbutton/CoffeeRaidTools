@@ -67,12 +67,20 @@ end
 ---@return table?, string?
 local function DecodeMessage(payload)
     local decoded = LibDeflate:DecodeForWoWAddonChannel(payload)
-    if not decoded then return nil, "unable to decode addon message payload" end
+    if not decoded then
+        return nil, "unable to decode addon message payload"
+    end
     local decompressed = LibDeflate:DecompressDeflate(decoded)
-    if not decompressed then return nil, "unable to decompress addon message payload" end
+    if not decompressed then
+        return nil, "unable to decompress addon message payload"
+    end
     local success, msg = LibSerialize:Deserialize(decompressed)
-    if not success then return nil, "unable to deserialize addon message payload" end
-    if type(msg) ~= "table" then return nil, "invalid addon message type" end
+    if not success then
+        return nil, "unable to deserialize addon message payload"
+    end
+    if type(msg) ~= "table" then
+        return nil, "invalid addon message type"
+    end
     return msg
 end
 
@@ -80,10 +88,10 @@ local function StringHash(text)
     local counter = 1
     local len = string.len(text)
     for i = 1, len, 3 do
-        counter = math.fmod(counter * 8161, 4294967279) + -- 2^32 - 17: Prime!
-        (string.byte(text, i) * 16776193) +
-        ((string.byte(text, i + 1) or (len - i + 256)) * 8372226) +
-        ((string.byte(text, i + 2) or (len - i + 256)) * 3932164)
+        counter = math.fmod(counter * 8161, 4294967279) -- 2^32 - 17: Prime!
+            + (string.byte(text, i) * 16776193)
+            + ((string.byte(text, i + 1) or (len - i + 256)) * 8372226)
+            + ((string.byte(text, i + 2) or (len - i + 256)) * 3932164)
     end
     return "" .. math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
 end
@@ -99,7 +107,6 @@ local function GetMRTNoteHash()
     end
     return "NONE"
 end
-
 
 local function GetAddonVersion(name)
     if C_AddOns.IsAddOnLoaded(name) then
@@ -225,7 +232,9 @@ local function BroadcastVersions()
         SetGroupVersionData(playerGuid, Private:GetLocalVersionTable())
     end
 
-    if versionBroadcastQueued then return end
+    if versionBroadcastQueued then
+        return
+    end
 
     local timeToNext = 0
     local timeSinceLast = GetTime() - lastVersionBroadcastTime
@@ -245,13 +254,17 @@ local function BroadcastVersions()
 end
 
 local function HandleVersionRequest(sender)
-    if UnitIsUnit(sender, "player") then return end
+    if UnitIsUnit(sender, "player") then
+        return
+    end
 
     BroadcastVersions()
 end
 
 local function HandleVersionResponse(sender, data)
-    if UnitIsUnit(sender, "player") then return end
+    if UnitIsUnit(sender, "player") then
+        return
+    end
 
     local guid = Private.UnitGUID(sender)
     if guid then
@@ -261,7 +274,9 @@ end
 
 local function HandleAddonMessage(prefix, payload, dist, sender)
     local msg, err = DecodeMessage(payload)
-    if not msg then return Private:DebugPrint("HandleAddonMessage failed:", err) end
+    if not msg then
+        return Private:DebugPrint("HandleAddonMessage failed:", err)
+    end
     Private:DebugPrint("HandleAddonMessage(", msg.op, ",", sender, ")")
 
     if msg.op == "VREQ" then

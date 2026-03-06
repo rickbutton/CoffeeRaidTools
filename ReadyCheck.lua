@@ -14,7 +14,9 @@ end
 
 ---@param useTestData boolean?
 function Private:OpenReadyCheckPopup(useTestData)
-    if readyCheckFrame then return end
+    if readyCheckFrame then
+        return
+    end
 
     ---@type AceGUIFrame
     local frame = AceGUI:Create("Frame")

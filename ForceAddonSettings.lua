@@ -50,7 +50,15 @@ local ReadyCheckForceTrue = {
 }
 
 local EncounterAlertIDs = {
-    3176, 3177, 3178, 3179, 3180, 3181, 3182, 3183, 3306,
+    3176,
+    3177,
+    3178,
+    3179,
+    3180,
+    3181,
+    3182,
+    3183,
+    3306,
 }
 
 local QoLForceTrue = {
@@ -65,14 +73,18 @@ local QoLForceTrue = {
 }
 
 local function EnforceNSRT()
-    if not NSRT then return end
+    if not NSRT then
+        return
+    end
 
     if not NSRT.ReadyCheckSettings then
         NSRT.ReadyCheckSettings = {}
     end
     for _, key in ipairs(ReadyCheckForceTrue) do
         if NSRT.ReadyCheckSettings[key] ~= true then
-            Private:DebugPrint("NSRT ReadyCheckSettings." .. key .. ": " .. tostring(NSRT.ReadyCheckSettings[key]) .. " -> true")
+            Private:DebugPrint(
+                "NSRT ReadyCheckSettings." .. key .. ": " .. tostring(NSRT.ReadyCheckSettings[key]) .. " -> true"
+            )
             NSRT.ReadyCheckSettings[key] = true
             Private.enforceChanged = true
         end
@@ -86,7 +98,13 @@ local function EnforceNSRT()
             NSRT.EncounterAlerts[id] = {}
         end
         if NSRT.EncounterAlerts[id].enabled ~= true then
-            Private:DebugPrint("NSRT EncounterAlerts[" .. id .. "].enabled: " .. tostring(NSRT.EncounterAlerts[id].enabled) .. " -> true")
+            Private:DebugPrint(
+                "NSRT EncounterAlerts["
+                    .. id
+                    .. "].enabled: "
+                    .. tostring(NSRT.EncounterAlerts[id].enabled)
+                    .. " -> true"
+            )
             NSRT.EncounterAlerts[id].enabled = true
             Private.enforceChanged = true
         end
@@ -117,7 +135,9 @@ local TRSettingsForceTrue = {
 }
 
 local function EnforceTimelineReminders()
-    if not LiquidRemindersSaved then return end
+    if not LiquidRemindersSaved then
+        return
+    end
 
     -- Nickname enforcement
     local battleTag = select(2, Private.BNGetInfo())
@@ -165,7 +185,9 @@ frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function(self, event, addonName)
     if event == "ADDON_LOADED" then
         local enforce = EnforceFunctions[addonName]
-        if not enforce then return end
+        if not enforce then
+            return
+        end
         enforce()
         return
     end

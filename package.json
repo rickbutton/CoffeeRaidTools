@@ -6,7 +6,11 @@
     "build": "node scripts/build.js",
     "build:full": "node scripts/build.js full",
     "build:watch": "node scripts/build.js watch",
-    "test:compiler": "lua scripts/compiler/test.lua"
+    "test:compiler": "lua scripts/compiler/test.lua",
+    "check": "node scripts/check-lua.js",
+    "lint": "node scripts/lint-lua.js",
+    "format": "node scripts/format-lua.js",
+    "format:check": "node scripts/format-lua.js --check"
   },
   "dependencies": {
     "chokidar": "^4.0.3",

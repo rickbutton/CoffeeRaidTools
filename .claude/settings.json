@@ -3,5 +3,29 @@
     "allow": [
       "Bash(git *)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [[ \"$f\" == *.lua ]]; then stylua \"$f\"; fi",
+            "statusMessage": "Formatting with StyLua"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); if [[ \"$f\" == *.lua ]]; then stylua \"$f\"; fi",
+            "statusMessage": "Formatting with StyLua"
+          }
+        ]
+      }
+    ]
   }
 }

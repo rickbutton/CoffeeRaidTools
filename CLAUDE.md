@@ -40,17 +40,24 @@ pnpm run build:watch   # Watch mode
 
 ## Type Definitions
 
-WoW API and library type annotations come from the `ketho.wow-api` VS Code extension. To find annotation files:
+WoW API and library type annotations come from the `ketho.wow-api` VS Code extension (`~/.vscode/extensions/ketho.wow-api-*/Annotations/`). LuaLS is configured via `.luarc.json` which references the extension's annotation paths.
 
-```
-~/.vscode/extensions/ketho.wow-api-*/Annotations/
-```
-
-Key directories under `Annotations/`:
+Key annotation directories:
 - `Core/Blizzard_APIDocumentationGenerated/` — WoW C_ API docs
 - `Core/Data/` — Enums and global data types
 - `Core/Widget/` — Raw WoW widget types (prefer Ace3GUI wrappers)
 - `Core/Libraries/` — Only use types for libraries in `.pkgmeta` (Ace3, LibDeflate, LibSerialize, CallbackHandler)
+
+## Diagnostics
+
+`.luarc.json` and `.luacheckrc` are gitignored and generated — do not edit by hand. WoW globals are defined in `scripts/wow-globals.js`.
+
+```bash
+pnpm run check            # Generate .luarc.json + run LuaLS type diagnostics (matches VS Code)
+pnpm run lint             # Generate .luacheckrc + run luacheck (unused vars, style)
+pnpm run format           # Format with StyLua
+pnpm run format:check     # Check formatting without modifying
+```
 
 ## Code Style
 
@@ -58,7 +65,7 @@ Key directories under `Annotations/`:
 - Always use `local` unless it must be global
 - Use LuaLS annotations for table shapes, parameters, and complex return types
 - Annotate `AceGUI:Create()` with specific widget type (e.g., `---@type AceGUILabel`)
-- Prefer Ace3 over direct WoW API; check `.luaTypes/Libraries/Ace3` for public methods before accessing private widget fields
+- Prefer Ace3 over direct WoW API; check Ace3 library annotations for public methods before accessing private widget fields
 - Only comment genuinely complex logic
 
 ### General

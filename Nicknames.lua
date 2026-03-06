@@ -18,7 +18,9 @@ function CoffeeRaidTools:GetCharacterNameWithRealm(unit)
     if not realm then
         realm = GetNormalizedRealmName()
     end
-    if not realm then return end -- Called before PLAYER_LOGIN
+    if not realm then
+        return
+    end -- Called before PLAYER_LOGIN
     return string.format("%s-%s", name, realm)
 end
 

@@ -77,8 +77,7 @@ function Private:DebugPrint(...)
     end
 end
 
-function CoffeeRaidTools:OnInitialize()
-end
+function CoffeeRaidTools:OnInitialize() end
 
 function CoffeeRaidTools:OnEnable()
     if Private.db.devMode and Private.db.runTestsOnLoad then
@@ -86,8 +85,7 @@ function CoffeeRaidTools:OnEnable()
     end
 end
 
-function CoffeeRaidTools:OnDisable()
-end
+function CoffeeRaidTools:OnDisable() end
 
 local function TogglePopup(name, ...)
     if StaticPopup_Visible(name) then

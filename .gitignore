@@ -1,3 +1,5 @@
 .release
 node_modules
 .claude/settings.local.json
+.luarc.json
+.luacheckrc

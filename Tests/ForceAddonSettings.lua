@@ -62,7 +62,9 @@ end
 function Tests:EnforceTimelineRemindersSetsNestedPaths()
     Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "BNGetInfo", function() return nil, nil end)
+    Replace(Private, "BNGetInfo", function()
+        return nil, nil
+    end)
     Private.EnforceTimelineReminders()
     IsTrue(LiquidRemindersSaved.settings.timeline.nsrtNote)
     IsTrue(LiquidRemindersSaved.settings.timeline.mrtNote)
@@ -72,7 +74,9 @@ end
 function Tests:EnforceTimelineRemindersCreatesIntermediateTables()
     Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "BNGetInfo", function() return nil, nil end)
+    Replace(Private, "BNGetInfo", function()
+        return nil, nil
+    end)
     Private.EnforceTimelineReminders()
     AreEqual(type(LiquidRemindersSaved.settings), "table")
     AreEqual(type(LiquidRemindersSaved.settings.timeline), "table")
@@ -82,7 +86,9 @@ end
 function Tests:EnforceTimelineRemindersNickname()
     Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "BNGetInfo", function() return nil, "waffletwo#1858" end)
+    Replace(Private, "BNGetInfo", function()
+        return nil, "waffletwo#1858"
+    end)
     Private.EnforceTimelineReminders()
     AreEqual("Waffle", LiquidRemindersSaved.nickname)
 end
@@ -90,7 +96,9 @@ end
 function Tests:EnforceTimelineRemindersUnknownBattleTag()
     Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", { nickname = "Original" })
-    Replace(Private, "BNGetInfo", function() return nil, "unknown#0000" end)
+    Replace(Private, "BNGetInfo", function()
+        return nil, "unknown#0000"
+    end)
     Private.EnforceTimelineReminders()
     AreEqual("Original", LiquidRemindersSaved.nickname)
 end

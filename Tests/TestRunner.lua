@@ -88,9 +88,7 @@ function Private.Tests:RunAll(suiteName)
                     passed = passed + 1
                 else
                     failed = failed + 1
-                    CoffeeRaidTools:Print(
-                        ("|cffff0000FAIL|r %s:%s - %s"):format(suite.name, testName, tostring(err))
-                    )
+                    CoffeeRaidTools:Print(("|cffff0000FAIL|r %s:%s - %s"):format(suite.name, testName, tostring(err)))
                 end
             end
 
@@ -98,15 +96,10 @@ function Private.Tests:RunAll(suiteName)
             totalFailed = totalFailed + failed
 
             local color = failed > 0 and "ff0000" or "00ff00"
-            CoffeeRaidTools:Print(
-                ("|cff%s%s|r: %d passed, %d failed"):format(color, suite.name, passed, failed)
-            )
+            CoffeeRaidTools:Print(("|cff%s%s|r: %d passed, %d failed"):format(color, suite.name, passed, failed))
         end
     end
 
     local summaryColor = totalFailed > 0 and "ff0000" or "00ff00"
-    CoffeeRaidTools:Print(
-        ("|cff%sTotal: %d passed, %d failed|r"):format(summaryColor, totalPassed, totalFailed)
-    )
+    CoffeeRaidTools:Print(("|cff%sTotal: %d passed, %d failed|r"):format(summaryColor, totalPassed, totalFailed))
 end
-

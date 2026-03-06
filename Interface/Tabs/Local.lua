@@ -25,18 +25,18 @@ local function CreateAddonRow(addonName, statusText)
     local row = AceGUI:Create("SimpleGroup")
     row:SetLayout("Flow")
     row:SetFullWidth(true)
-    
+
     ---@type AceGUIInteractiveLabel
     local nameLabel = AceGUI:Create("InteractiveLabel")
     nameLabel:SetText(addonName)
     nameLabel:SetRelativeWidth(0.3)
     nameLabel:SetFont(GameFontNormal:GetFont())
-    
+
     ---@type AceGUILabel
     local statusLabel = AceGUI:Create("Label")
     statusLabel:SetText(statusText)
     statusLabel:SetRelativeWidth(0.7)
-    
+
     row:AddChild(nameLabel)
     row:AddChild(statusLabel)
     return row
