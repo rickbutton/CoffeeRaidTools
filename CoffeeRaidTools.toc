@@ -7,6 +7,7 @@
 ## Category: Coffee
 ## SavedVariables: CoffeeRaidToolsSaved
 ## LoadSavedVariablesFirst: 1
+## OptionalDeps: WoWUnit
 
 externals.xml
 CoffeeRaidTools.lua
@@ -22,3 +23,11 @@ Interface/Tabs/Local.lua
 Interface/Tabs/Raid.lua
 ReadyCheck.lua
 Interface/Tabs/Settings.lua
+
+Tests/Versions.lua
+Tests/Messaging.lua
+Tests/RaidStatus.lua
+Tests/ForceAddonSettings.lua
+Tests/ReadyCheck.lua
+Tests/ChatCommands.lua
+Tests/TabRegistry.lua

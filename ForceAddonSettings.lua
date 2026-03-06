@@ -150,6 +150,9 @@ end
 
 -- Event handling
 
+Private.EnforceNSRT = EnforceNSRT
+Private.EnforceTimelineReminders = EnforceTimelineReminders
+
 local EnforceFunctions = {
     NorthernSkyRaidTools = EnforceNSRT,
     TimelineReminders = EnforceTimelineReminders,

@@ -55,6 +55,27 @@ Private.AddonsToTrack = {
     },
 }
 
+---@param msg table
+---@return string
+local function EncodeMessage(msg)
+    local serialized = LibSerialize:Serialize(msg)
+    local compressed = LibDeflate:CompressDeflate(serialized)
+    return LibDeflate:EncodeForWoWAddonChannel(compressed)
+end
+
+---@param payload string
+---@return table?, string?
+local function DecodeMessage(payload)
+    local decoded = LibDeflate:DecodeForWoWAddonChannel(payload)
+    if not decoded then return nil, "unable to decode addon message payload" end
+    local decompressed = LibDeflate:DecompressDeflate(decoded)
+    if not decompressed then return nil, "unable to decompress addon message payload" end
+    local success, msg = LibSerialize:Deserialize(decompressed)
+    if not success then return nil, "unable to deserialize addon message payload" end
+    if type(msg) ~= "table" then return nil, "invalid addon message type" end
+    return msg
+end
+
 local function StringHash(text)
     local counter = 1
     local len = string.len(text)
@@ -169,11 +190,7 @@ end
 ---@param data any
 local function BroadcastMessage(op, target, data)
     Private:DebugPrint("BroadcastMessage(", op, ",", target, ")")
-
-    local msg = { op = op, data = data }
-    local serialized = LibSerialize:Serialize(msg)
-    local compressed = LibDeflate:CompressDeflate(serialized)
-    local encoded = LibDeflate:EncodeForWoWAddonChannel(compressed)
+    local encoded = EncodeMessage({ op = op, data = data })
     CoffeeRaidTools:SendCommMessage("CRT", encoded, target)
 end
 
@@ -243,14 +260,8 @@ local function HandleVersionResponse(sender, data)
 end
 
 local function HandleAddonMessage(prefix, payload, dist, sender)
-    local decoded = LibDeflate:DecodeForWoWAddonChannel(payload)
-    if not decoded then return Private:DebugPrint("unable to decode addon message payload") end
-    local decompressed = LibDeflate:DecompressDeflate(decoded)
-    if not decompressed then return Private:DebugPrint("unable to decompress addon message payload") end
-    local success, msg = LibSerialize:Deserialize(decompressed)
-    if not success then return Private:DebugPrint("unable to deserialize addon message payload", msg) end
-
-    if type(msg) ~= "table" then return Private:DebugPrint("invalid addon message type", type(msg)) end
+    local msg, err = DecodeMessage(payload)
+    if not msg then return Private:DebugPrint("HandleAddonMessage failed:", err) end
     Private:DebugPrint("HandleAddonMessage(", msg.op, ",", sender, ")")
 
     if msg.op == "VREQ" then
@@ -301,6 +312,14 @@ end
 function Private:BroadcastGroupMessage(op, data)
     BroadcastMessage(op, GetGroupBroadcastTarget(), data)
 end
+
+Private.StringHash = StringHash
+Private.GetMRTNoteHash = GetMRTNoteHash
+Private.GetAddonVersion = GetAddonVersion
+Private.CollectLocalVersionTable = CollectLocalVersionTable
+Private.EncodeMessage = EncodeMessage
+Private.DecodeMessage = DecodeMessage
+Private.GetGroupBroadcastTarget = GetGroupBroadcastTarget
 
 CoffeeRaidTools:RegisterComm("CRT", HandleAddonMessage)
 Private:RegisterEvent("GROUP_ROSTER_UPDATE", HandleGroupUpdate)

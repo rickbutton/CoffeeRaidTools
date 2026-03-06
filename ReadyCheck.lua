@@ -49,6 +49,8 @@ local function IsInCoffeeRaid()
     return totalMembers > 0 and (coffeeMembers / totalMembers) > 0.5
 end
 
+Private.IsInCoffeeRaid = IsInCoffeeRaid
+
 local function ShouldShowPopup()
     local setting = Private.db.readyCheckPopup
     if setting == "never" then
@@ -58,10 +60,12 @@ local function ShouldShowPopup()
     elseif setting == "inraid" then
         return IsInRaid()
     elseif setting == "inraidcoffee" then
-        return IsInRaid() and IsInCoffeeRaid()
+        return IsInRaid() and Private.IsInCoffeeRaid()
     end
     return false
 end
+
+Private.ShouldShowPopup = ShouldShowPopup
 
 local function HandleReadyCheck()
     if ShouldShowPopup() then

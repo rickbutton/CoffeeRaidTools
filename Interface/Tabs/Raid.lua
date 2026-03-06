@@ -286,5 +286,8 @@ local function HandleVersionsChanged()
     end
 end
 
+Private.GenerateStatusText = GenerateStatusText
+Private.GenerateTooltipText = GenerateTooltipText
+
 Private:RegisterTab("raid", "Raid", DrawTab, ReleaseTab)
 Private:RegisterMessage("VERSIONS_CHANGED", HandleVersionsChanged)
