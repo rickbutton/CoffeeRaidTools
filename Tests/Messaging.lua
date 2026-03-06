@@ -1,10 +1,8 @@
-if not WoWUnit then return end
-
 ---@class Private
 local Private = select(2, ...)
 
-local AreEqual, IsTrue, IsFalse, Replace = WoWUnit.AreEqual, WoWUnit.IsTrue, WoWUnit.IsFalse, WoWUnit.Replace
-local Tests = WoWUnit("CRT Messaging")
+local Tests, Asserts = Private.Tests:CreateSuite("Messaging")
+local AreEqual, IsTrue, IsFalse, Replace = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse, Asserts.Replace
 
 function Tests:RoundTripSimpleMessage()
     local original = { op = "VREQ", data = {} }
@@ -60,21 +58,21 @@ function Tests:DecodeEmptyStringReturnsNil()
 end
 
 function Tests:GetGroupBroadcastTargetInstanceChat()
-    Replace("IsInGroup", function(category)
+    Replace(Private, "IsInGroup", function(category)
         return category == LE_PARTY_CATEGORY_INSTANCE
     end)
-    Replace("IsInRaid", function() return false end)
+    Replace(Private, "IsInRaid", function() return false end)
     AreEqual("INSTANCE_CHAT", Private.GetGroupBroadcastTarget())
 end
 
 function Tests:GetGroupBroadcastTargetRaid()
-    Replace("IsInGroup", function() return false end)
-    Replace("IsInRaid", function() return true end)
+    Replace(Private, "IsInGroup", function() return false end)
+    Replace(Private, "IsInRaid", function() return true end)
     AreEqual("RAID", Private.GetGroupBroadcastTarget())
 end
 
 function Tests:GetGroupBroadcastTargetParty()
-    Replace("IsInGroup", function() return false end)
-    Replace("IsInRaid", function() return false end)
+    Replace(Private, "IsInGroup", function() return false end)
+    Replace(Private, "IsInRaid", function() return false end)
     AreEqual("PARTY", Private.GetGroupBroadcastTarget())
 end

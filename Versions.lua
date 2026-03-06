@@ -139,7 +139,7 @@ local function ResetGroupVersionsData()
     local newData = {}
     for unit in Private:IterateGroupMembers() do
         if Private:UnitIsRealPlayer(unit) and UnitExists(unit) then
-            local guid = UnitGUID(unit)
+            local guid = Private.UnitGUID(unit)
             if guid then
                 newData[guid] = oldData[guid]
             end
@@ -174,9 +174,9 @@ end
 ---@return GroupBroadcastTarget
 local function GetGroupBroadcastTarget()
     local target
-    if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+    if Private.IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
         return "INSTANCE_CHAT"
-    elseif IsInRaid() then
+    elseif Private.IsInRaid() then
         return "RAID"
     else
         return "PARTY"
@@ -220,7 +220,7 @@ local lastVersionBroadcastTime = 0
 
 local function BroadcastVersions()
     Private:DebugPrint("BroadcastVersions()")
-    local playerGuid = UnitGUID("player")
+    local playerGuid = Private.UnitGUID("player")
     if playerGuid then
         SetGroupVersionData(playerGuid, Private:GetLocalVersionTable())
     end
@@ -253,7 +253,7 @@ end
 local function HandleVersionResponse(sender, data)
     if UnitIsUnit(sender, "player") then return end
 
-    local guid = UnitGUID(sender)
+    local guid = Private.UnitGUID(sender)
     if guid then
         SetGroupVersionData(guid, data)
     end

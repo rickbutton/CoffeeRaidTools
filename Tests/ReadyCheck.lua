@@ -1,10 +1,8 @@
-if not WoWUnit then return end
-
 ---@class Private
 local Private = select(2, ...)
 
-local IsTrue, IsFalse, Replace = WoWUnit.IsTrue, WoWUnit.IsFalse, WoWUnit.Replace
-local Tests = WoWUnit("CRT ReadyCheck")
+local Tests, Asserts = Private.Tests:CreateSuite("ReadyCheck")
+local IsTrue, IsFalse, Replace = Asserts.IsTrue, Asserts.IsFalse, Asserts.Replace
 
 function Tests:ShouldShowPopupNever()
     Private.db.readyCheckPopup = "never"
@@ -18,33 +16,33 @@ end
 
 function Tests:ShouldShowPopupInRaidWhenInRaid()
     Private.db.readyCheckPopup = "inraid"
-    Replace("IsInRaid", function() return true end)
+    Replace(Private, "IsInRaid", function() return true end)
     IsTrue(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidWhenNotInRaid()
     Private.db.readyCheckPopup = "inraid"
-    Replace("IsInRaid", function() return false end)
+    Replace(Private, "IsInRaid", function() return false end)
     IsFalse(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenBothTrue()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace("IsInRaid", function() return true end)
+    Replace(Private, "IsInRaid", function() return true end)
     Replace(Private, "IsInCoffeeRaid", function() return true end)
     IsTrue(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenNotCoffee()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace("IsInRaid", function() return true end)
+    Replace(Private, "IsInRaid", function() return true end)
     Replace(Private, "IsInCoffeeRaid", function() return false end)
     IsFalse(Private.ShouldShowPopup())
 end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenNotInRaid()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace("IsInRaid", function() return false end)
+    Replace(Private, "IsInRaid", function() return false end)
     IsFalse(Private.ShouldShowPopup())
 end
 
@@ -66,8 +64,8 @@ function Tests:IsInCoffeeRaidMajorityCoffee()
         end
     end)
     Replace(Private, "UnitIsRealPlayer", function() return true end)
-    Replace("GetGuildInfo", function(unit) return guildInfo[unit] end)
-    Replace("UnitGUID", function(unit) return guids[unit] end)
+    Replace(Private, "GetGuildInfo", function(unit) return guildInfo[unit] end)
+    Replace(Private, "UnitGUID", function(unit) return guids[unit] end)
     IsTrue(Private.IsInCoffeeRaid())
 end
 
@@ -84,8 +82,8 @@ function Tests:IsInCoffeeRaidMinorityCoffee()
         end
     end)
     Replace(Private, "UnitIsRealPlayer", function() return true end)
-    Replace("GetGuildInfo", function(unit) return guildInfo[unit] end)
-    Replace("UnitGUID", function(unit) return guids[unit] end)
+    Replace(Private, "GetGuildInfo", function(unit) return guildInfo[unit] end)
+    Replace(Private, "UnitGUID", function(unit) return guids[unit] end)
     IsFalse(Private.IsInCoffeeRaid())
 end
 

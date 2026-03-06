@@ -173,7 +173,7 @@ local function GetPlayerData()
     local players = {}
     for unit in Private:IterateGroupMembers() do
         local playerName, nameFormat = CoffeeRaidTools:GetNickname(unit)
-        local guid = UnitGUID(unit)
+        local guid = Private.UnitGUID(unit)
         if guid and Private:UnitIsRealPlayer(unit) then
             local versions = groupVersions[guid]
             if versions then

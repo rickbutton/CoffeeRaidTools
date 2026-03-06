@@ -2,5 +2,5 @@
 - break timers with old weakaura images
 - settings dropdown too wide
 - versions in player tab not offset correctly
-- Local Configuration -> Player Info
-- Settings first title -> General
+- checkbox to top of raid tab and ready check popup to filter out "good" players
+- disable most stuff in combat

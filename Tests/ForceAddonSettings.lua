@@ -1,18 +1,18 @@
-if not WoWUnit then return end
-
 ---@class Private
 local Private = select(2, ...)
 
-local AreEqual, IsTrue, IsFalse, Replace = WoWUnit.AreEqual, WoWUnit.IsTrue, WoWUnit.IsFalse, WoWUnit.Replace
-local Tests = WoWUnit("CRT ForceAddonSettings")
+local Tests, Asserts = Private.Tests:CreateSuite("ForceAddonSettings")
+local AreEqual, IsTrue, IsFalse, Replace = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse, Asserts.Replace
 
 function Tests:EnforceNSRTNilSafe()
+    Replace(Private, "enforceChanged", false)
     Replace("NSRT", nil)
     Private.EnforceNSRT()
     IsFalse(NSRT)
 end
 
 function Tests:EnforceNSRTSetsReadyCheckSettings()
+    Replace(Private, "enforceChanged", false)
     Replace("NSRT", {})
     Private.EnforceNSRT()
     IsTrue(NSRT.ReadyCheckSettings.RepairCheck)
@@ -26,6 +26,7 @@ function Tests:EnforceNSRTSetsReadyCheckSettings()
 end
 
 function Tests:EnforceNSRTSetsEncounterAlerts()
+    Replace(Private, "enforceChanged", false)
     Replace("NSRT", {})
     Private.EnforceNSRT()
     IsTrue(NSRT.EncounterAlerts[3176].enabled)
@@ -34,6 +35,7 @@ function Tests:EnforceNSRTSetsEncounterAlerts()
 end
 
 function Tests:EnforceNSRTSetsQoL()
+    Replace(Private, "enforceChanged", false)
     Replace("NSRT", {})
     Private.EnforceNSRT()
     IsTrue(NSRT.QoL.SoulwellDropped)
@@ -43,6 +45,7 @@ function Tests:EnforceNSRTSetsQoL()
 end
 
 function Tests:EnforceNSRTPreservesExistingValues()
+    Replace(Private, "enforceChanged", false)
     Replace("NSRT", { ReadyCheckSettings = { RepairCheck = true, CustomSetting = "keep" } })
     Private.EnforceNSRT()
     AreEqual("keep", NSRT.ReadyCheckSettings.CustomSetting)
@@ -50,14 +53,16 @@ function Tests:EnforceNSRTPreservesExistingValues()
 end
 
 function Tests:EnforceTimelineRemindersNilSafe()
+    Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", nil)
     Private.EnforceTimelineReminders()
     IsFalse(LiquidRemindersSaved)
 end
 
 function Tests:EnforceTimelineRemindersSetsNestedPaths()
+    Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", {})
-    Replace("BNGetInfo", function() return nil, nil end)
+    Replace(Private, "BNGetInfo", function() return nil, nil end)
     Private.EnforceTimelineReminders()
     IsTrue(LiquidRemindersSaved.settings.timeline.nsrtNote)
     IsTrue(LiquidRemindersSaved.settings.timeline.mrtNote)
@@ -65,8 +70,9 @@ function Tests:EnforceTimelineRemindersSetsNestedPaths()
 end
 
 function Tests:EnforceTimelineRemindersCreatesIntermediateTables()
+    Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", {})
-    Replace("BNGetInfo", function() return nil, nil end)
+    Replace(Private, "BNGetInfo", function() return nil, nil end)
     Private.EnforceTimelineReminders()
     AreEqual(type(LiquidRemindersSaved.settings), "table")
     AreEqual(type(LiquidRemindersSaved.settings.timeline), "table")
@@ -74,15 +80,17 @@ function Tests:EnforceTimelineRemindersCreatesIntermediateTables()
 end
 
 function Tests:EnforceTimelineRemindersNickname()
+    Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", {})
-    Replace("BNGetInfo", function() return nil, "waffletwo#1858" end)
+    Replace(Private, "BNGetInfo", function() return nil, "waffletwo#1858" end)
     Private.EnforceTimelineReminders()
     AreEqual("Waffle", LiquidRemindersSaved.nickname)
 end
 
 function Tests:EnforceTimelineRemindersUnknownBattleTag()
+    Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", { nickname = "Original" })
-    Replace("BNGetInfo", function() return nil, "unknown#0000" end)
+    Replace(Private, "BNGetInfo", function() return nil, "unknown#0000" end)
     Private.EnforceTimelineReminders()
     AreEqual("Original", LiquidRemindersSaved.nickname)
 end

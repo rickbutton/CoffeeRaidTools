@@ -3,7 +3,7 @@
 ---@class Private
 local Private = select(2, ...)
 
-local changed = false
+Private.enforceChanged = false
 
 local function PopupOnShow(self)
     self:ClearAllPoints()
@@ -74,7 +74,7 @@ local function EnforceNSRT()
         if NSRT.ReadyCheckSettings[key] ~= true then
             Private:DebugPrint("NSRT ReadyCheckSettings." .. key .. ": " .. tostring(NSRT.ReadyCheckSettings[key]) .. " -> true")
             NSRT.ReadyCheckSettings[key] = true
-            changed = true
+            Private.enforceChanged = true
         end
     end
 
@@ -88,7 +88,7 @@ local function EnforceNSRT()
         if NSRT.EncounterAlerts[id].enabled ~= true then
             Private:DebugPrint("NSRT EncounterAlerts[" .. id .. "].enabled: " .. tostring(NSRT.EncounterAlerts[id].enabled) .. " -> true")
             NSRT.EncounterAlerts[id].enabled = true
-            changed = true
+            Private.enforceChanged = true
         end
     end
 
@@ -99,7 +99,7 @@ local function EnforceNSRT()
         if NSRT.QoL[key] ~= true then
             Private:DebugPrint("NSRT QoL." .. key .. ": " .. tostring(NSRT.QoL[key]) .. " -> true")
             NSRT.QoL[key] = true
-            changed = true
+            Private.enforceChanged = true
         end
     end
 end
@@ -120,13 +120,13 @@ local function EnforceTimelineReminders()
     if not LiquidRemindersSaved then return end
 
     -- Nickname enforcement
-    local battleTag = select(2, BNGetInfo())
+    local battleTag = select(2, Private.BNGetInfo())
     if battleTag then
         local expectedNickname = BattleTagToNickname[battleTag]
         if expectedNickname and LiquidRemindersSaved.nickname ~= expectedNickname then
             Private:DebugPrint("TR nickname: " .. tostring(LiquidRemindersSaved.nickname) .. " -> " .. expectedNickname)
             LiquidRemindersSaved.nickname = expectedNickname
-            changed = true
+            Private.enforceChanged = true
         end
     end
 
@@ -143,7 +143,7 @@ local function EnforceTimelineReminders()
         if tbl[key] ~= true then
             Private:DebugPrint(entry.label .. ": " .. tostring(tbl[key]) .. " -> true")
             tbl[key] = true
-            changed = true
+            Private.enforceChanged = true
         end
     end
 end
@@ -182,7 +182,7 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 
         if #missing > 0 then
             StaticPopup_Show("CRT_MISSING_ADDONS", table.concat(missing, "\n"))
-        elseif changed then
+        elseif Private.enforceChanged then
             StaticPopup_Show("CRT_FORCE_RELOAD")
         end
     end

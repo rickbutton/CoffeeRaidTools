@@ -1,10 +1,8 @@
-if not WoWUnit then return end
-
 ---@class Private
 local Private = select(2, ...)
 
-local AreEqual, IsTrue, IsFalse = WoWUnit.AreEqual, WoWUnit.IsTrue, WoWUnit.IsFalse
-local Tests = WoWUnit("CRT RaidStatus")
+local Tests, Asserts = Private.Tests:CreateSuite("RaidStatus")
+local AreEqual, IsTrue, IsFalse = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse
 
 function Tests:StatusTextAllGood()
     local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }

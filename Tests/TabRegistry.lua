@@ -1,32 +1,39 @@
-if not WoWUnit then return end
-
 ---@class Private
 local Private = select(2, ...)
 
-local AreEqual, IsTrue, IsFalse = WoWUnit.AreEqual, WoWUnit.IsTrue, WoWUnit.IsFalse
-local Tests = WoWUnit("CRT TabRegistry")
+local Tests, Asserts = Private.Tests:CreateSuite("TabRegistry")
+local AreEqual, IsTrue, IsFalse = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse
 
-local function CountTabs()
-    local count = 0
-    for _ in Private:IterateTabDescriptions() do
-        count = count + 1
+local savedTabs
+
+local function SaveTabs()
+    savedTabs = {}
+    for i, v in ipairs(Private.tabs) do
+        savedTabs[i] = v
     end
-    return count
+end
+
+local function RestoreTabs()
+    Private.tabs = savedTabs
 end
 
 function Tests:RegisterTabAddsToList()
-    local before = CountTabs()
+    SaveTabs()
+    local before = #Private.tabs
     Private:RegisterTab("unittest", "Unit Test", function() end)
-    local after = CountTabs()
+    local after = #Private.tabs
     AreEqual(before + 1, after)
+    RestoreTabs()
 end
 
 function Tests:GetTabDescriptionFindsRegistered()
+    SaveTabs()
     Private:RegisterTab("unittest_find", "Find Me", function() end)
     local tab = Private:GetTabDescription("unittest_find")
     IsTrue(tab ~= nil)
     AreEqual("unittest_find", tab.key)
     AreEqual("Find Me", tab.title)
+    RestoreTabs()
 end
 
 function Tests:GetTabDescriptionReturnsNilForUnknown()

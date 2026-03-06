@@ -1,10 +1,8 @@
-if not WoWUnit then return end
-
 ---@class Private
 local Private = select(2, ...)
 
-local AreEqual, IsTrue, Replace = WoWUnit.AreEqual, WoWUnit.IsTrue, WoWUnit.Replace
-local Tests = WoWUnit("CRT ChatCommands")
+local Tests, Asserts = Private.Tests:CreateSuite("ChatCommands")
+local AreEqual, IsTrue, Replace = Asserts.AreEqual, Asserts.IsTrue, Asserts.Replace
 
 function Tests:EmptyInputTogglesFrame()
     local toggled = false

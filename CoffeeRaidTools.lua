@@ -26,6 +26,20 @@ if Private.db.readyCheckPopup == nil then
     Private.db.readyCheckPopup = "never"
 end
 
+if Private.db.devMode == nil then
+    Private.db.devMode = false
+end
+
+if Private.db.runTestsOnLoad == nil then
+    Private.db.runTestsOnLoad = false
+end
+
+Private.IsInRaid = IsInRaid
+Private.IsInGroup = IsInGroup
+Private.UnitGUID = UnitGUID
+Private.GetGuildInfo = GetGuildInfo
+Private.BNGetInfo = BNGetInfo
+
 ---@class TabDescription
 ---@field key string
 ---@field title string
@@ -67,6 +81,9 @@ function CoffeeRaidTools:OnInitialize()
 end
 
 function CoffeeRaidTools:OnEnable()
+    if Private.db.devMode and Private.db.runTestsOnLoad then
+        Private.Tests:RunAll()
+    end
 end
 
 function CoffeeRaidTools:OnDisable()
@@ -104,6 +121,10 @@ local ChatCommands = {
         Private.db.debug = not Private.db.debug
         CoffeeRaidTools:Print("Debug mode " .. (Private.db.debug and "enabled" or "disabled"))
     end,
+    devmode = function()
+        Private.db.devMode = not Private.db.devMode
+        CoffeeRaidTools:Print("Dev mode " .. (Private.db.devMode and "enabled" or "disabled"))
+    end,
 }
 
 function CoffeeRaidTools:ChatCommandHandler(input)
@@ -116,11 +137,15 @@ function CoffeeRaidTools:ChatCommandHandler(input)
     local first, rest = cmd:match("^(%S+)%s*(.*)$")
     if first == "test" then
         local subcommand = rest and rest:trim() or ""
-        local handler = TestCommands[subcommand]
-        if handler then
-            handler()
+        if subcommand == "" then
+            Private.Tests:RunAll()
         else
-            CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
+            local handler = TestCommands[subcommand]
+            if handler then
+                handler()
+            else
+                CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
+            end
         end
         return
     end

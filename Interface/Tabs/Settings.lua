@@ -72,6 +72,13 @@ local function DrawTab(container)
         },
         { "never", "inraid", "inraidcoffee", "always" }
     ))
+
+    if Private.db.devMode then
+        container:AddChild(CreateSpacer())
+        container:AddChild(CreateSectionTitle("Dev Mode"))
+        container:AddChild(CreateSpacer())
+        container:AddChild(CreateSettingsCheckbox("runTestsOnLoad", "Run Tests on Addon Load"))
+    end
 end
 
 Private:RegisterTab("settings", "Settings", DrawTab)

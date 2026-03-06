@@ -40,7 +40,7 @@ local function IsInCoffeeRaid()
     for unit in Private:IterateGroupMembers() do
         if Private:UnitIsRealPlayer(unit) then
             totalMembers = totalMembers + 1
-            local guildName = GetGuildInfo(unit)
+            local guildName = Private.GetGuildInfo(unit)
             if guildName == "Coffee" then
                 coffeeMembers = coffeeMembers + 1
             end
@@ -58,9 +58,9 @@ local function ShouldShowPopup()
     elseif setting == "always" then
         return true
     elseif setting == "inraid" then
-        return IsInRaid()
+        return Private.IsInRaid()
     elseif setting == "inraidcoffee" then
-        return IsInRaid() and Private.IsInCoffeeRaid()
+        return Private.IsInRaid() and Private.IsInCoffeeRaid()
     end
     return false
 end

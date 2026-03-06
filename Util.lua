@@ -4,7 +4,7 @@ local Private = select(2, ...)
 ---@param reversed boolean?
 ---@param forceParty boolean?
 function Private:IterateGroupMembers(reversed, forceParty)
-    local unit = (not forceParty and IsInRaid()) and 'raid' or 'party'
+    local unit = (not forceParty and Private.IsInRaid()) and 'raid' or 'party'
     local numGroupMembers = unit == 'party' and GetNumSubgroupMembers() or GetNumGroupMembers()
     local i = reversed and numGroupMembers or (unit == 'party' and 0 or 1)
     return function()
@@ -21,6 +21,6 @@ end
 
 ---@param unit string
 function Private:UnitIsRealPlayer(unit)
-    local guid = UnitGUID(unit)
+    local guid = Private.UnitGUID(unit)
     return guid and guid:find("^Player-") ~= nil
 end
