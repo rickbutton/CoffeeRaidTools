@@ -22,5 +22,5 @@ ${luaList(writableGlobals)}
 fs.writeFileSync(path.join(projectRoot, ".luacheckrc"), luacheckrc);
 console.log(`Generated .luacheckrc with ${readOnlyGlobals.length + writableGlobals.length} globals`);
 
-const luacheck = process.platform === "win32" ? "./bin/luacheck.exe" : "luacheck";
+const luacheck = process.platform === "win32" ? "./scripts/luacheck.exe" : "luacheck";
 run(`${luacheck} ${luaFiles}`);

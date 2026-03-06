@@ -1,24 +1,22 @@
 {
     "files.eol": "\n",
     "wowAPI.luals.frameXML": true,
-    "Lua.workspace.ignoreDir": [
-        ".vscode",
-    ],
+    "wowAPI.luals.configurationScope": "User",
+    "Lua.workspace.ignoreDir": [".vscode"],
     "Lua.runtime.special": {
-        "relImport": "require",
+        "relImport": "require"
     },
-"wowAPI.luals.configurationScope": "User",
-"Lua.diagnostics.globals": [
-    "StaticPopup_Visible",
-    "StaticPopup_Hide",
-    "StaticPopup_Show",
-    "UISpecialFrames",
-    "RAID_CLASS_COLORS",
-    "GameFontNormalLarge",
-    "GameFontHighlightSmall",
-    "GameFontNormalSmall",
-    "GameFontNormal",
-    "LE_PARTY_CATEGORY_INSTANCE",
-    "GameTooltip"
-]
+    "Lua.diagnostics.globals": [
+        "StaticPopup_Visible",
+        "StaticPopup_Hide",
+        "StaticPopup_Show",
+        "UISpecialFrames",
+        "RAID_CLASS_COLORS",
+        "GameFontNormalLarge",
+        "GameFontHighlightSmall",
+        "GameFontNormalSmall",
+        "GameFontNormal",
+        "LE_PARTY_CATEGORY_INSTANCE",
+        "GameTooltip"
+    ]
 }
