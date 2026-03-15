@@ -45,7 +45,7 @@ local function CreateSettingsDropdown(key, label, values, order)
     dropdown:SetCallback("OnValueChanged", function(widget, event, value)
         Private.db[key] = value
     end)
-    dropdown:SetFullWidth(true)
+    dropdown:SetWidth(220)
     return dropdown
 end
 

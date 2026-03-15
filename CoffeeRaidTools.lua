@@ -105,6 +105,9 @@ local TestCommands = {
     closereadycheck = function()
         Private:CloseReadyCheckPopup()
     end,
+    update = function()
+        TogglePopup("CRT_UPDATE_AVAILABLE")
+    end,
 }
 
 local ChatCommands = {

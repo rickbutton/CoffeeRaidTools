@@ -41,7 +41,7 @@ function mergeGlobals(base) {
 const readOnlyGlobals = [
   "tinsert", "wipe",
   "BNGetInfo", "C_AddOns", "C_Secrets", "C_Timer", "CreateFrame",
-  "GetGuildInfo", "GetNormalizedRealmName", "GetNumGroupMembers", "GetNumSubgroupMembers",
+  "GetGuildInfo", "GetGuildInfoText", "GetNormalizedRealmName", "GetNumGroupMembers", "GetNumSubgroupMembers",
   "GetTime", "IsInGroup", "IsInRaid", "ReloadUI",
   "StaticPopup_Hide", "StaticPopup_Show", "StaticPopup_Visible",
   "InCombatLockdown",
