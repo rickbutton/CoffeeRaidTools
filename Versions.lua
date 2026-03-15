@@ -180,7 +180,6 @@ end
 
 ---@return GroupBroadcastTarget
 local function GetGroupBroadcastTarget()
-    local target
     if Private.IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
         return "INSTANCE_CHAT"
     elseif Private.IsInRaid() then

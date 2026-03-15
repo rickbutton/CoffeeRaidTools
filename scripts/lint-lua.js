@@ -9,6 +9,7 @@ const luacheckrc = `std = "lua51"
 self = false
 unused_args = false
 max_line_length = false
+ignore = {"211/Private"}
 
 read_globals = {
 ${luaList(readOnlyGlobals)}

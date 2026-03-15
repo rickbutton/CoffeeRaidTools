@@ -44,6 +44,7 @@ const readOnlyGlobals = [
   "GetGuildInfo", "GetNormalizedRealmName", "GetNumGroupMembers", "GetNumSubgroupMembers",
   "GetTime", "IsInGroup", "IsInRaid", "ReloadUI",
   "StaticPopup_Hide", "StaticPopup_Show", "StaticPopup_Visible",
+  "InCombatLockdown",
   "UnitClassBase", "UnitExists", "UnitGUID", "UnitIsUnit", "UnitNameUnmodified",
   "issecretvalue", "canaccessvalue", "issecrettable", "canaccesstable",
   "GameTooltip", "UIParent", "UISpecialFrames",
