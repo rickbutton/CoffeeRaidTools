@@ -4,47 +4,69 @@ local Private = select(2, ...)
 local Tests, Asserts = Private.Tests:CreateSuite("RaidStatus")
 local AreEqual, IsTrue, IsFalse = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse
 
-function Tests:StatusTextAllGood()
+function Tests:StatusAllGood()
     local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
     local player = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local result = Private.GenerateStatusText(player, expected)
-    AreEqual("|cff00ff00GOOD|r", result)
+    local status = Private.GeneratePlayerStatus(player, expected)
+    IsTrue(status.good)
+    IsFalse(status.noResponse)
+    AreEqual(0, #status.failures)
 end
 
-function Tests:StatusTextNilPlayerVersions()
+function Tests:StatusNilPlayerVersions()
     local expected = { CRT = "1.0" }
-    local result = Private.GenerateStatusText(nil, expected)
-    AreEqual("|cffff0000NO RESPONSE|r", result)
+    local status = Private.GeneratePlayerStatus(nil, expected)
+    IsFalse(status.good)
+    IsTrue(status.noResponse)
 end
 
-function Tests:StatusTextMissingExistsAddon()
+function Tests:StatusMissingExistsAddon()
     local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
     local player = { CRT = "1.0", BW = "NONE", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local result = Private.GenerateStatusText(player, expected)
-    IsTrue(result:find("BW") ~= nil)
+    local status = Private.GeneratePlayerStatus(player, expected)
+    IsFalse(status.good)
+    AreEqual(1, #status.failures)
+    AreEqual("BW", status.failures[1])
 end
 
-function Tests:StatusTextWrongEqualVersion()
+function Tests:StatusWrongEqualVersion()
     local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
     local player = { CRT = "0.9", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local result = Private.GenerateStatusText(player, expected)
-    IsTrue(result:find("CRT=0.9") ~= nil)
+    local status = Private.GeneratePlayerStatus(player, expected)
+    IsFalse(status.good)
+    AreEqual("CRT=0.9", status.failures[1])
 end
 
-function Tests:StatusTextMissingEqualAddon()
+function Tests:StatusMissingEqualAddon()
     local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
     local player = { CRT = "NONE", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local result = Private.GenerateStatusText(player, expected)
-    IsTrue(result:find("CRT") ~= nil)
-    IsFalse(result:find("CRT="))
+    local status = Private.GeneratePlayerStatus(player, expected)
+    IsFalse(status.good)
+    AreEqual("CRT", status.failures[1])
 end
 
-function Tests:StatusTextMRTHashMismatch()
+function Tests:StatusMRTHashMismatch()
     local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
     local player =
         { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "different" }
-    local result = Private.GenerateStatusText(player, expected)
-    IsTrue(result:find("NOTE") ~= nil)
+    local status = Private.GeneratePlayerStatus(player, expected)
+    IsFalse(status.good)
+    AreEqual("NOTE", status.failures[1])
+end
+
+function Tests:FormatStatusTextGood()
+    local text = Private.FormatStatusText({ good = true, failures = {}, noResponse = false })
+    AreEqual("|cff00ff00GOOD|r", text)
+end
+
+function Tests:FormatStatusTextNoResponse()
+    local text = Private.FormatStatusText({ good = false, failures = {}, noResponse = true })
+    AreEqual("|cffff0000NO RESPONSE|r", text)
+end
+
+function Tests:FormatStatusTextFailures()
+    local text = Private.FormatStatusText({ good = false, failures = { "BW", "CRT=0.9" }, noResponse = false })
+    AreEqual("|cffff0000BW CRT=0.9|r", text)
 end
 
 function Tests:TooltipTextNormal()

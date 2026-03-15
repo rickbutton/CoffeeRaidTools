@@ -34,6 +34,10 @@ if Private.db.runTestsOnLoad == nil then
     Private.db.runTestsOnLoad = false
 end
 
+if Private.db.onlyShowMismatches == nil then
+    Private.db.onlyShowMismatches = false
+end
+
 Private.IsInRaid = IsInRaid
 Private.IsInGroup = IsInGroup
 Private.UnitGUID = UnitGUID
@@ -101,6 +105,9 @@ local TestCommands = {
     end,
     readycheck = function()
         Private:OpenReadyCheckPopup(true)
+    end,
+    readycheckgood = function()
+        Private:OpenReadyCheckPopup(false, true)
     end,
     closereadycheck = function()
         Private:CloseReadyCheckPopup()

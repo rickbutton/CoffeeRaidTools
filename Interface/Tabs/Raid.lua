@@ -2,16 +2,6 @@
 local Private = select(2, ...)
 local AceGUI = LibStub("AceGUI-3.0")
 
-local function CreateSectionTitle(text)
-    ---@type AceGUILabel
-    local label = AceGUI:Create("Label")
-    label:SetText(text)
-    label:SetFullWidth(true)
-    label:SetFont(GameFontNormalLarge:GetFont())
-    label:SetColor(1, 0.82, 0)
-    return label
-end
-
 local function CreateSpacer()
     ---@type AceGUILabel
     local spacer = AceGUI:Create("Label")
@@ -27,14 +17,20 @@ local function CreateSeparator()
     return sep
 end
 
+---@class PlayerStatus
+---@field good boolean
+---@field failures string[]
+---@field noResponse boolean
+
 ---@param playerVersions VersionTable?
 ---@param expectedVersions VersionTable
-local function GenerateStatusText(playerVersions, expectedVersions)
-    local failures = {}
-
+---@return PlayerStatus
+local function GeneratePlayerStatus(playerVersions, expectedVersions)
     if not playerVersions then
-        return "|cffff0000" .. "NO RESPONSE" .. "|r"
+        return { good = false, failures = {}, noResponse = true }
     end
+
+    local failures = {}
 
     for _, addon in ipairs(Private.AddonsToTrack) do
         local playerVersion = playerVersions[addon.shortcode]
@@ -59,11 +55,19 @@ local function GenerateStatusText(playerVersions, expectedVersions)
         table.insert(failures, "NOTE")
     end
 
-    if #failures == 0 then
-        return "|cff00ff00GOOD|r"
-    else
-        return "|cffff0000" .. table.concat(failures, " ") .. "|r"
+    return { good = #failures == 0, failures = failures, noResponse = false }
+end
+
+---@param status PlayerStatus
+---@return string
+local function FormatStatusText(status)
+    if status.noResponse then
+        return "|cffff0000NO RESPONSE|r"
     end
+    if status.good then
+        return "|cff00ff00GOOD|r"
+    end
+    return "|cffff0000" .. table.concat(status.failures, " ") .. "|r"
 end
 
 local function GenerateTooltipText(playerVersions)
@@ -129,7 +133,9 @@ end
 ---@field name string
 ---@field versions VersionTable?
 
-local function GenerateMockPlayerData(expectedVersions)
+---@param expectedVersions VersionTable
+---@param allGood boolean
+local function GenerateMockPlayerData(expectedVersions, allGood)
     ---@type [PlayerData]
     local players = {}
 
@@ -137,7 +143,7 @@ local function GenerateMockPlayerData(expectedVersions)
         local playerName = "Player" .. i
         local playerVersions = {}
 
-        local scenario = math.random(1, 4)
+        local scenario = allGood and 1 or math.random(1, 4)
 
         for _, addon in ipairs(Private.AddonsToTrack) do
             if scenario == 1 then
@@ -214,10 +220,12 @@ local currentContainer = nil
 
 ---@class DrawRaidContentOptions
 ---@field useTestData boolean?
+---@field useTestDataAllGood boolean?
 ---@field showTitle boolean?
 
 ---@param container AceGUIContainer
 ---@param opts DrawRaidContentOptions?
+---@return boolean allGood
 function Private:DrawRaidContent(container, opts)
     local useTestData = opts and opts.useTestData or false
     local showTitle = not opts or opts.showTitle ~= false
@@ -232,7 +240,7 @@ function Private:DrawRaidContent(container, opts)
         restricted:SetFullWidth(true)
         restricted:SetFont(GameFontNormal:GetFont())
         container:AddChild(restricted)
-        return
+        return false
     end
 
     ---@type AceGUISimpleGroup
@@ -242,12 +250,89 @@ function Private:DrawRaidContent(container, opts)
 
     if showTitle then
         headerGroup:AddChild(CreateSpacer())
-        headerGroup:AddChild(CreateSectionTitle("Raid Configuration"))
+
+        ---@type AceGUISimpleGroup
+        local titleRow = AceGUI:Create("SimpleGroup")
+        titleRow:SetFullWidth(true)
+        titleRow:SetLayout("Flow")
+
+        ---@type AceGUILabel
+        local titleLabel = AceGUI:Create("Label")
+        titleLabel:SetText("Raid Configuration")
+        titleLabel:SetFont(GameFontNormalLarge:GetFont())
+        titleLabel:SetColor(1, 0.82, 0)
+        titleLabel:SetRelativeWidth(0.5)
+        titleRow:AddChild(titleLabel)
+
+        ---@type AceGUICheckBox
+        local filterCheckbox = AceGUI:Create("CheckBox")
+        filterCheckbox:SetLabel("Only Show Mismatches")
+        filterCheckbox:SetValue(Private.db.onlyShowMismatches)
+        filterCheckbox:SetCallback("OnValueChanged", function(_, _, value)
+            Private.db.onlyShowMismatches = value
+            container:ReleaseChildren()
+            Private:DrawRaidContent(container, opts)
+        end)
+        filterCheckbox:SetRelativeWidth(0.49)
+        titleRow:AddChild(filterCheckbox)
+
+        headerGroup:AddChild(titleRow)
         headerGroup:AddChild(CreateSpacer())
+    else
+        ---@type AceGUICheckBox
+        local filterCheckbox = AceGUI:Create("CheckBox")
+        filterCheckbox:SetLabel("Only Show Mismatches")
+        filterCheckbox:SetValue(Private.db.onlyShowMismatches)
+        filterCheckbox:SetCallback("OnValueChanged", function(_, _, value)
+            Private.db.onlyShowMismatches = value
+            container:ReleaseChildren()
+            Private:DrawRaidContent(container, opts)
+        end)
+        headerGroup:AddChild(filterCheckbox)
     end
+
+    local useTestDataAllGood = opts and opts.useTestDataAllGood or false
+
+    local expectedVersions = Private:GetLocalVersionTable()
+    local players
+    if useTestDataAllGood then
+        players = GenerateMockPlayerData(expectedVersions, true)
+    elseif useTestData then
+        players = GenerateMockPlayerData(expectedVersions, false)
+    else
+        players = GetPlayerData()
+    end
+
+    local filterMismatches = Private.db.onlyShowMismatches
+    local allGood = true
+
+    ---@type { name: string, statusText: string, tooltipText: string }[]
+    local rows = {}
+    for _, player in ipairs(players) do
+        local status = GeneratePlayerStatus(player.versions, expectedVersions)
+        if not status.good then
+            allGood = false
+        end
+        if not filterMismatches or not status.good then
+            local statusText = FormatStatusText(status)
+            local tooltipText = GenerateTooltipText(player.versions)
+            table.insert(rows, { name = player.name, statusText = statusText, tooltipText = tooltipText })
+        end
+    end
+
+    if filterMismatches and #rows == 0 then
+        container:AddChild(headerGroup)
+        ---@type AceGUILabel
+        local allGoodLabel = AceGUI:Create("Label")
+        allGoodLabel:SetText("|cff00ff00All players are up to date.|r")
+        allGoodLabel:SetFullWidth(true)
+        allGoodLabel:SetFont(GameFontNormal:GetFont())
+        container:AddChild(allGoodLabel)
+        return true
+    end
+
     headerGroup:AddChild(CreateTableHeader())
     headerGroup:AddChild(CreateSeparator())
-
     container:AddChild(headerGroup)
 
     ---@type AceGUIScrollFrame
@@ -261,24 +346,14 @@ function Private:DrawRaidContent(container, opts)
     -- initially laid out at width 0 and may not re-layout correctly.
     container:AddChild(scrollFrame)
 
-    local expectedVersions = Private:GetLocalVersionTable()
-    local players
-    if useTestData then
-        players = GenerateMockPlayerData(expectedVersions)
-    else
-        players = GetPlayerData()
-    end
-
-    for i, player in ipairs(players) do
-        local statusText = GenerateStatusText(player.versions, expectedVersions)
-        local tooltipText = GenerateTooltipText(player.versions)
-
-        scrollFrame:AddChild(CreateTableRow(player.name, statusText, tooltipText))
-
-        if i < #players then
+    for i, row in ipairs(rows) do
+        if i > 1 then
             scrollFrame:AddChild(CreateSeparator())
         end
+        scrollFrame:AddChild(CreateTableRow(row.name, row.statusText, row.tooltipText))
     end
+
+    return allGood
 end
 
 local function DrawTab(container)
@@ -298,7 +373,8 @@ local function HandleVersionsChanged()
     end
 end
 
-Private.GenerateStatusText = GenerateStatusText
+Private.GeneratePlayerStatus = GeneratePlayerStatus
+Private.FormatStatusText = FormatStatusText
 Private.GenerateTooltipText = GenerateTooltipText
 
 Private:RegisterTab("raid", "Raid", DrawTab, ReleaseTab)

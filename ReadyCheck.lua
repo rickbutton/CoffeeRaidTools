@@ -2,18 +2,59 @@
 local Private = select(2, ...)
 local AceGUI = LibStub("AceGUI-3.0")
 
+local AUTO_DISMISS_SECONDS = 5
+
 ---@type AceGUIFrame?
 local readyCheckFrame = nil
 local readyCheckUseTestData = false
+local readyCheckUseTestDataAllGood = false
+---@type FunctionContainer?
+local autoDismissTicker = nil
+
+local function CancelAutoDismiss()
+    if autoDismissTicker then
+        autoDismissTicker:Cancel()
+        autoDismissTicker = nil
+    end
+end
+
+local function StartAutoDismiss()
+    CancelAutoDismiss()
+    if not readyCheckFrame then
+        return
+    end
+
+    local remaining = AUTO_DISMISS_SECONDS
+    readyCheckFrame:SetStatusText("Closing in " .. remaining .. "s...")
+
+    autoDismissTicker = C_Timer.NewTicker(1, function()
+        remaining = remaining - 1
+        if remaining <= 0 then
+            Private:CloseReadyCheckPopup()
+        elseif readyCheckFrame then
+            readyCheckFrame:SetStatusText("Closing in " .. remaining .. "s...")
+        end
+    end, AUTO_DISMISS_SECONDS)
+end
 
 local function RefreshReadyCheckPopup()
     if readyCheckFrame then
+        CancelAutoDismiss()
+        readyCheckFrame:SetStatusText("")
         readyCheckFrame:ReleaseChildren()
-        Private:DrawRaidContent(readyCheckFrame, { useTestData = readyCheckUseTestData, showTitle = false })
+        local allGood = Private:DrawRaidContent(readyCheckFrame, {
+            useTestData = readyCheckUseTestData,
+            useTestDataAllGood = readyCheckUseTestDataAllGood,
+            showTitle = false,
+        })
+        if allGood then
+            StartAutoDismiss()
+        end
     end
 end
 
 function Private:CloseReadyCheckPopup()
+    CancelAutoDismiss()
     if readyCheckFrame then
         AceGUI:Release(readyCheckFrame)
         readyCheckFrame = nil
@@ -21,11 +62,12 @@ function Private:CloseReadyCheckPopup()
 end
 
 ---@param useTestData boolean?
-function Private:OpenReadyCheckPopup(useTestData)
+---@param useTestDataAllGood boolean?
+function Private:OpenReadyCheckPopup(useTestData, useTestDataAllGood)
     if readyCheckFrame then
         return
     end
-    if not useTestData and Private:IsInCombat() then
+    if not useTestData and not useTestDataAllGood and Private:IsInCombat() then
         return
     end
 
@@ -38,12 +80,14 @@ function Private:OpenReadyCheckPopup(useTestData)
     frame:SetHeight(400)
     frame:EnableResize(false)
     frame:SetCallback("OnClose", function(widget)
+        CancelAutoDismiss()
         AceGUI:Release(widget)
         readyCheckFrame = nil
     end)
 
     readyCheckFrame = frame
     readyCheckUseTestData = useTestData or false
+    readyCheckUseTestDataAllGood = useTestDataAllGood or false
     RefreshReadyCheckPopup()
 end
 
