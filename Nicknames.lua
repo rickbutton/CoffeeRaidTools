@@ -15,12 +15,15 @@ end
 ---@param unit string
 function CoffeeRaidTools:GetCharacterNameWithRealm(unit)
     local name, realm = UnitNameUnmodified(unit)
+    if issecretvalue(name) then
+        return name
+    end
     if not realm then
         realm = GetNormalizedRealmName()
     end
     if not realm then
-        return
-    end -- Called before PLAYER_LOGIN
+        return name
+    end
     return string.format("%s-%s", name, realm)
 end
 

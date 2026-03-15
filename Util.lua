@@ -19,8 +19,22 @@ function Private:IterateGroupMembers(reversed, forceParty)
     end
 end
 
+---@param unit UnitToken
+---@return boolean
+function Private:IsSecretUnit(unit)
+    return C_Secrets.ShouldUnitIdentityBeSecret(unit)
+end
+
+---@return boolean
+function Private:IsInCombat()
+    return InCombatLockdown()
+end
+
 ---@param unit string
 function Private:UnitIsRealPlayer(unit)
     local guid = Private.UnitGUID(unit)
+    if issecretvalue(guid) then
+        return false
+    end
     return guid and guid:find("^Player-") ~= nil
 end

@@ -147,7 +147,7 @@ local function ResetGroupVersionsData()
     for unit in Private:IterateGroupMembers() do
         if Private:UnitIsRealPlayer(unit) and UnitExists(unit) then
             local guid = Private.UnitGUID(unit)
-            if guid then
+            if not issecretvalue(guid) and guid then
                 newData[guid] = oldData[guid]
             end
         end
@@ -228,7 +228,7 @@ local lastVersionBroadcastTime = 0
 local function BroadcastVersions()
     Private:DebugPrint("BroadcastVersions()")
     local playerGuid = Private.UnitGUID("player")
-    if playerGuid then
+    if not issecretvalue(playerGuid) and playerGuid then
         SetGroupVersionData(playerGuid, Private:GetLocalVersionTable())
     end
 
@@ -254,7 +254,8 @@ local function BroadcastVersions()
 end
 
 local function HandleVersionRequest(sender)
-    if UnitIsUnit(sender, "player") then
+    local isSelf = UnitIsUnit(sender, "player")
+    if not issecretvalue(isSelf) and isSelf then
         return
     end
 
@@ -262,12 +263,13 @@ local function HandleVersionRequest(sender)
 end
 
 local function HandleVersionResponse(sender, data)
-    if UnitIsUnit(sender, "player") then
+    local isSelf = UnitIsUnit(sender, "player")
+    if not issecretvalue(isSelf) and isSelf then
         return
     end
 
     local guid = Private.UnitGUID(sender)
-    if guid then
+    if not issecretvalue(guid) and guid then
         SetGroupVersionData(guid, data)
     end
 end

@@ -45,18 +45,24 @@ if (mode === "watch") {
             if (p.startsWith(".luaTypes")) return true;
             if (p.startsWith("node_modules")) return true;
             if (p.startsWith(".git")) return true;
+            if (p.startsWith(".claude")) return true;
             if (p.startsWith(".release")) return true;
             if (p.startsWith(".vscode")) return true;
             if (p.startsWith("scripts")) return true;
 
+            if (p.startsWith("vendor")) return true;
+
             if (p === ".luacheckrc") return true;
+            if (p === ".luarc.json") return true;
+            if (p === ".stylua.toml") return true;
             if (p === ".editorconfig") return true;
             if (p === "package.json") return true;
             if (p === "pnpm-lock.yaml") return true;
             if (p === "TODO") return true;
-            if (p === "CLAUDE.md") return false;
+            if (p.endsWith(".md")) return true;
 
             if (p.endsWith(".lua")) return false;
+            if (p.startsWith("Media")) return false;
             if (p === ".pkgmeta") return false;
             if (p === "CoffeeRaidTools.toc") return false;
             if (p === "externals.xml") return false;
