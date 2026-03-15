@@ -175,7 +175,7 @@ local function GetPlayerData()
     for unit in Private:IterateGroupMembers() do
         local playerName, nameFormat = CoffeeRaidTools:GetNickname(unit)
         local guid = Private.UnitGUID(unit)
-        if guid and Private:UnitIsRealPlayer(unit) then
+        if not issecretvalue(guid) and guid and Private:UnitIsRealPlayer(unit) then
             local versions = groupVersions[guid]
             if versions then
                 table.insert(players, { name = string.format(nameFormat, playerName), versions = versions })
@@ -223,6 +223,17 @@ function Private:DrawRaidContent(container, opts)
     local showTitle = not opts or opts.showTitle ~= false
 
     container:SetLayout("Flow")
+
+    if not useTestData and Private:IsInCombat() then
+        container:AddChild(CreateSpacer())
+        ---@type AceGUILabel
+        local restricted = AceGUI:Create("Label")
+        restricted:SetText("|cffff8800Data unavailable during combat.|r")
+        restricted:SetFullWidth(true)
+        restricted:SetFont(GameFontNormal:GetFont())
+        container:AddChild(restricted)
+        return
+    end
 
     ---@type AceGUISimpleGroup
     local headerGroup = AceGUI:Create("SimpleGroup")
@@ -292,3 +303,6 @@ Private.GenerateTooltipText = GenerateTooltipText
 
 Private:RegisterTab("raid", "Raid", DrawTab, ReleaseTab)
 Private:RegisterMessage("VERSIONS_CHANGED", HandleVersionsChanged)
+Private:RegisterEvent("PLAYER_REGEN_DISABLED", HandleVersionsChanged)
+Private:RegisterEvent("PLAYER_REGEN_ENABLED", HandleVersionsChanged)
+Private:RegisterEvent("GROUP_ROSTER_UPDATE", HandleVersionsChanged)

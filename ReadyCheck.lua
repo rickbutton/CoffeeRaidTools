@@ -4,6 +4,14 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 ---@type AceGUIFrame?
 local readyCheckFrame = nil
+local readyCheckUseTestData = false
+
+local function RefreshReadyCheckPopup()
+    if readyCheckFrame then
+        readyCheckFrame:ReleaseChildren()
+        Private:DrawRaidContent(readyCheckFrame, { useTestData = readyCheckUseTestData, showTitle = false })
+    end
+end
 
 function Private:CloseReadyCheckPopup()
     if readyCheckFrame then
@@ -15,6 +23,9 @@ end
 ---@param useTestData boolean?
 function Private:OpenReadyCheckPopup(useTestData)
     if readyCheckFrame then
+        return
+    end
+    if not useTestData and Private:IsInCombat() then
         return
     end
 
@@ -31,9 +42,9 @@ function Private:OpenReadyCheckPopup(useTestData)
         readyCheckFrame = nil
     end)
 
-    Private:DrawRaidContent(frame, { useTestData = useTestData, showTitle = false })
-
     readyCheckFrame = frame
+    readyCheckUseTestData = useTestData or false
+    RefreshReadyCheckPopup()
 end
 
 local function IsInCoffeeRaid()
@@ -43,7 +54,7 @@ local function IsInCoffeeRaid()
         if Private:UnitIsRealPlayer(unit) then
             totalMembers = totalMembers + 1
             local guildName = Private.GetGuildInfo(unit)
-            if guildName == "Coffee" then
+            if not issecretvalue(guildName) and guildName == "Coffee" then
                 coffeeMembers = coffeeMembers + 1
             end
         end
@@ -81,3 +92,8 @@ end
 
 Private:RegisterEvent("READY_CHECK", HandleReadyCheck)
 Private:RegisterEvent("READY_CHECK_FINISHED", HandleReadyCheckFinished)
+Private:RegisterEvent("PLAYER_REGEN_DISABLED", function()
+    Private:CloseReadyCheckPopup()
+end)
+Private:RegisterEvent("GROUP_ROSTER_UPDATE", RefreshReadyCheckPopup)
+Private:RegisterMessage("VERSIONS_CHANGED", RefreshReadyCheckPopup)
