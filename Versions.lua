@@ -121,6 +121,16 @@ local function GetAddonVersion(name)
     return "NONE"
 end
 
+---@param addon TrackedAddonMetadata
+---@return string
+local function GetTransformedAddonVersion(addon)
+    local version = GetAddonVersion(addon.name)
+    if addon.transformVersion then
+        version = addon.transformVersion(version)
+    end
+    return version
+end
+
 ---@class VersionTable
 ---@field [TrackedShortcode] string
 
@@ -131,12 +141,7 @@ local function CollectLocalVersionTable()
 
     -- addon versions
     for i, addon in ipairs(Private.AddonsToTrack) do
-        ---@type string?
-        local version = GetAddonVersion(addon.name)
-        if addon.transformVersion then
-            version = addon.transformVersion(version)
-        end
-        versions[addon.shortcode] = version
+        versions[addon.shortcode] = GetTransformedAddonVersion(addon)
     end
 
     -- hash mrt note
@@ -352,7 +357,9 @@ Private.InvalidateLocalVersions = InvalidateLocalVersions
 local noteChangeTimer = nil
 
 local function HandleMRTNoteChange()
+    Private:DebugPrint("HandleMRTNoteChange called")
     if noteChangeTimer then
+        Private:DebugPrint("Cancelling existing note change timer")
         noteChangeTimer:Cancel()
     end
     noteChangeTimer = C_Timer.NewTimer(2, function()
@@ -360,17 +367,37 @@ local function HandleMRTNoteChange()
         local oldHash = Private:GetLocalVersion("MRTHASH")
         InvalidateLocalVersions()
         local newHash = Private:GetLocalVersion("MRTHASH")
+        Private:DebugPrint("MRT note hash check: old=", oldHash, "new=", newHash)
         if oldHash ~= newHash then
             Private:DebugPrint("MRT note hash changed:", oldHash, "->", newHash)
             BroadcastVersions()
+        else
+            Private:DebugPrint("MRT note hash unchanged, skipping broadcast")
         end
     end)
 end
 
-if GMRT and GMRT.F then
-    GMRT.F:RegisterCallback("Note_UpdateText", function()
-        HandleMRTNoteChange()
-    end, "CoffeeRaidTools")
+local function TryRegisterMRTCallback()
+    if GMRT and GMRT.F then
+        Private:DebugPrint("Registering GMRT Note_UpdateText callback")
+        GMRT.F:RegisterCallback("Note_UpdateText", function(...)
+            Private:DebugPrint("Note_UpdateText callback fired, args:", ...)
+            HandleMRTNoteChange()
+        end, "CoffeeRaidTools")
+        return true
+    end
+    return false
+end
+
+if not TryRegisterMRTCallback() then
+    Private:DebugPrint("GMRT not yet available, waiting for ADDON_LOADED")
+    Private:RegisterEvent("ADDON_LOADED", function(_, addonName)
+        if addonName == "MRT" then
+            Private:DebugPrint("MRT addon loaded, attempting callback registration")
+            TryRegisterMRTCallback()
+            Private:UnregisterEvent("ADDON_LOADED")
+        end
+    end)
 end
 
 -- Guild info version check
@@ -409,7 +436,7 @@ local function CheckGuildVersions()
     for shortcode, guildVersion in pairs(guildVersions) do
         local addon = shortcodeToAddon[shortcode]
         if addon then
-            local localVersion = Private.GetAddonVersion(addon.name)
+            local localVersion = GetTransformedAddonVersion(addon)
             if localVersion ~= guildVersion then
                 table.insert(outdated, addon.name)
             end
