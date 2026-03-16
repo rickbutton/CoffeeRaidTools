@@ -124,7 +124,7 @@ end
 ---@param addon TrackedAddonMetadata
 ---@return string
 local function GetTransformedAddonVersion(addon)
-    local version = GetAddonVersion(addon.name)
+    local version = Private.GetAddonVersion(addon.name)
     if addon.transformVersion then
         version = addon.transformVersion(version)
     end
