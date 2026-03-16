@@ -83,12 +83,22 @@ async function main() {
     console.log("current manifest:", currentManifestString);
 
     const manifest = JSON.parse(currentManifestString);
+    let found = false;
     for (const addon of manifest.AddOns) {
         if (addon.Name === projectName) {
             console.log(`updating version for ${projectName} in manifest from ${addon.Version} to ${latestTag}`);
             addon.Version = latestTag;
+            found = true;
         }
     }
+    
+     if (!found) {
+        console.log("didn't find addon in manifest, adding it");
+        manifest.AddOns.push({
+            Name: projectName,
+            Version: latestTag,
+        });
+     }
 
     const newManifestString = JSON.stringify(manifest, null, 2);
     console.log("new manifest:", newManifestString);
