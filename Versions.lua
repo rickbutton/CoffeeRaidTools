@@ -27,6 +27,12 @@ Private.AddonsToTrack = {
         name = "CoffeeRaidTools",
         shortcode = "CRT",
         matcher = Matchers.EQUAL,
+        transformVersion = function(v)
+            if not v then
+                return v
+            end
+            return v:match("^([^-]+)") or v
+        end,
     },
     {
         name = "BigWigs",
