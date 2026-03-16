@@ -422,11 +422,11 @@ local function ParseGuildInfoVersions()
     return versions
 end
 
----@return string[]
+---@return string[]?
 local function CheckGuildVersions()
     local guildVersions = ParseGuildInfoVersions()
     if not guildVersions then
-        return {}
+        return nil
     end
     local shortcodeToAddon = {}
     for _, addon in ipairs(Private.AddonsToTrack) do
@@ -450,12 +450,15 @@ Private.CheckGuildVersions = CheckGuildVersions
 
 local guildVersionChecked = false
 local function HandleGuildRosterUpdate()
-    if guildVersionChecked then
+    if guildVersionChecked or InCombatLockdown() then
         return
     end
     local outdated = CheckGuildVersions()
+    if not outdated then
+        return
+    end
+    guildVersionChecked = true
     if #outdated > 0 then
-        guildVersionChecked = true
         StaticPopup_Show("CRT_UPDATE_AVAILABLE", table.concat(outdated, "\n"))
     end
 end

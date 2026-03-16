@@ -119,6 +119,7 @@ function Tests:ParseGuildInfoVersionsReturnsBothAddons()
         return "Welcome to the guild!\n<CRT:42 TR:1.2.3>"
     end)
     local versions = Private.ParseGuildInfoVersions()
+    assert(versions)
     AreEqual("42", versions.CRT)
     AreEqual("1.2.3", versions.TR)
 end
@@ -128,6 +129,7 @@ function Tests:ParseGuildInfoVersionsCRTOnly()
         return "<CRT:42>"
     end)
     local versions = Private.ParseGuildInfoVersions()
+    assert(versions)
     AreEqual("42", versions.CRT)
     AreEqual(nil, versions.TR)
 end
@@ -137,6 +139,7 @@ function Tests:ParseGuildInfoVersionsTROnly()
         return "<TR:5.0.0-beta>"
     end)
     local versions = Private.ParseGuildInfoVersions()
+    assert(versions)
     AreEqual(nil, versions.CRT)
     AreEqual("5.0.0-beta", versions.TR)
 end
@@ -182,6 +185,7 @@ function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
         end
     end)
     local outdated = Private.CheckGuildVersions()
+    assert(outdated)
     AreEqual(1, #outdated)
     AreEqual("CoffeeRaidTools", outdated[1])
 end
@@ -199,6 +203,7 @@ function Tests:CheckGuildVersionsReturnsTRWhenOutdated()
         end
     end)
     local outdated = Private.CheckGuildVersions()
+    assert(outdated)
     AreEqual(1, #outdated)
     AreEqual("TimelineReminders", outdated[1])
 end
@@ -216,6 +221,7 @@ function Tests:CheckGuildVersionsReturnsBothWhenOutdated()
         end
     end)
     local outdated = Private.CheckGuildVersions()
+    assert(outdated)
     AreEqual(2, #outdated)
 end
 
@@ -232,23 +238,22 @@ function Tests:CheckGuildVersionsReturnsEmptyWhenCurrent()
         end
     end)
     local outdated = Private.CheckGuildVersions()
+    assert(outdated)
     AreEqual(0, #outdated)
 end
 
-function Tests:CheckGuildVersionsReturnsEmptyWhenNoTag()
+function Tests:CheckGuildVersionsReturnsNilWhenNoTag()
     Replace("GetGuildInfoText", function()
         return "No version here"
     end)
-    local outdated = Private.CheckGuildVersions()
-    AreEqual(0, #outdated)
+    AreEqual(nil, Private.CheckGuildVersions())
 end
 
-function Tests:CheckGuildVersionsReturnsEmptyWhenNoGuildInfo()
+function Tests:CheckGuildVersionsReturnsNilWhenNoGuildInfo()
     Replace("GetGuildInfoText", function()
         return nil
     end)
-    local outdated = Private.CheckGuildVersions()
-    AreEqual(0, #outdated)
+    AreEqual(nil, Private.CheckGuildVersions())
 end
 
 function Tests:CheckGuildVersionsSkipsUnknownShortcodes()
