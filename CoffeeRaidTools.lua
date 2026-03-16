@@ -112,6 +112,12 @@ local TestCommands = {
     closereadycheck = function()
         Private:CloseReadyCheckPopup()
     end,
+    break10 = function()
+        Private:SendMessage("BigWigs_StartBreak", nil, 10, UnitName("player"), false, false, "Break time", 134062)
+    end,
+    breakstop = function()
+        Private:SendMessage("BigWigs_StopBreak", nil, 0, UnitName("player"), false, false)
+    end,
     update = function()
         TogglePopup("CRT_UPDATE_AVAILABLE")
     end,

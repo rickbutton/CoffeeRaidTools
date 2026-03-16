@@ -20,6 +20,7 @@ Interface/Frame.lua
 Interface/Tabs/Local.lua
 Interface/Tabs/Raid.lua
 ReadyCheck.lua
+Break.lua
 Interface/Tabs/Settings.lua
 
 Tests/TestRunner.lua
