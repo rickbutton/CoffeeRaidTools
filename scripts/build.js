@@ -59,6 +59,7 @@ if (mode === "watch") {
             if (p === "package.json") return true;
             if (p === "pnpm-lock.yaml") return true;
             if (p === "TODO") return true;
+            if (p === ".env") return true;
             if (p.endsWith(".md")) return true;
 
             if (p.endsWith(".lua")) return false;
