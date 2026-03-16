@@ -389,16 +389,12 @@ local function TryRegisterMRTCallback()
     return false
 end
 
-if not TryRegisterMRTCallback() then
-    Private:DebugPrint("GMRT not yet available, waiting for ADDON_LOADED")
-    Private:RegisterEvent("ADDON_LOADED", function(_, addonName)
-        if addonName == "MRT" then
-            Private:DebugPrint("MRT addon loaded, attempting callback registration")
-            TryRegisterMRTCallback()
-            Private:UnregisterEvent("ADDON_LOADED")
-        end
-    end)
-end
+Private:RegisterEvent("PLAYER_LOGIN", function()
+    Private:UnregisterEvent("PLAYER_LOGIN")
+    if not TryRegisterMRTCallback() then
+        Private:DebugPrint("GMRT not available at PLAYER_LOGIN, MRT callback not registered")
+    end
+end)
 
 -- Guild info version check
 
