@@ -39,8 +39,7 @@ end
 
 local function RefreshReadyCheckPopup()
     if readyCheckFrame then
-        CancelAutoDismiss()
-        readyCheckFrame:SetStatusText("")
+        local alreadyDismissing = autoDismissTicker ~= nil
         readyCheckFrame:ReleaseChildren()
         local allGood = Private:DrawRaidContent(readyCheckFrame, {
             useTestData = readyCheckUseTestData,
@@ -48,7 +47,12 @@ local function RefreshReadyCheckPopup()
             showTitle = false,
         })
         if allGood then
-            StartAutoDismiss()
+            if not alreadyDismissing then
+                StartAutoDismiss()
+            end
+        else
+            CancelAutoDismiss()
+            readyCheckFrame:SetStatusText("")
         end
     end
 end
