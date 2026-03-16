@@ -24,10 +24,10 @@ if (libsAlreadyCheckedOut && mode != "full") {
     command.push("-e");
 }
 if (isWindows) {
-    const scriptPath = path.join(__dirname, "release.bat");
+    const scriptPath = path.join(__dirname, "package.bat");
     command = ["cmd.exe", "/c", scriptPath, ...command];
 } else {
-    const scriptPath = path.join(__dirname, "release.sh");
+    const scriptPath = path.join(__dirname, "package.sh");
     command = [scriptPath, ...command];
 }
 
