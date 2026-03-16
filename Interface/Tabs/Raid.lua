@@ -358,7 +358,7 @@ end
 
 local function DrawTab(container)
     currentContainer = container
-    Private:DrawRaidContent(container, { useTestData = Private.db.testGroupVersionList })
+    Private:DrawRaidContent(container, { useTestData = Private:UseTestGroupVersionList() })
 end
 
 ---@param container AceGUIContainer

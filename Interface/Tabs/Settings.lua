@@ -55,7 +55,6 @@ local function DrawTab(container)
     container:AddChild(CreateSpacer())
 
     container:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
-    container:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
 
     container:AddChild(CreateSpacer())
     container:AddChild(CreateSectionTitle("Ready Check"))
@@ -73,6 +72,7 @@ local function DrawTab(container)
         container:AddChild(CreateSectionTitle("Dev Mode"))
         container:AddChild(CreateSpacer())
         container:AddChild(CreateSettingsCheckbox("runTestsOnLoad", "Run Tests on Addon Load"))
+        container:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
     end
 end
 
