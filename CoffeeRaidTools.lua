@@ -81,6 +81,49 @@ function Private:DebugPrint(...)
     end
 end
 
+-- Popups
+
+local function PopupOnShow(self)
+    self:ClearAllPoints()
+    self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    C_Timer.After(0, function()
+        self:SetHeight(self:GetHeight() + 10)
+    end)
+end
+
+local TITLE = "|cffffd100CoffeeRaidTools|r"
+
+StaticPopupDialogs["CRT_FORCE_RELOAD"] = {
+    text = TITLE .. "\n\nA UI reload is required.",
+    button1 = "Reload UI",
+    OnAccept = ReloadUI,
+    OnShow = PopupOnShow,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = false,
+    showAlert = false,
+}
+
+StaticPopupDialogs["CRT_MISSING_ADDONS"] = {
+    text = TITLE .. "\n\nRequired addon(s) missing:\n\n|cffff4040%s|r",
+    button1 = "Ok",
+    OnShow = PopupOnShow,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    showAlert = false,
+}
+
+StaticPopupDialogs["CRT_UPDATE_AVAILABLE"] = {
+    text = TITLE .. "\n\nUpdates available for:\n\n|cffff4040%s|r\n\nPlease update with |cff00ccffCoffee Updater|r.",
+    button1 = "Ok",
+    OnShow = PopupOnShow,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    showAlert = false,
+}
+
 function CoffeeRaidTools:OnInitialize() end
 
 function CoffeeRaidTools:OnEnable()
@@ -119,7 +162,7 @@ local TestCommands = {
         Private:SendMessage("BigWigs_StopBreak", nil, 0, UnitName("player"), false, false)
     end,
     update = function()
-        TogglePopup("CRT_UPDATE_AVAILABLE")
+        TogglePopup("CRT_UPDATE_AVAILABLE", "CoffeeRaidTools\nTimelineReminders")
     end,
 }
 

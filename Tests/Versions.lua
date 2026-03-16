@@ -111,3 +111,155 @@ function Tests:CollectLocalVersionTableMRTHASHMatchesNote()
     local versions = Private.CollectLocalVersionTable()
     AreEqual(Private.StringHash("my raid note"), versions["MRTHASH"])
 end
+
+-- Guild info version check
+
+function Tests:ParseGuildInfoVersionsReturnsBothAddons()
+    Replace("GetGuildInfoText", function()
+        return "Welcome to the guild!\n<CRT:42 TR:1.2.3>"
+    end)
+    local versions = Private.ParseGuildInfoVersions()
+    AreEqual("42", versions.CRT)
+    AreEqual("1.2.3", versions.TR)
+end
+
+function Tests:ParseGuildInfoVersionsCRTOnly()
+    Replace("GetGuildInfoText", function()
+        return "<CRT:42>"
+    end)
+    local versions = Private.ParseGuildInfoVersions()
+    AreEqual("42", versions.CRT)
+    AreEqual(nil, versions.TR)
+end
+
+function Tests:ParseGuildInfoVersionsTROnly()
+    Replace("GetGuildInfoText", function()
+        return "<TR:5.0.0-beta>"
+    end)
+    local versions = Private.ParseGuildInfoVersions()
+    AreEqual(nil, versions.CRT)
+    AreEqual("5.0.0-beta", versions.TR)
+end
+
+function Tests:ParseGuildInfoVersionsNoTag()
+    Replace("GetGuildInfoText", function()
+        return "Welcome to the guild!"
+    end)
+    AreEqual(nil, Private.ParseGuildInfoVersions())
+end
+
+function Tests:ParseGuildInfoVersionsNilText()
+    Replace("GetGuildInfoText", function()
+        return nil
+    end)
+    AreEqual(nil, Private.ParseGuildInfoVersions())
+end
+
+function Tests:ParseGuildInfoVersionsEmptyTag()
+    Replace("GetGuildInfoText", function()
+        return "<>"
+    end)
+    AreEqual(nil, Private.ParseGuildInfoVersions())
+end
+
+function Tests:ParseGuildInfoVersionsPartialTag()
+    Replace("GetGuildInfoText", function()
+        return "<CRT:>"
+    end)
+    AreEqual(nil, Private.ParseGuildInfoVersions())
+end
+
+function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
+    Replace("GetGuildInfoText", function()
+        return "<CRT:99 TR:1.0>"
+    end)
+    Replace(Private, "GetAddonVersion", function(name)
+        if name == "CoffeeRaidTools" then
+            return "42"
+        end
+        if name == "TimelineReminders" then
+            return "1.0"
+        end
+    end)
+    local outdated = Private.CheckGuildVersions()
+    AreEqual(1, #outdated)
+    AreEqual("CoffeeRaidTools", outdated[1])
+end
+
+function Tests:CheckGuildVersionsReturnsTRWhenOutdated()
+    Replace("GetGuildInfoText", function()
+        return "<CRT:42 TR:2.0>"
+    end)
+    Replace(Private, "GetAddonVersion", function(name)
+        if name == "CoffeeRaidTools" then
+            return "42"
+        end
+        if name == "TimelineReminders" then
+            return "1.0"
+        end
+    end)
+    local outdated = Private.CheckGuildVersions()
+    AreEqual(1, #outdated)
+    AreEqual("TimelineReminders", outdated[1])
+end
+
+function Tests:CheckGuildVersionsReturnsBothWhenOutdated()
+    Replace("GetGuildInfoText", function()
+        return "<CRT:99 TR:2.0>"
+    end)
+    Replace(Private, "GetAddonVersion", function(name)
+        if name == "CoffeeRaidTools" then
+            return "42"
+        end
+        if name == "TimelineReminders" then
+            return "1.0"
+        end
+    end)
+    local outdated = Private.CheckGuildVersions()
+    AreEqual(2, #outdated)
+end
+
+function Tests:CheckGuildVersionsReturnsEmptyWhenCurrent()
+    Replace("GetGuildInfoText", function()
+        return "<CRT:42 TR:1.0>"
+    end)
+    Replace(Private, "GetAddonVersion", function(name)
+        if name == "CoffeeRaidTools" then
+            return "42"
+        end
+        if name == "TimelineReminders" then
+            return "1.0"
+        end
+    end)
+    local outdated = Private.CheckGuildVersions()
+    AreEqual(0, #outdated)
+end
+
+function Tests:CheckGuildVersionsReturnsEmptyWhenNoTag()
+    Replace("GetGuildInfoText", function()
+        return "No version here"
+    end)
+    local outdated = Private.CheckGuildVersions()
+    AreEqual(0, #outdated)
+end
+
+function Tests:CheckGuildVersionsReturnsEmptyWhenNoGuildInfo()
+    Replace("GetGuildInfoText", function()
+        return nil
+    end)
+    local outdated = Private.CheckGuildVersions()
+    AreEqual(0, #outdated)
+end
+
+function Tests:CheckGuildVersionsSkipsUnknownShortcodes()
+    Replace("GetGuildInfoText", function()
+        return "<CRT:42 UNKNOWN:99>"
+    end)
+    Replace(Private, "GetAddonVersion", function(name)
+        if name == "CoffeeRaidTools" then
+            return "42"
+        end
+    end)
+    local outdated = Private.CheckGuildVersions()
+    AreEqual(0, #outdated)
+end

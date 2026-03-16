@@ -5,47 +5,6 @@ local Private = select(2, ...)
 
 Private.enforceChanged = false
 
-local function PopupOnShow(self)
-    self:ClearAllPoints()
-    self:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    C_Timer.After(0, function()
-        self:SetHeight(self:GetHeight() + 10)
-    end)
-end
-
-local TITLE = "|cffffd100CoffeeRaidTools|r"
-
-StaticPopupDialogs["CRT_FORCE_RELOAD"] = {
-    text = TITLE .. "\n\nA UI reload is required.",
-    button1 = "Reload UI",
-    OnAccept = ReloadUI,
-    OnShow = PopupOnShow,
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = false,
-    showAlert = false,
-}
-
-StaticPopupDialogs["CRT_MISSING_ADDONS"] = {
-    text = TITLE .. "\n\nRequired addon(s) missing:\n\n|cffff4040%s|r",
-    button1 = "Ok",
-    OnShow = PopupOnShow,
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = true,
-    showAlert = false,
-}
-
-StaticPopupDialogs["CRT_UPDATE_AVAILABLE"] = {
-    text = TITLE .. "\n\nA new version is available.\n\nPlease update with |cff00ccffCoffee Updater|r.",
-    button1 = "Ok",
-    OnShow = PopupOnShow,
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = true,
-    showAlert = false,
-}
-
 -- NSRT enforcement
 
 local ReadyCheckForceTrue = {
@@ -178,28 +137,6 @@ local function EnforceTimelineReminders()
     end
 end
 
--- Guild info version check
-
-local function ParseGuildInfoVersion()
-    local info = GetGuildInfoText()
-    if not info then
-        return nil
-    end
-    return info:match("<CRT:(%d+)>")
-end
-
-local function CheckGuildVersion()
-    local guildVersion = ParseGuildInfoVersion()
-    if not guildVersion then
-        return false
-    end
-    local localVersion = Private.GetAddonVersion("CoffeeRaidTools")
-    return localVersion ~= guildVersion
-end
-
-Private.ParseGuildInfoVersion = ParseGuildInfoVersion
-Private.CheckGuildVersion = CheckGuildVersion
-
 -- Event handling
 
 Private.EnforceNSRT = EnforceNSRT
@@ -214,8 +151,6 @@ local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 
-local guildVersionChecked = false
-
 frame:SetScript("OnEvent", function(self, event, addonName)
     if event == "ADDON_LOADED" then
         local enforce = EnforceFunctions[addonName]
@@ -229,7 +164,6 @@ frame:SetScript("OnEvent", function(self, event, addonName)
     if event == "PLAYER_LOGIN" then
         self:UnregisterEvent("ADDON_LOADED")
         self:UnregisterEvent("PLAYER_LOGIN")
-        self:RegisterEvent("GUILD_ROSTER_UPDATE")
 
         local missing = {}
         for _, addon in ipairs(Private.AddonsToTrack) do
@@ -242,18 +176,6 @@ frame:SetScript("OnEvent", function(self, event, addonName)
             StaticPopup_Show("CRT_MISSING_ADDONS", table.concat(missing, "\n"))
         elseif Private.enforceChanged then
             StaticPopup_Show("CRT_FORCE_RELOAD")
-        end
-        return
-    end
-
-    if event == "GUILD_ROSTER_UPDATE" then
-        if guildVersionChecked then
-            return
-        end
-        if CheckGuildVersion() then
-            guildVersionChecked = true
-            self:UnregisterEvent("GUILD_ROSTER_UPDATE")
-            StaticPopup_Show("CRT_UPDATE_AVAILABLE")
         end
     end
 end)

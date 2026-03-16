@@ -367,8 +367,69 @@ if GMRT and GMRT.F then
     end, "CoffeeRaidTools")
 end
 
+-- Guild info version check
+
+---@return table<string, string>?
+local function ParseGuildInfoVersions()
+    local info = GetGuildInfoText()
+    if not info then
+        return nil
+    end
+    local block = info:match("<(.-)>")
+    if not block then
+        return nil
+    end
+    local versions = {}
+    for key, value in block:gmatch("(%w+):(%S+)") do
+        versions[key] = value
+    end
+    if not next(versions) then
+        return nil
+    end
+    return versions
+end
+
+---@return string[]
+local function CheckGuildVersions()
+    local guildVersions = ParseGuildInfoVersions()
+    if not guildVersions then
+        return {}
+    end
+    local shortcodeToAddon = {}
+    for _, addon in ipairs(Private.AddonsToTrack) do
+        shortcodeToAddon[addon.shortcode] = addon
+    end
+    local outdated = {}
+    for shortcode, guildVersion in pairs(guildVersions) do
+        local addon = shortcodeToAddon[shortcode]
+        if addon then
+            local localVersion = Private.GetAddonVersion(addon.name)
+            if localVersion ~= guildVersion then
+                table.insert(outdated, addon.name)
+            end
+        end
+    end
+    return outdated
+end
+
+Private.ParseGuildInfoVersions = ParseGuildInfoVersions
+Private.CheckGuildVersions = CheckGuildVersions
+
+local guildVersionChecked = false
+local function HandleGuildRosterUpdate()
+    if guildVersionChecked then
+        return
+    end
+    local outdated = CheckGuildVersions()
+    if #outdated > 0 then
+        guildVersionChecked = true
+        StaticPopup_Show("CRT_UPDATE_AVAILABLE", table.concat(outdated, "\n"))
+    end
+end
+
 CoffeeRaidTools:RegisterComm("CRT", HandleAddonMessage)
 Private:RegisterEvent("GROUP_ROSTER_UPDATE", HandleGroupUpdate)
 Private:RegisterEvent("GROUP_JOINED", HandleGroupUpdate)
 Private:RegisterEvent("GROUP_FORMED", HandleGroupUpdate)
 Private:RegisterEvent("PLAYER_ENTERING_WORLD", HandleGroupUpdate)
+Private:RegisterEvent("GUILD_ROSTER_UPDATE", HandleGuildRosterUpdate)
