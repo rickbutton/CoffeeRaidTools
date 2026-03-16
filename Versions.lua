@@ -337,6 +337,36 @@ Private.EncodeMessage = EncodeMessage
 Private.DecodeMessage = DecodeMessage
 Private.GetGroupBroadcastTarget = GetGroupBroadcastTarget
 
+local function InvalidateLocalVersions()
+    localVersions = nil
+end
+
+Private.InvalidateLocalVersions = InvalidateLocalVersions
+
+local noteChangeTimer = nil
+
+local function HandleMRTNoteChange()
+    if noteChangeTimer then
+        noteChangeTimer:Cancel()
+    end
+    noteChangeTimer = C_Timer.NewTimer(2, function()
+        noteChangeTimer = nil
+        local oldHash = Private:GetLocalVersion("MRTHASH")
+        InvalidateLocalVersions()
+        local newHash = Private:GetLocalVersion("MRTHASH")
+        if oldHash ~= newHash then
+            Private:DebugPrint("MRT note hash changed:", oldHash, "->", newHash)
+            BroadcastVersions()
+        end
+    end)
+end
+
+if GMRT and GMRT.F then
+    GMRT.F:RegisterCallback("Note_UpdateText", function()
+        HandleMRTNoteChange()
+    end, "CoffeeRaidTools")
+end
+
 CoffeeRaidTools:RegisterComm("CRT", HandleAddonMessage)
 Private:RegisterEvent("GROUP_ROSTER_UPDATE", HandleGroupUpdate)
 Private:RegisterEvent("GROUP_JOINED", HandleGroupUpdate)

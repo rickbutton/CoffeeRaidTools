@@ -56,7 +56,7 @@ const readOnlyGlobals = [
 // Writable globals (addon globals, saved variables, third-party addons)
 const writableGlobals = [
   "CoffeeRaidTools", "CoffeeRaidToolsSaved", "StaticPopupDialogs",
-  "LiquidRemindersSaved", "NSRT", "TimelineReminders", "VMRT",
+  "GMRT", "LiquidRemindersSaved", "NSRT", "TimelineReminders", "VMRT",
 ];
 
 module.exports = { projectRoot, luaFiles, run, readOnlyGlobals, writableGlobals, mergeGlobals };
