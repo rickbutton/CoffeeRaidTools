@@ -293,7 +293,7 @@ function Private:DrawRaidContent(container, opts)
 
     local useTestDataAllGood = opts and opts.useTestDataAllGood or false
 
-    local expectedVersions = Private:GetLocalVersionTable()
+    local expectedVersions = Private:GetExpectedVersionTable()
     local players
     if useTestDataAllGood then
         players = GenerateMockPlayerData(expectedVersions, true)

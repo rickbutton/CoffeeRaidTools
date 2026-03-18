@@ -268,3 +268,122 @@ function Tests:CheckGuildVersionsSkipsUnknownShortcodes()
     local outdated = Private.CheckGuildVersions()
     AreEqual(0, #outdated)
 end
+
+-- GetExpectedVersionTable
+
+function Tests:GetExpectedVersionTableReturnsLeaderVersions()
+    local leaderVersions = { CRT = "99", MRTHASH = "abc" }
+    Replace(Private, "IsInGroup", function()
+        return true
+    end)
+    Replace(Private, "IterateGroupMembers", function()
+        local units = { "raid1", "raid2" }
+        local i = 0
+        return function()
+            i = i + 1
+            return units[i]
+        end
+    end)
+    Replace(Private, "UnitIsGroupLeader", function(unit)
+        return unit == "raid1"
+    end)
+    Replace(Private, "UnitGUID", function(unit)
+        return "guid-" .. unit
+    end)
+    Replace(Private, "GetGroupVersionsTable", function()
+        return { ["guid-raid1"] = leaderVersions }
+    end)
+    AreEqual(leaderVersions, Private:GetExpectedVersionTable())
+end
+
+function Tests:GetExpectedVersionTableFallsBackWhenNotInGroup()
+    local localVersions = { CRT = "1.0" }
+    Replace(Private, "IsInGroup", function()
+        return false
+    end)
+    Replace(Private, "GetLocalVersionTable", function()
+        return localVersions
+    end)
+    AreEqual(localVersions, Private:GetExpectedVersionTable())
+end
+
+function Tests:GetExpectedVersionTableFallsBackWhenLeaderNotResponded()
+    local localVersions = { CRT = "1.0" }
+    Replace(Private, "IsInGroup", function()
+        return true
+    end)
+    Replace(Private, "IterateGroupMembers", function()
+        local units = { "raid1", "raid2" }
+        local i = 0
+        return function()
+            i = i + 1
+            return units[i]
+        end
+    end)
+    Replace(Private, "UnitIsGroupLeader", function(unit)
+        return unit == "raid1"
+    end)
+    Replace(Private, "UnitGUID", function()
+        return "guid-leader"
+    end)
+    Replace(Private, "GetGroupVersionsTable", function()
+        return {}
+    end)
+    Replace(Private, "GetLocalVersionTable", function()
+        return localVersions
+    end)
+    AreEqual(localVersions, Private:GetExpectedVersionTable())
+end
+
+function Tests:GetExpectedVersionTableWorksWhenPlayerIsLeader()
+    local leaderVersions = { CRT = "42" }
+    Replace(Private, "IsInGroup", function()
+        return true
+    end)
+    Replace(Private, "IterateGroupMembers", function()
+        local units = { "player", "raid1" }
+        local i = 0
+        return function()
+            i = i + 1
+            return units[i]
+        end
+    end)
+    Replace(Private, "UnitIsGroupLeader", function(unit)
+        return unit == "player"
+    end)
+    Replace(Private, "UnitGUID", function(unit)
+        return "guid-" .. unit
+    end)
+    Replace(Private, "GetGroupVersionsTable", function()
+        return { ["guid-player"] = leaderVersions }
+    end)
+    AreEqual(leaderVersions, Private:GetExpectedVersionTable())
+end
+
+function Tests:GetExpectedVersionTableFallsBackWhenLeaderGUIDSecret()
+    local localVersions = { CRT = "1.0" }
+    Replace(Private, "IsInGroup", function()
+        return true
+    end)
+    Replace(Private, "IterateGroupMembers", function()
+        local units = { "raid1" }
+        local i = 0
+        return function()
+            i = i + 1
+            return units[i]
+        end
+    end)
+    Replace(Private, "UnitIsGroupLeader", function()
+        return true
+    end)
+    Replace(Private, "UnitGUID", function()
+        return "secret-guid"
+    end)
+    Replace("issecretvalue", function()
+        return true
+    end)
+    Replace(Private, "GetLocalVersionTable", function()
+        return localVersions
+    end)
+    AreEqual(localVersions, Private:GetExpectedVersionTable())
+end

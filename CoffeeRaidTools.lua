@@ -43,6 +43,7 @@ Private.IsInGroup = IsInGroup
 Private.UnitGUID = UnitGUID
 Private.GetGuildInfo = GetGuildInfo
 Private.BNGetInfo = BNGetInfo
+Private.UnitIsGroupLeader = UnitIsGroupLeader
 
 ---@class TabDescription
 ---@field key string

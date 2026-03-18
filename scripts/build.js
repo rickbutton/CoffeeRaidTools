@@ -47,6 +47,7 @@ if (mode === "watch") {
             if (p.startsWith(".git")) return true;
             if (p.startsWith(".claude")) return true;
             if (p.startsWith(".release")) return true;
+            if (p.startsWith("release")) return false;
             if (p.startsWith(".vscode")) return true;
             if (p.startsWith("scripts")) return true;
 

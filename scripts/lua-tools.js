@@ -45,7 +45,7 @@ const readOnlyGlobals = [
   "GetTime", "IsInGroup", "IsInRaid", "ReloadUI",
   "StaticPopup_Hide", "StaticPopup_Show", "StaticPopup_Visible",
   "InCombatLockdown",
-  "UnitClassBase", "UnitExists", "UnitGUID", "UnitIsUnit", "UnitNameUnmodified",
+  "UnitClassBase", "UnitExists", "UnitGUID", "UnitIsGroupLeader", "UnitIsUnit", "UnitNameUnmodified",
   "issecretvalue", "canaccessvalue", "issecrettable", "canaccesstable",
   "GameTooltip", "UIParent", "UISpecialFrames",
   "GameFontHighlightSmall", "GameFontNormal", "GameFontNormalLarge", "GameFontNormalSmall",

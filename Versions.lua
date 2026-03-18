@@ -336,6 +336,26 @@ function Private:GetGroupVersionsTable()
     return groupVersions
 end
 
+---@return VersionTable
+function Private:GetExpectedVersionTable()
+    if Private.IsInGroup() then
+        local gv = Private:GetGroupVersionsTable()
+        for unit in Private:IterateGroupMembers() do
+            if Private.UnitIsGroupLeader(unit) then
+                local guid = Private.UnitGUID(unit)
+                if not issecretvalue(guid) and guid then
+                    local leaderVersions = gv[guid]
+                    if leaderVersions then
+                        return leaderVersions
+                    end
+                end
+                break
+            end
+        end
+    end
+    return Private:GetLocalVersionTable()
+end
+
 function Private:BroadcastGroupMessage(op, data)
     BroadcastMessage(op, GetGroupBroadcastTarget(), data)
 end
