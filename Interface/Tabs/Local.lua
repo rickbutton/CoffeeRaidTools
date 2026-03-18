@@ -42,11 +42,13 @@ local function CreateAddonRow(addonName, statusText)
     return row
 end
 
-local function FormatVersion(version)
+local function FormatVersion(version, expectedVersion)
     if version == "NONE" then
         return "|cffff0000Not Installed|r"
-    else
+    elseif version == expectedVersion then
         return "|cff00ff00" .. version .. "|r"
+    else
+        return "|cffff0000" .. version .. "|r"
     end
 end
 
@@ -66,9 +68,11 @@ local function DrawTab(container)
     container:AddChild(CreateSectionTitle("Installed AddOns"))
     container:AddChild(CreateSpacer())
 
+    local expectedVersions = Private:GetExpectedVersionTable()
     for _, addon in ipairs(Private.AddonsToTrack) do
         local version = Private:GetLocalVersion(addon.shortcode)
-        container:AddChild(CreateAddonRow(addon.name, FormatVersion(version)))
+        local expectedVersion = expectedVersions[addon.shortcode]
+        container:AddChild(CreateAddonRow(addon.name, FormatVersion(version, expectedVersion)))
     end
 end
 
