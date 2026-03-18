@@ -93,6 +93,16 @@ function Tests:EnforceTimelineRemindersNickname()
     AreEqual("Waffle", LiquidRemindersSaved.nickname)
 end
 
+function Tests:EnforceTimelineRemindersNicknameCaseInsensitive()
+    Replace(Private, "enforceChanged", false)
+    Replace("LiquidRemindersSaved", {})
+    Replace(Private, "BNGetInfo", function()
+        return nil, "WaffleTwo#1858"
+    end)
+    Private.EnforceTimelineReminders()
+    AreEqual("Waffle", LiquidRemindersSaved.nickname)
+end
+
 function Tests:EnforceTimelineRemindersUnknownBattleTag()
     Replace(Private, "enforceChanged", false)
     Replace("LiquidRemindersSaved", { nickname = "Original" })

@@ -95,6 +95,18 @@ end
 
 local BattleTagToNickname = {
     ["waffletwo#1858"] = "Waffle",
+    ["bestman#1653"] = "Bestman",
+    ["eeld#1234"] = "Eeld",
+    ["bonestorm#11570"] = "Rocky",
+    ["hm3boost#1688"] = "Bubble",
+    ["pwnstar#11783"] = "Apollo",
+    ["notlad#11770"] = "Peer",
+    ["h8shot#1402"] = "Gold",
+    ["mazed#11112"] = "Nmu",
+    ["hundiddy#1280"] = "Hun",
+    ["phaszr#1199"] = "Lancr",
+    ["itsneahvil#1266"] = "Dez",
+    ["ophidian#1948"] = "Scynical",
 }
 
 local TRSettingsForceTrue = {
@@ -111,7 +123,7 @@ local function EnforceTimelineReminders()
     -- Nickname enforcement
     local battleTag = select(2, Private.BNGetInfo())
     if battleTag then
-        local expectedNickname = BattleTagToNickname[battleTag]
+        local expectedNickname = BattleTagToNickname[battleTag:lower()]
         if expectedNickname and LiquidRemindersSaved.nickname ~= expectedNickname then
             Private:DebugPrint("TR nickname: " .. tostring(LiquidRemindersSaved.nickname) .. " -> " .. expectedNickname)
             LiquidRemindersSaved.nickname = expectedNickname
