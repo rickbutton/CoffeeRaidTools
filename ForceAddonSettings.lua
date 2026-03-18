@@ -107,6 +107,13 @@ local BattleTagToNickname = {
     ["phaszr#1199"] = "Lancr",
     ["itsneahvil#1266"] = "Dez",
     ["ophidian#1948"] = "Scynical",
+    ["mordrag#11554"] = "Jerk",
+    ["sluff#11368"] = "Sluff",
+    ["apexmachine#1449"] = "Apex",
+    ["squeethetree#1185"] = "Squishes",
+    ["xuedo#1579"] = "Xhul",
+    ["drcuddlesphd#1611"] = "DrCuddles",
+    ["jaybirrd#11458"] = "Errmac",
 }
 
 local TRSettingsForceTrue = {
