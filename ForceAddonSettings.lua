@@ -3,8 +3,6 @@
 ---@class Private
 local Private = select(2, ...)
 
-Private.enforceChanged = false
-
 -- NSRT enforcement
 
 local ReadyCheckForceTrue = {
@@ -55,7 +53,6 @@ local function EnforceNSRT()
                 "NSRT ReadyCheckSettings." .. key .. ": " .. tostring(NSRT.ReadyCheckSettings[key]) .. " -> true"
             )
             NSRT.ReadyCheckSettings[key] = true
-            Private.enforceChanged = true
         end
     end
 
@@ -75,7 +72,6 @@ local function EnforceNSRT()
                     .. " -> true"
             )
             NSRT.EncounterAlerts[id].enabled = true
-            Private.enforceChanged = true
         end
     end
 
@@ -86,8 +82,17 @@ local function EnforceNSRT()
         if NSRT.QoL[key] ~= true then
             Private:DebugPrint("NSRT QoL." .. key .. ": " .. tostring(NSRT.QoL[key]) .. " -> true")
             NSRT.QoL[key] = true
-            Private.enforceChanged = true
         end
+    end
+
+    if not NSRT.ReminderSettings then
+        NSRT.ReminderSettings = {}
+    end
+    if NSRT.ReminderSettings.UseTLReminders ~= true then
+        Private:DebugPrint(
+            "NSRT ReminderSettings.UseTLReminders: " .. tostring(NSRT.ReminderSettings.UseTLReminders) .. " -> true"
+        )
+        NSRT.ReminderSettings.UseTLReminders = true
     end
 end
 
@@ -134,7 +139,6 @@ local function EnforceTimelineReminders()
         if expectedNickname and LiquidRemindersSaved.nickname ~= expectedNickname then
             Private:DebugPrint("TR nickname: " .. tostring(LiquidRemindersSaved.nickname) .. " -> " .. expectedNickname)
             LiquidRemindersSaved.nickname = expectedNickname
-            Private.enforceChanged = true
         end
     end
 
@@ -151,7 +155,6 @@ local function EnforceTimelineReminders()
         if tbl[key] ~= true then
             Private:DebugPrint(entry.label .. ": " .. tostring(tbl[key]) .. " -> true")
             tbl[key] = true
-            Private.enforceChanged = true
         end
     end
 end
@@ -193,8 +196,6 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 
         if #missing > 0 then
             StaticPopup_Show("CRT_MISSING_ADDONS", table.concat(missing, "\n"))
-        elseif Private.enforceChanged then
-            StaticPopup_Show("CRT_FORCE_RELOAD")
         end
     end
 end)
