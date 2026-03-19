@@ -40,6 +40,12 @@ function Tests:EnforceNSRTSetsQoL()
     IsTrue(NSRT.QoL.LootBossReminder)
 end
 
+function Tests:EnforceNSRTSetsReminderSettingsEnabled()
+    Replace("NSRT", {})
+    Private.EnforceNSRT()
+    IsTrue(NSRT.ReminderSettings.enabled)
+end
+
 function Tests:EnforceNSRTSetsUseTLReminders()
     Replace("NSRT", {})
     Private.EnforceNSRT()
@@ -106,4 +112,58 @@ function Tests:EnforceTimelineRemindersUnknownBattleTag()
     end)
     Private.EnforceTimelineReminders()
     AreEqual("Original", LiquidRemindersSaved.nickname)
+end
+
+function Tests:ForceTRDefaultTemplatesSetsTTSOnBothTemplateTypes()
+    Replace("LiquidRemindersSaved", {})
+    Replace("C_VoiceChat", {
+        GetTtsVoices = function()
+            return { { voiceID = 42 } }
+        end,
+    })
+    Private.db.hasForcedTRTemplates = false
+    Replace(Private, "BNGetInfo", function()
+        return nil, nil
+    end)
+    Private.EnforceTimelineReminders()
+    IsTrue(LiquidRemindersSaved.defaultTemplates.TEXT.tts.enabled)
+    AreEqual(42, LiquidRemindersSaved.defaultTemplates.TEXT.tts.voice)
+    AreEqual(0, LiquidRemindersSaved.defaultTemplates.TEXT.tts.time)
+    IsTrue(LiquidRemindersSaved.defaultTemplates.SPELL.tts.enabled)
+    AreEqual(42, LiquidRemindersSaved.defaultTemplates.SPELL.tts.voice)
+    AreEqual(0, LiquidRemindersSaved.defaultTemplates.SPELL.tts.time)
+end
+
+function Tests:ForceTRDefaultTemplatesUsesVoiceIDZeroWhenNoVoices()
+    Replace("LiquidRemindersSaved", {})
+    Replace("C_VoiceChat", nil)
+    Private.db.hasForcedTRTemplates = false
+    Replace(Private, "BNGetInfo", function()
+        return nil, nil
+    end)
+    Private.EnforceTimelineReminders()
+    AreEqual(0, LiquidRemindersSaved.defaultTemplates.TEXT.tts.voice)
+    AreEqual(0, LiquidRemindersSaved.defaultTemplates.SPELL.tts.voice)
+end
+
+function Tests:ForceTRDefaultTemplatesSetsHasForcedFlag()
+    Replace("LiquidRemindersSaved", {})
+    Replace("C_VoiceChat", nil)
+    Private.db.hasForcedTRTemplates = false
+    Replace(Private, "BNGetInfo", function()
+        return nil, nil
+    end)
+    Private.EnforceTimelineReminders()
+    IsTrue(Private.db.hasForcedTRTemplates)
+end
+
+function Tests:ForceTRDefaultTemplatesSkipsWhenAlreadyForced()
+    Replace("LiquidRemindersSaved", {})
+    Replace("C_VoiceChat", nil)
+    Private.db.hasForcedTRTemplates = true
+    Replace(Private, "BNGetInfo", function()
+        return nil, nil
+    end)
+    Private.EnforceTimelineReminders()
+    IsFalse(LiquidRemindersSaved.defaultTemplates)
 end

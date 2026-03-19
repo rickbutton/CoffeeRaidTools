@@ -88,6 +88,11 @@ local function EnforceNSRT()
     if not NSRT.ReminderSettings then
         NSRT.ReminderSettings = {}
     end
+    if NSRT.ReminderSettings.enabled ~= true then
+        Private:DebugPrint("NSRT ReminderSettings.enabled: " .. tostring(NSRT.ReminderSettings.enabled) .. " -> true")
+        NSRT.ReminderSettings.enabled = true
+    end
+
     if NSRT.ReminderSettings.UseTLReminders ~= true then
         Private:DebugPrint(
             "NSRT ReminderSettings.UseTLReminders: " .. tostring(NSRT.ReminderSettings.UseTLReminders) .. " -> true"
