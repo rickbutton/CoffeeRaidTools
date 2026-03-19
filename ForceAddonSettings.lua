@@ -117,8 +117,11 @@ local BattleTagToNickname = {
     ["apexmachine#1449"] = "Apex",
     ["squeethetree#1185"] = "Squishes",
     ["xuedo#1579"] = "Xhul",
-    ["drcuddlesphd#1611"] = "DrCuddles",
+    ["drcuddlesphd#1611"] = "Drcuddles",
     ["jaybirrd#11458"] = "Errmac",
+    ["klaus#12266"] = "Kami",
+    ["tenille#1412"] = "Tenillee",
+    ["puma#1523"] = "Annoyance",
 }
 
 local TRSettingsForceTrue = {
