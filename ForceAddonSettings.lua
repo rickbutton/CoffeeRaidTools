@@ -130,6 +130,51 @@ local TRSettingsForceTrue = {
     { path = { "settings", "groupMode", "allowBroadcast" }, label = "TR settings.groupMode.allowBroadcast" },
 }
 
+function Private:ForceTRDefaultTemplates()
+    if not LiquidRemindersSaved then
+        return
+    end
+
+    if not LiquidRemindersSaved.defaultTemplates then
+        LiquidRemindersSaved.defaultTemplates = {}
+    end
+
+    local voices = C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()
+    local voiceID = voices and voices[1] and voices[1].voiceID or 0
+
+    for _, templateType in ipairs({ "TEXT", "SPELL" }) do
+        if not LiquidRemindersSaved.defaultTemplates[templateType] then
+            LiquidRemindersSaved.defaultTemplates[templateType] = {}
+        end
+
+        local tts = LiquidRemindersSaved.defaultTemplates[templateType].tts
+        if not tts then
+            LiquidRemindersSaved.defaultTemplates[templateType].tts = {}
+            tts = LiquidRemindersSaved.defaultTemplates[templateType].tts
+        end
+
+        Private:DebugPrint(
+            "TR defaultTemplates." .. templateType .. ".tts.enabled: " .. tostring(tts.enabled) .. " -> true"
+        )
+        Private:DebugPrint(
+            "TR defaultTemplates."
+                .. templateType
+                .. ".tts.voice: "
+                .. tostring(tts.voice)
+                .. " -> "
+                .. tostring(voiceID)
+        )
+        Private:DebugPrint("TR defaultTemplates." .. templateType .. ".tts.time: " .. tostring(tts.time) .. " -> 0")
+
+        tts.enabled = true
+        tts.voice = voiceID
+        tts.time = 0
+    end
+
+    Private.db.hasForcedTRTemplates = true
+    CoffeeRaidTools:Print("TimelineReminders default template TTS has been enabled.")
+end
+
 local function EnforceTimelineReminders()
     if not LiquidRemindersSaved then
         return
@@ -143,6 +188,11 @@ local function EnforceTimelineReminders()
             Private:DebugPrint("TR nickname: " .. tostring(LiquidRemindersSaved.nickname) .. " -> " .. expectedNickname)
             LiquidRemindersSaved.nickname = expectedNickname
         end
+    end
+
+    -- One-time default template TTS enforcement
+    if not Private.db.hasForcedTRTemplates then
+        Private:ForceTRDefaultTemplates()
     end
 
     -- Settings enforcement

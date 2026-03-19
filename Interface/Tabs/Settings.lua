@@ -67,6 +67,21 @@ local function DrawTab(container)
         inraidcoffee = "In Raid with Coffee Players",
     }, { "never", "inraid", "inraidcoffee", "always" }))
 
+    container:AddChild(CreateSpacer())
+    container:AddChild(CreateSectionTitle("TimelineReminders"))
+    container:AddChild(CreateSpacer())
+
+    do
+        ---@type AceGUIButton
+        local button = AceGUI:Create("Button")
+        button:SetText("Force Default Template TTS")
+        button:SetWidth(250)
+        button:SetCallback("OnClick", function()
+            Private:ForceTRDefaultTemplates()
+        end)
+        container:AddChild(button)
+    end
+
     if Private.db.devMode then
         container:AddChild(CreateSpacer())
         container:AddChild(CreateSectionTitle("Dev Mode"))

@@ -38,6 +38,10 @@ if Private.db.onlyShowMismatches == nil then
     Private.db.onlyShowMismatches = false
 end
 
+if Private.db.hasForcedTRTemplates == nil then
+    Private.db.hasForcedTRTemplates = false
+end
+
 Private.IsInRaid = IsInRaid
 Private.IsInGroup = IsInGroup
 Private.UnitGUID = UnitGUID
@@ -152,6 +156,10 @@ local TestCommands = {
     end,
     readycheckgood = function()
         Private:OpenReadyCheckPopup(false, true)
+    end,
+    resettrtemplate = function()
+        Private.db.hasForcedTRTemplates = false
+        CoffeeRaidTools:Print("TR template force flag reset. Will re-apply on next load.")
     end,
     closereadycheck = function()
         Private:CloseReadyCheckPopup()
