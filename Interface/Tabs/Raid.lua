@@ -52,7 +52,11 @@ local function GeneratePlayerStatus(playerVersions, expectedVersions)
     end
 
     if playerVersions["MRTHASH"] ~= expectedVersions["MRTHASH"] then
-        table.insert(failures, "NOTE")
+        table.insert(failures, "MRTNOTE")
+    end
+
+    if playerVersions["NSRTHASH"] ~= expectedVersions["NSRTHASH"] then
+        table.insert(failures, "NSRTNOTE")
     end
 
     return { good = #failures == 0, failures = failures, noResponse = false }
@@ -82,6 +86,7 @@ local function GenerateTooltipText(playerVersions)
     end
 
     table.insert(entries, "MRTHASH=" .. (playerVersions["MRTHASH"] or "NONE"))
+    table.insert(entries, "NSRTHASH=" .. (playerVersions["NSRTHASH"] or "NONE"))
 
     return table.concat(entries, "\n")
 end
@@ -163,8 +168,10 @@ local function GenerateMockPlayerData(expectedVersions, allGood)
 
         if scenario == 1 then
             playerVersions["MRTHASH"] = expectedVersions["MRTHASH"]
+            playerVersions["NSRTHASH"] = expectedVersions["NSRTHASH"]
         else
             playerVersions["MRTHASH"] = math.random() > 0.6 and expectedVersions["MRTHASH"] or "different_hash"
+            playerVersions["NSRTHASH"] = math.random() > 0.6 and expectedVersions["NSRTHASH"] or "different_hash"
         end
 
         table.insert(players, { name = playerName, versions = playerVersions })

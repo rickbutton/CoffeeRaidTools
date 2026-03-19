@@ -5,8 +5,26 @@ local Tests, Asserts = Private.Tests:CreateSuite("RaidStatus")
 local AreEqual, IsTrue, IsFalse = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse
 
 function Tests:StatusAllGood()
-    local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local player = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
+    local expected = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
+    local player = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
     local status = Private.GeneratePlayerStatus(player, expected)
     IsTrue(status.good)
     IsFalse(status.noResponse)
@@ -21,8 +39,26 @@ function Tests:StatusNilPlayerVersions()
 end
 
 function Tests:StatusMissingExistsAddon()
-    local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local player = { CRT = "1.0", BW = "NONE", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
+    local expected = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
+    local player = {
+        CRT = "1.0",
+        BW = "NONE",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
     local status = Private.GeneratePlayerStatus(player, expected)
     IsFalse(status.good)
     AreEqual(1, #status.failures)
@@ -30,28 +66,107 @@ function Tests:StatusMissingExistsAddon()
 end
 
 function Tests:StatusWrongEqualVersion()
-    local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local player = { CRT = "0.9", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
+    local expected = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
+    local player = {
+        CRT = "0.9",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
     local status = Private.GeneratePlayerStatus(player, expected)
     IsFalse(status.good)
     AreEqual("CRT=0.9", status.failures[1])
 end
 
 function Tests:StatusMissingEqualAddon()
-    local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local player = { CRT = "NONE", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
+    local expected = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
+    local player = {
+        CRT = "NONE",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
     local status = Private.GeneratePlayerStatus(player, expected)
     IsFalse(status.good)
     AreEqual("CRT", status.failures[1])
 end
 
 function Tests:StatusMRTHashMismatch()
-    local expected = { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "abc" }
-    local player =
-        { CRT = "1.0", BW = "2.0", NSRT = "1.0", MRT = "3.0", RCLC = "1.0", TR = "1.0", MRTHASH = "different" }
+    local expected = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
+    local player = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "different",
+        NSRTHASH = "def",
+    }
     local status = Private.GeneratePlayerStatus(player, expected)
     IsFalse(status.good)
-    AreEqual("NOTE", status.failures[1])
+    AreEqual("MRTNOTE", status.failures[1])
+end
+
+function Tests:StatusNSRTHashMismatch()
+    local expected = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
+    local player = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "1.0",
+        MRT = "3.0",
+        RCLC = "1.0",
+        TR = "1.0",
+        MRTHASH = "abc",
+        NSRTHASH = "different",
+    }
+    local status = Private.GeneratePlayerStatus(player, expected)
+    IsFalse(status.good)
+    AreEqual("NSRTNOTE", status.failures[1])
 end
 
 function Tests:FormatStatusTextGood()
@@ -70,11 +185,21 @@ function Tests:FormatStatusTextFailures()
 end
 
 function Tests:TooltipTextNormal()
-    local player = { CRT = "1.0", BW = "2.0", NSRT = "3.0", MRT = "4.0", RCLC = "5.0", TR = "6.0", MRTHASH = "abc" }
+    local player = {
+        CRT = "1.0",
+        BW = "2.0",
+        NSRT = "3.0",
+        MRT = "4.0",
+        RCLC = "5.0",
+        TR = "6.0",
+        MRTHASH = "abc",
+        NSRTHASH = "def",
+    }
     local result = Private.GenerateTooltipText(player)
     IsTrue(result:find("CRT=1.0") ~= nil)
     IsTrue(result:find("BW=2.0") ~= nil)
     IsTrue(result:find("MRTHASH=abc") ~= nil)
+    IsTrue(result:find("NSRTHASH=def") ~= nil)
 end
 
 function Tests:TooltipTextNilPlayerVersions()

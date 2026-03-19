@@ -82,6 +82,48 @@ function Tests:GetMRTNoteHashLoadedWithNote()
     AreEqual(hash, Private.StringHash("test note content"))
 end
 
+function Tests:GetNSRTNoteHashNotLoaded()
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return false
+    end)
+    AreEqual("NONE", Private.GetNSRTNoteHash())
+end
+
+function Tests:GetNSRTNoteHashLoadedNoAPI()
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
+    Replace("NSAPI", nil)
+    AreEqual("NONE", Private.GetNSRTNoteHash())
+end
+
+function Tests:GetNSRTNoteHashLoadedWithReminder()
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
+    Replace("NSAPI", {
+        GetReminderString = function()
+            return "personal note", "shared note"
+        end,
+    })
+    local hash = Private.GetNSRTNoteHash()
+    IsTrue(hash ~= "NONE")
+    AreEqual(type(hash), "string")
+    AreEqual(hash, Private.StringHash("shared note"))
+end
+
+function Tests:GetNSRTNoteHashLoadedEmptyReminder()
+    Replace(C_AddOns, "IsAddOnLoaded", function()
+        return true
+    end)
+    Replace("NSAPI", {
+        GetReminderString = function()
+            return "", ""
+        end,
+    })
+    AreEqual("NONE", Private.GetNSRTNoteHash())
+end
+
 function Tests:CollectLocalVersionTableHasAllShortcodes()
     Replace(C_AddOns, "IsAddOnLoaded", function()
         return true
@@ -97,6 +139,7 @@ function Tests:CollectLocalVersionTableHasAllShortcodes()
         IsTrue(versions[addon.shortcode] ~= nil)
     end
     IsTrue(versions["MRTHASH"] ~= nil)
+    IsTrue(versions["NSRTHASH"] ~= nil)
 end
 
 function Tests:CollectLocalVersionTableMRTHASHMatchesNote()

@@ -35,6 +35,7 @@ function Tests:RoundTripPreservesAllVersionFields()
         versionData[addon.shortcode] = "v" .. addon.shortcode
     end
     versionData["MRTHASH"] = "somehash123"
+    versionData["NSRTHASH"] = "nsrthash456"
 
     local encoded = Private.EncodeMessage({ op = "VRES", data = versionData })
     local decoded = Private.DecodeMessage(encoded)
@@ -43,6 +44,7 @@ function Tests:RoundTripPreservesAllVersionFields()
         AreEqual("v" .. addon.shortcode, decoded.data[addon.shortcode])
     end
     AreEqual("somehash123", decoded.data["MRTHASH"])
+    AreEqual("nsrthash456", decoded.data["NSRTHASH"])
 end
 
 function Tests:DecodeGarbageReturnsNil()
