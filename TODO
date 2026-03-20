@@ -1,6 +1,12 @@
 - minimap icon turns red when group/player has invalid or non-matching state
-- break timers with old weakaura images
-- settings dropdown too wide
-- versions in player tab not offset correctly
-- checkbox to top of raid tab and ready check popup to filter out "good" players
-- disable most stuff in combat
+- versions in player tab not offset correctly sometimes randomly
+- catalyst charge warning popup
+- great vault warning popup
+- button on ready check popup to resend note if any note mismatches
+- private aura configuration for NSRT
+- bigwigs private aura configuration, disable in favor of NSRT?
+- generate sounds for dispel mechanic on dragons boss
+- local tab addon status should use matcher types instead of strict checks
+- should we drop TimelineReminders?
+  - need to add ability to delete addons in update tool
+  - or disable TR from CRT
