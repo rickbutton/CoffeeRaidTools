@@ -59,6 +59,16 @@ pnpm run format           # Format with StyLua
 pnpm run format:check     # Check formatting without modifying
 ```
 
+## Vendor References
+
+`vendor/` contains read-only checkouts of addons we interop with. **Never modify code in `vendor/`** — these are for reading source only.
+
+- `vendor/wow-ui-source` — Blizzard UI source (blobless clone)
+- `vendor/BigWigs` — BigWigs boss mod
+- `vendor/NorthernSkyRaidTools` — NSRT raid tool
+
+Run `pnpm run vendor` to clone or update all vendor repos. Do this before implementing features that interop with BigWigs or NSRT to ensure you're referencing the latest code.
+
 ## Code Style
 
 ### Lua (5.1)

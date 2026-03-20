@@ -10,7 +10,8 @@
     "check": "node scripts/check-lua.js",
     "lint": "node scripts/lint-lua.js",
     "format": "node scripts/format-lua.js",
-    "format:check": "node scripts/format-lua.js --check"
+    "format:check": "node scripts/format-lua.js --check",
+    "vendor": "node scripts/update-vendor.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1009.0",
