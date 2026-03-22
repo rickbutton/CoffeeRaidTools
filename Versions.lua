@@ -103,7 +103,7 @@ local function StringHash(text)
 end
 
 local function GetMRTNoteHash()
-    if C_AddOns.IsAddOnLoaded("MRT") then
+    if Private.IsAddOnLoaded("MRT") then
         if VMRT and VMRT.Note.Text1 then
             local text = VMRT.Note.Text1
             local hashed = StringHash(text)
@@ -115,7 +115,7 @@ local function GetMRTNoteHash()
 end
 
 local function GetNSRTNoteHash()
-    if C_AddOns.IsAddOnLoaded("NorthernSkyRaidTools") then
+    if Private.IsAddOnLoaded("NorthernSkyRaidTools") then
         if NSAPI and NSAPI.GetReminderString then
             local _, sharedReminder = NSAPI:GetReminderString()
             if sharedReminder and sharedReminder ~= "" then
@@ -128,8 +128,8 @@ local function GetNSRTNoteHash()
 end
 
 local function GetAddonVersion(name)
-    if C_AddOns.IsAddOnLoaded(name) then
-        return C_AddOns.GetAddOnMetadata(name, "Version") or "NONE"
+    if Private.IsAddOnLoaded(name) then
+        return Private.GetAddOnMetadata(name, "Version") or "NONE"
     end
     return "NONE"
 end
@@ -172,7 +172,7 @@ local function ResetGroupVersionsData()
     for unit in Private:IterateGroupMembers() do
         if Private:UnitIsRealPlayer(unit) and UnitExists(unit) then
             local guid = Private.UnitGUID(unit)
-            if not issecretvalue(guid) and guid then
+            if not Private.issecretvalue(guid) and guid then
                 newData[guid] = oldData[guid]
             end
         end
@@ -252,7 +252,7 @@ local lastVersionBroadcastTime = 0
 local function BroadcastVersions()
     Private:DebugPrint("BroadcastVersions()")
     local playerGuid = Private.UnitGUID("player")
-    if not issecretvalue(playerGuid) and playerGuid then
+    if not Private.issecretvalue(playerGuid) and playerGuid then
         SetGroupVersionData(playerGuid, Private:GetLocalVersionTable())
     end
 
@@ -279,7 +279,7 @@ end
 
 local function HandleVersionRequest(sender)
     local isSelf = UnitIsUnit(sender, "player")
-    if not issecretvalue(isSelf) and isSelf then
+    if not Private.issecretvalue(isSelf) and isSelf then
         return
     end
 
@@ -288,12 +288,12 @@ end
 
 local function HandleVersionResponse(sender, data)
     local isSelf = UnitIsUnit(sender, "player")
-    if not issecretvalue(isSelf) and isSelf then
+    if not Private.issecretvalue(isSelf) and isSelf then
         return
     end
 
     local guid = Private.UnitGUID(sender)
-    if not issecretvalue(guid) and guid then
+    if not Private.issecretvalue(guid) and guid then
         SetGroupVersionData(guid, data)
     end
 end
@@ -357,7 +357,7 @@ function Private:GetExpectedVersionTable()
         for unit in Private:IterateGroupMembers() do
             if Private.UnitIsGroupLeader(unit) then
                 local guid = Private.UnitGUID(unit)
-                if not issecretvalue(guid) and guid then
+                if not Private.issecretvalue(guid) and guid then
                     local leaderVersions = gv[guid]
                     if leaderVersions then
                         return leaderVersions
@@ -473,7 +473,7 @@ end)
 
 ---@return table<string, string>?
 local function ParseGuildInfoVersions()
-    local info = GetGuildInfoText()
+    local info = Private.GetGuildInfoText()
     if not info then
         return nil
     end

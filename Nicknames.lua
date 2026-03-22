@@ -15,7 +15,7 @@ end
 ---@param unit string
 function CoffeeRaidTools:GetCharacterNameWithRealm(unit)
     local name, realm = UnitNameUnmodified(unit)
-    if issecretvalue(name) then
+    if Private.issecretvalue(name) then
         return name
     end
     if not realm then

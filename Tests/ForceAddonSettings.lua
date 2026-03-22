@@ -116,11 +116,9 @@ end
 
 function Tests:ForceTRDefaultTemplatesSetsTTSOnBothTemplateTypes()
     Replace("LiquidRemindersSaved", {})
-    Replace("C_VoiceChat", {
-        GetTtsVoices = function()
-            return { { voiceID = 42 } }
-        end,
-    })
+    Replace(Private, "GetTtsVoices", function()
+        return { { voiceID = 42 } }
+    end)
     Private.db.hasForcedTRTemplates = false
     Replace(Private, "BNGetInfo", function()
         return nil, nil
@@ -136,7 +134,9 @@ end
 
 function Tests:ForceTRDefaultTemplatesUsesVoiceIDZeroWhenNoVoices()
     Replace("LiquidRemindersSaved", {})
-    Replace("C_VoiceChat", nil)
+    Replace(Private, "GetTtsVoices", function()
+        return nil
+    end)
     Private.db.hasForcedTRTemplates = false
     Replace(Private, "BNGetInfo", function()
         return nil, nil
@@ -148,7 +148,9 @@ end
 
 function Tests:ForceTRDefaultTemplatesSetsHasForcedFlag()
     Replace("LiquidRemindersSaved", {})
-    Replace("C_VoiceChat", nil)
+    Replace(Private, "GetTtsVoices", function()
+        return nil
+    end)
     Private.db.hasForcedTRTemplates = false
     Replace(Private, "BNGetInfo", function()
         return nil, nil
@@ -159,7 +161,9 @@ end
 
 function Tests:ForceTRDefaultTemplatesSkipsWhenAlreadyForced()
     Replace("LiquidRemindersSaved", {})
-    Replace("C_VoiceChat", nil)
+    Replace(Private, "GetTtsVoices", function()
+        return nil
+    end)
     Private.db.hasForcedTRTemplates = true
     Replace(Private, "BNGetInfo", function()
         return nil, nil

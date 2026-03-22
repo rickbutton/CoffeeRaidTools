@@ -28,10 +28,10 @@ function Tests:StringHashReturnsString()
 end
 
 function Tests:GetAddonVersionLoaded()
-    Replace(C_AddOns, "IsAddOnLoaded", function(name)
+    Replace(Private, "IsAddOnLoaded", function(name)
         return name == "TestAddon"
     end)
-    Replace(C_AddOns, "GetAddOnMetadata", function(name, key)
+    Replace(Private, "GetAddOnMetadata", function(name, key)
         if name == "TestAddon" and key == "Version" then
             return "1.2.3"
         end
@@ -40,31 +40,31 @@ function Tests:GetAddonVersionLoaded()
 end
 
 function Tests:GetAddonVersionNotLoaded()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return false
     end)
     AreEqual("NONE", Private.GetAddonVersion("FakeAddon"))
 end
 
 function Tests:GetAddonVersionNilMetadata()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
-    Replace(C_AddOns, "GetAddOnMetadata", function()
+    Replace(Private, "GetAddOnMetadata", function()
         return nil
     end)
     AreEqual("NONE", Private.GetAddonVersion("TestAddon"))
 end
 
 function Tests:GetMRTNoteHashNotLoaded()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return false
     end)
     AreEqual("NONE", Private.GetMRTNoteHash())
 end
 
 function Tests:GetMRTNoteHashLoadedNoNote()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
     Replace("VMRT", nil)
@@ -72,7 +72,7 @@ function Tests:GetMRTNoteHashLoadedNoNote()
 end
 
 function Tests:GetMRTNoteHashLoadedWithNote()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
     Replace("VMRT", { Note = { Text1 = "test note content" } })
@@ -83,14 +83,14 @@ function Tests:GetMRTNoteHashLoadedWithNote()
 end
 
 function Tests:GetNSRTNoteHashNotLoaded()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return false
     end)
     AreEqual("NONE", Private.GetNSRTNoteHash())
 end
 
 function Tests:GetNSRTNoteHashLoadedNoAPI()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
     Replace("NSAPI", nil)
@@ -98,7 +98,7 @@ function Tests:GetNSRTNoteHashLoadedNoAPI()
 end
 
 function Tests:GetNSRTNoteHashLoadedWithReminder()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
     Replace("NSAPI", {
@@ -113,7 +113,7 @@ function Tests:GetNSRTNoteHashLoadedWithReminder()
 end
 
 function Tests:GetNSRTNoteHashLoadedEmptyReminder()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
     Replace("NSAPI", {
@@ -125,10 +125,10 @@ function Tests:GetNSRTNoteHashLoadedEmptyReminder()
 end
 
 function Tests:CollectLocalVersionTableHasAllShortcodes()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
-    Replace(C_AddOns, "GetAddOnMetadata", function()
+    Replace(Private, "GetAddOnMetadata", function()
         return "1.0.0"
     end)
     Replace("VMRT", { Note = { Text1 = "note" } })
@@ -143,10 +143,10 @@ function Tests:CollectLocalVersionTableHasAllShortcodes()
 end
 
 function Tests:CollectLocalVersionTableMRTHASHMatchesNote()
-    Replace(C_AddOns, "IsAddOnLoaded", function()
+    Replace(Private, "IsAddOnLoaded", function()
         return true
     end)
-    Replace(C_AddOns, "GetAddOnMetadata", function()
+    Replace(Private, "GetAddOnMetadata", function()
         return "1.0.0"
     end)
     Replace("VMRT", { Note = { Text1 = "my raid note" } })
@@ -158,7 +158,7 @@ end
 -- Guild info version check
 
 function Tests:ParseGuildInfoVersionsReturnsBothAddons()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "Welcome to the guild!\n<CRT:42 TR:1.2.3>"
     end)
     local versions = Private.ParseGuildInfoVersions()
@@ -168,7 +168,7 @@ function Tests:ParseGuildInfoVersionsReturnsBothAddons()
 end
 
 function Tests:ParseGuildInfoVersionsCRTOnly()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<CRT:42>"
     end)
     local versions = Private.ParseGuildInfoVersions()
@@ -178,7 +178,7 @@ function Tests:ParseGuildInfoVersionsCRTOnly()
 end
 
 function Tests:ParseGuildInfoVersionsTROnly()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<TR:5.0.0-beta>"
     end)
     local versions = Private.ParseGuildInfoVersions()
@@ -188,35 +188,35 @@ function Tests:ParseGuildInfoVersionsTROnly()
 end
 
 function Tests:ParseGuildInfoVersionsNoTag()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "Welcome to the guild!"
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:ParseGuildInfoVersionsNilText()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return nil
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:ParseGuildInfoVersionsEmptyTag()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<>"
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:ParseGuildInfoVersionsPartialTag()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<CRT:>"
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<CRT:99 TR:1.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -234,7 +234,7 @@ function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
 end
 
 function Tests:CheckGuildVersionsReturnsTRWhenOutdated()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<CRT:42 TR:2.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -252,7 +252,7 @@ function Tests:CheckGuildVersionsReturnsTRWhenOutdated()
 end
 
 function Tests:CheckGuildVersionsReturnsBothWhenOutdated()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<CRT:99 TR:2.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -269,7 +269,7 @@ function Tests:CheckGuildVersionsReturnsBothWhenOutdated()
 end
 
 function Tests:CheckGuildVersionsReturnsEmptyWhenCurrent()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<CRT:42 TR:1.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -286,21 +286,21 @@ function Tests:CheckGuildVersionsReturnsEmptyWhenCurrent()
 end
 
 function Tests:CheckGuildVersionsReturnsNilWhenNoTag()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "No version here"
     end)
     AreEqual(nil, Private.CheckGuildVersions())
 end
 
 function Tests:CheckGuildVersionsReturnsNilWhenNoGuildInfo()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return nil
     end)
     AreEqual(nil, Private.CheckGuildVersions())
 end
 
 function Tests:CheckGuildVersionsSkipsUnknownShortcodes()
-    Replace("GetGuildInfoText", function()
+    Replace(Private, "GetGuildInfoText", function()
         return "<CRT:42 UNKNOWN:99>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -422,7 +422,7 @@ function Tests:GetExpectedVersionTableFallsBackWhenLeaderGUIDSecret()
     Replace(Private, "UnitGUID", function()
         return "secret-guid"
     end)
-    Replace("issecretvalue", function()
+    Replace(Private, "issecretvalue", function()
         return true
     end)
     Replace(Private, "GetLocalVersionTable", function()

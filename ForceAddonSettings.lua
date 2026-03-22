@@ -144,7 +144,7 @@ function Private:ForceTRDefaultTemplates()
         LiquidRemindersSaved.defaultTemplates = {}
     end
 
-    local voices = C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()
+    local voices = Private.GetTtsVoices()
     local voiceID = voices and voices[1] and voices[1].voiceID or 0
 
     for _, templateType in ipairs({ "TEXT", "SPELL" }) do
@@ -247,7 +247,7 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 
         local missing = {}
         for _, addon in ipairs(Private.AddonsToTrack) do
-            if addon.name ~= "CoffeeRaidTools" and not C_AddOns.IsAddOnLoaded(addon.name) then
+            if addon.name ~= "CoffeeRaidTools" and not Private.IsAddOnLoaded(addon.name) then
                 missing[#missing + 1] = addon.name
             end
         end

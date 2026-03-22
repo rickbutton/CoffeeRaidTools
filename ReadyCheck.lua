@@ -102,7 +102,7 @@ local function IsInCoffeeRaid()
         if Private:UnitIsRealPlayer(unit) then
             totalMembers = totalMembers + 1
             local guildName = Private.GetGuildInfo(unit)
-            if not issecretvalue(guildName) and guildName == "Coffee" then
+            if not Private.issecretvalue(guildName) and guildName == "Coffee" then
                 coffeeMembers = coffeeMembers + 1
             end
         end

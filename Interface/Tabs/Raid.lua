@@ -188,7 +188,7 @@ local function GetPlayerData()
     for unit in Private:IterateGroupMembers() do
         local playerName, nameFormat = CoffeeRaidTools:GetNickname(unit)
         local guid = Private.UnitGUID(unit)
-        if not issecretvalue(guid) and guid and Private:UnitIsRealPlayer(unit) then
+        if not Private.issecretvalue(guid) and guid and Private:UnitIsRealPlayer(unit) then
             local versions = groupVersions[guid]
             if versions then
                 table.insert(players, { name = string.format(nameFormat, playerName), versions = versions })

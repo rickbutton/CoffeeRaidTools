@@ -48,6 +48,14 @@ Private.UnitGUID = UnitGUID
 Private.GetGuildInfo = GetGuildInfo
 Private.BNGetInfo = BNGetInfo
 Private.UnitIsGroupLeader = UnitIsGroupLeader
+Private.GetGuildInfoText = GetGuildInfoText
+Private.IsAddOnLoaded = C_AddOns.IsAddOnLoaded
+Private.GetAddOnMetadata = C_AddOns.GetAddOnMetadata
+Private.issecretvalue = issecretvalue
+
+function Private.GetTtsVoices()
+    return C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()
+end
 
 ---@class TabDescription
 ---@field key string

@@ -146,7 +146,7 @@ end
 ---@param unit string
 function Private:UnitIsRealPlayer(unit)
     local guid = Private.UnitGUID(unit)
-    if issecretvalue(guid) then
+    if Private.issecretvalue(guid) then
         return false
     end
     return guid and guid:find("^Player-") ~= nil
