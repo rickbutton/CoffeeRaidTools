@@ -5,7 +5,7 @@ const { execSync } = require("child_process");
 
 const projectRoot = path.join(__dirname, "..");
 
-const luaFiles = "*.lua Interface/*.lua Interface/Tabs/*.lua Tests/*.lua";
+const luaFiles = "*.lua Core/*.lua Features/*.lua Interface/*.lua Interface/Tabs/*.lua Tests/*.lua";
 
 function run(cmd) {
   try {

@@ -18,15 +18,12 @@ pnpm run build:watch   # Watch mode
 ### File Structure (loading order from TOC)
 1. `externals.xml` — Ace3 and other libraries
 2. `CoffeeRaidTools.lua` — Entry point (AceAddon, AceConsole, AceComm)
-3. `Util.lua` — Shared utilities
-4. `Nicknames.lua` — Player nickname mappings
-5. `Versions.lua` — Version tracking and comparisons
-6. `ForceAddonSettings.lua` — Automatic addon settings enforcement (NSRT, TimelineReminders)
-7. `Interface/Minimap.lua` — Minimap button
-8. `Interface/Frame.lua` — Main frame controller (closes on ESC)
-9. `Interface/Tabs/` — Local, Raid, Settings
-10. `ReadyCheck.lua` — Ready check tracking
-11. `Tests/TestRunner.lua` + `Tests/*.lua` — WoWUnit test suites
+3. `Core/` — Shared infrastructure (Util, Nicknames, Versions)
+4. `Features/` — Self-contained feature modules (ForceAddonSettings, ReadyCheck, Break, GearWarnings)
+5. `Interface/Minimap.lua` — Minimap button
+6. `Interface/Frame.lua` — Main frame controller (closes on ESC)
+7. `Interface/Tabs/` — Local, Raid, Settings
+8. `Tests/TestRunner.lua` + `Tests/*.lua` — WoWUnit test suites
 
 ### Key Patterns
 - Private namespace via `select(2, ...)` — use `Private` for all internal state

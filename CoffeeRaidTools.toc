@@ -10,18 +10,19 @@
 externals.xml
 CoffeeRaidTools.lua
 
-Util.lua
-Nicknames.lua
-Versions.lua
-ForceAddonSettings.lua
+Core/Util.lua
+Core/Nicknames.lua
+Core/Versions.lua
+
+Features/ForceAddonSettings.lua
+Features/ReadyCheck.lua
+Features/Break.lua
+Features/GearWarnings.lua
 
 Interface/Minimap.lua
 Interface/Frame.lua
 Interface/Tabs/Local.lua
 Interface/Tabs/Raid.lua
-ReadyCheck.lua
-Break.lua
-GearWarnings.lua
 Interface/Tabs/Settings.lua
 
 Tests/TestRunner.lua
