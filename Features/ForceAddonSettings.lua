@@ -5,6 +5,32 @@ local Private = select(2, ...)
 ---@type Blizz
 local Blizz = Private.Blizz
 
+local BattleTagToNickname = {
+    ["waffletwo#1858"] = "Waffle",
+    ["bestman#1653"] = "Bestman",
+    ["eeld#1234"] = "Eeld",
+    ["bonestorm#11570"] = "Rocky",
+    ["hm3boost#1688"] = "Bubble",
+    ["pwnstar#11783"] = "Apollo",
+    ["notlad#11770"] = "Peer",
+    ["h8shot#1402"] = "Gold",
+    ["mazed#11112"] = "Nmu",
+    ["hundiddy#1280"] = "Hun",
+    ["phaszr#1199"] = "Lancr",
+    ["itsneahvil#1266"] = "Dez",
+    ["ophidian#1948"] = "Scynical",
+    ["mordrag#11554"] = "Jerk",
+    ["sluff#11368"] = "Sluff",
+    ["apexmachine#1449"] = "Apex",
+    ["squeethetree#1185"] = "Squishes",
+    ["xuedo#1579"] = "Xhul",
+    ["drcuddlesphd#1611"] = "Drcuddles",
+    ["jaybirrd#11458"] = "Errmac",
+    ["klaus#12266"] = "Kami",
+    ["tenille#1412"] = "Tenillee",
+    ["puma#1523"] = "Annoyance",
+}
+
 -- NSRT enforcement
 
 local ReadyCheckForceTrue = {
@@ -95,126 +121,51 @@ local function EnforceNSRT()
         NSRT.ReminderSettings.enabled = true
     end
 
-    if NSRT.ReminderSettings.UseTLReminders ~= true then
+    if NSRT.ReminderSettings.UseTLReminders ~= false then
         Private:DebugPrint(
-            "NSRT ReminderSettings.UseTLReminders: " .. tostring(NSRT.ReminderSettings.UseTLReminders) .. " -> true"
+            "NSRT ReminderSettings.UseTLReminders: " .. tostring(NSRT.ReminderSettings.UseTLReminders) .. " -> false"
         )
-        NSRT.ReminderSettings.UseTLReminders = true
-    end
-end
-
--- TimelineReminders enforcement
-
-local BattleTagToNickname = {
-    ["waffletwo#1858"] = "Waffle",
-    ["bestman#1653"] = "Bestman",
-    ["eeld#1234"] = "Eeld",
-    ["bonestorm#11570"] = "Rocky",
-    ["hm3boost#1688"] = "Bubble",
-    ["pwnstar#11783"] = "Apollo",
-    ["notlad#11770"] = "Peer",
-    ["h8shot#1402"] = "Gold",
-    ["mazed#11112"] = "Nmu",
-    ["hundiddy#1280"] = "Hun",
-    ["phaszr#1199"] = "Lancr",
-    ["itsneahvil#1266"] = "Dez",
-    ["ophidian#1948"] = "Scynical",
-    ["mordrag#11554"] = "Jerk",
-    ["sluff#11368"] = "Sluff",
-    ["apexmachine#1449"] = "Apex",
-    ["squeethetree#1185"] = "Squishes",
-    ["xuedo#1579"] = "Xhul",
-    ["drcuddlesphd#1611"] = "Drcuddles",
-    ["jaybirrd#11458"] = "Errmac",
-    ["klaus#12266"] = "Kami",
-    ["tenille#1412"] = "Tenillee",
-    ["puma#1523"] = "Annoyance",
-}
-
-local TRSettingsForceTrue = {
-    { path = { "settings", "timeline", "nsrtNote" }, label = "TR settings.timeline.nsrtNote" },
-    { path = { "settings", "timeline", "mrtNote" }, label = "TR settings.timeline.mrtNote" },
-    { path = { "settings", "groupMode", "allowBroadcast" }, label = "TR settings.groupMode.allowBroadcast" },
-}
-
-function Private:ForceTRDefaultTemplates()
-    if not LiquidRemindersSaved then
-        return
+        NSRT.ReminderSettings.UseTLReminders = false
     end
 
-    if not LiquidRemindersSaved.defaultTemplates then
-        LiquidRemindersSaved.defaultTemplates = {}
+    if NSRT.ReminderSettings.SpellTTS ~= true then
+        Private:DebugPrint("NSRT ReminderSettings.SpellTTS: " .. tostring(NSRT.ReminderSettings.SpellTTS) .. " -> true")
+        NSRT.ReminderSettings.SpellTTS = true
     end
 
-    local voices = Blizz.GetTtsVoices()
-    local voiceID = voices and voices[1] and voices[1].voiceID or 0
-
-    for _, templateType in ipairs({ "TEXT", "SPELL" }) do
-        if not LiquidRemindersSaved.defaultTemplates[templateType] then
-            LiquidRemindersSaved.defaultTemplates[templateType] = {}
-        end
-
-        local tts = LiquidRemindersSaved.defaultTemplates[templateType].tts
-        if not tts then
-            LiquidRemindersSaved.defaultTemplates[templateType].tts = {}
-            tts = LiquidRemindersSaved.defaultTemplates[templateType].tts
-        end
-
-        Private:DebugPrint(
-            "TR defaultTemplates." .. templateType .. ".tts.enabled: " .. tostring(tts.enabled) .. " -> true"
-        )
-        Private:DebugPrint(
-            "TR defaultTemplates."
-                .. templateType
-                .. ".tts.voice: "
-                .. tostring(tts.voice)
-                .. " -> "
-                .. tostring(voiceID)
-        )
-        Private:DebugPrint("TR defaultTemplates." .. templateType .. ".tts.time: " .. tostring(tts.time) .. " -> 0")
-
-        tts.enabled = true
-        tts.voice = voiceID
-        tts.time = 0
-    end
-
-    Private.db.hasForcedTRTemplates = true
-    CoffeeRaidTools:Print("TimelineReminders default template TTS has been enabled.")
-end
-
-local function EnforceTimelineReminders()
-    if not LiquidRemindersSaved then
-        return
+    if NSRT.ReminderSettings.TextTTS ~= true then
+        Private:DebugPrint("NSRT ReminderSettings.TextTTS: " .. tostring(NSRT.ReminderSettings.TextTTS) .. " -> true")
+        NSRT.ReminderSettings.TextTTS = true
     end
 
     -- Nickname enforcement
+    if not NSRT.Settings then
+        NSRT.Settings = {}
+    end
+    if NSRT.Settings["GlobalNickNames"] ~= true then
+        Private:DebugPrint(
+            "NSRT Settings.GlobalNickNames: " .. tostring(NSRT.Settings["GlobalNickNames"]) .. " -> true"
+        )
+        NSRT.Settings["GlobalNickNames"] = true
+    end
+
+    -- Nickname sharing: 1=Raid, 2=Guild, 3=Both, 4=None
+    local nickNameSettings = { "ShareNickNames", "AcceptNickNames", "NickNamesSyncAccept", "NickNamesSyncSend" }
+    for _, key in ipairs(nickNameSettings) do
+        if NSRT.Settings[key] ~= 2 then
+            Private:DebugPrint("NSRT Settings." .. key .. ": " .. tostring(NSRT.Settings[key]) .. " -> 2 (Guild)")
+            NSRT.Settings[key] = 2
+        end
+    end
+
     local battleTag = select(2, Blizz.BNGetInfo())
     if battleTag then
         local expectedNickname = BattleTagToNickname[battleTag:lower()]
-        if expectedNickname and LiquidRemindersSaved.nickname ~= expectedNickname then
-            Private:DebugPrint("TR nickname: " .. tostring(LiquidRemindersSaved.nickname) .. " -> " .. expectedNickname)
-            LiquidRemindersSaved.nickname = expectedNickname
-        end
-    end
-
-    -- One-time default template TTS enforcement
-    if not Private.db.hasForcedTRTemplates then
-        Private:ForceTRDefaultTemplates()
-    end
-
-    -- Settings enforcement
-    for _, entry in ipairs(TRSettingsForceTrue) do
-        local tbl = LiquidRemindersSaved
-        for i = 1, #entry.path - 1 do
-            if not tbl[entry.path[i]] then
-                tbl[entry.path[i]] = {}
-            end
-            tbl = tbl[entry.path[i]]
-        end
-        local key = entry.path[#entry.path]
-        if tbl[key] ~= true then
-            Private:DebugPrint(entry.label .. ": " .. tostring(tbl[key]) .. " -> true")
-            tbl[key] = true
+        if expectedNickname and NSRT.Settings["MyNickName"] ~= expectedNickname then
+            Private:DebugPrint(
+                "NSRT Settings.MyNickName: " .. tostring(NSRT.Settings["MyNickName"]) .. " -> " .. expectedNickname
+            )
+            NSRT.Settings["MyNickName"] = expectedNickname
         end
     end
 end
@@ -222,11 +173,9 @@ end
 -- Event handling
 
 Private.EnforceNSRT = EnforceNSRT
-Private.EnforceTimelineReminders = EnforceTimelineReminders
 
 local EnforceFunctions = {
     NorthernSkyRaidTools = EnforceNSRT,
-    TimelineReminders = EnforceTimelineReminders,
 }
 
 local frame = CreateFrame("Frame")
@@ -246,6 +195,13 @@ frame:SetScript("OnEvent", function(self, event, addonName)
     if event == "PLAYER_LOGIN" then
         self:UnregisterEvent("ADDON_LOADED")
         self:UnregisterEvent("PLAYER_LOGIN")
+
+        -- Disable TimelineReminders if it is still enabled
+        if Blizz.GetAddOnEnableState("TimelineReminders") > 0 then
+            Blizz.DisableAddOn("TimelineReminders")
+            StaticPopup_Show("CRT_TR_DISABLED")
+            return
+        end
 
         local missing = {}
         for _, addon in ipairs(Private.AddonsToTrack) do

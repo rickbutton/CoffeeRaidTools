@@ -158,34 +158,23 @@ end
 
 -- Guild info version check
 
-function Tests:ParseGuildInfoVersionsReturnsBothAddons()
+function Tests:ParseGuildInfoVersionsReturnsCRT()
     Replace(Blizz, "GetGuildInfoText", function()
-        return "Welcome to the guild!\n<CRT:42 TR:1.2.3>"
+        return "Welcome to the guild!\n<CRT:42>"
     end)
     local versions = Private.ParseGuildInfoVersions()
     assert(versions)
     AreEqual("42", versions.CRT)
-    AreEqual("1.2.3", versions.TR)
 end
 
-function Tests:ParseGuildInfoVersionsCRTOnly()
+function Tests:ParseGuildInfoVersionsReturnsMultipleAddons()
     Replace(Blizz, "GetGuildInfoText", function()
-        return "<CRT:42>"
+        return "<CRT:42 NSRT:1.2.3>"
     end)
     local versions = Private.ParseGuildInfoVersions()
     assert(versions)
     AreEqual("42", versions.CRT)
-    AreEqual(nil, versions.TR)
-end
-
-function Tests:ParseGuildInfoVersionsTROnly()
-    Replace(Blizz, "GetGuildInfoText", function()
-        return "<TR:5.0.0-beta>"
-    end)
-    local versions = Private.ParseGuildInfoVersions()
-    assert(versions)
-    AreEqual(nil, versions.CRT)
-    AreEqual("5.0.0-beta", versions.TR)
+    AreEqual("1.2.3", versions.NSRT)
 end
 
 function Tests:ParseGuildInfoVersionsNoTag()
@@ -218,14 +207,11 @@ end
 
 function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
     Replace(Blizz, "GetGuildInfoText", function()
-        return "<CRT:99 TR:1.0>"
+        return "<CRT:99>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
         if name == "CoffeeRaidTools" then
             return "42"
-        end
-        if name == "TimelineReminders" then
-            return "1.0"
         end
     end)
     local outdated = Private.CheckGuildVersions()
@@ -234,51 +220,13 @@ function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
     AreEqual("CoffeeRaidTools", outdated[1])
 end
 
-function Tests:CheckGuildVersionsReturnsTRWhenOutdated()
-    Replace(Blizz, "GetGuildInfoText", function()
-        return "<CRT:42 TR:2.0>"
-    end)
-    Replace(Private, "GetAddonVersion", function(name)
-        if name == "CoffeeRaidTools" then
-            return "42"
-        end
-        if name == "TimelineReminders" then
-            return "1.0"
-        end
-    end)
-    local outdated = Private.CheckGuildVersions()
-    assert(outdated)
-    AreEqual(1, #outdated)
-    AreEqual("TimelineReminders", outdated[1])
-end
-
-function Tests:CheckGuildVersionsReturnsBothWhenOutdated()
-    Replace(Blizz, "GetGuildInfoText", function()
-        return "<CRT:99 TR:2.0>"
-    end)
-    Replace(Private, "GetAddonVersion", function(name)
-        if name == "CoffeeRaidTools" then
-            return "42"
-        end
-        if name == "TimelineReminders" then
-            return "1.0"
-        end
-    end)
-    local outdated = Private.CheckGuildVersions()
-    assert(outdated)
-    AreEqual(2, #outdated)
-end
-
 function Tests:CheckGuildVersionsReturnsEmptyWhenCurrent()
     Replace(Blizz, "GetGuildInfoText", function()
-        return "<CRT:42 TR:1.0>"
+        return "<CRT:42>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
         if name == "CoffeeRaidTools" then
             return "42"
-        end
-        if name == "TimelineReminders" then
-            return "1.0"
         end
     end)
     local outdated = Private.CheckGuildVersions()

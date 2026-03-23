@@ -11,7 +11,7 @@ function Tests:StatusAllGood()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -21,7 +21,7 @@ function Tests:StatusAllGood()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -45,7 +45,7 @@ function Tests:StatusMissingExistsAddon()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -55,7 +55,7 @@ function Tests:StatusMissingExistsAddon()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -72,7 +72,7 @@ function Tests:StatusWrongEqualVersion()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -82,7 +82,7 @@ function Tests:StatusWrongEqualVersion()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -98,7 +98,7 @@ function Tests:StatusMissingEqualAddon()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -108,7 +108,7 @@ function Tests:StatusMissingEqualAddon()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -124,7 +124,7 @@ function Tests:StatusMRTHashMismatch()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -134,7 +134,7 @@ function Tests:StatusMRTHashMismatch()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "different",
         NSRTHASH = "def",
     }
@@ -150,7 +150,7 @@ function Tests:StatusNSRTHashMismatch()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "def",
     }
@@ -160,7 +160,7 @@ function Tests:StatusNSRTHashMismatch()
         NSRT = "1.0",
         MRT = "3.0",
         RCLC = "1.0",
-        TR = "1.0",
+
         MRTHASH = "abc",
         NSRTHASH = "different",
     }
@@ -191,7 +191,6 @@ function Tests:TooltipTextNormal()
         NSRT = "3.0",
         MRT = "4.0",
         RCLC = "5.0",
-        TR = "6.0",
         MRTHASH = "abc",
         NSRTHASH = "def",
     }

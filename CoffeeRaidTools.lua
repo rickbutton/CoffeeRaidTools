@@ -38,10 +38,6 @@ if Private.db.onlyShowMismatches == nil then
     Private.db.onlyShowMismatches = false
 end
 
-if Private.db.hasForcedTRTemplates == nil then
-    Private.db.hasForcedTRTemplates = false
-end
-
 Private.catalystWarningEnabled = true
 Private.greatVaultWarningEnabled = true
 
@@ -58,6 +54,8 @@ Blizz.UnitIsGroupLeader = UnitIsGroupLeader
 Blizz.GetGuildInfoText = GetGuildInfoText
 Blizz.IsAddOnLoaded = C_AddOns.IsAddOnLoaded
 Blizz.GetAddOnMetadata = C_AddOns.GetAddOnMetadata
+Blizz.GetAddOnEnableState = C_AddOns.GetAddOnEnableState
+Blizz.DisableAddOn = C_AddOns.DisableAddOn
 Blizz.issecretvalue = issecretvalue
 
 function Blizz.GetTtsVoices()
@@ -124,6 +122,17 @@ StaticPopupDialogs["CRT_FORCE_RELOAD"] = {
     showAlert = false,
 }
 
+StaticPopupDialogs["CRT_TR_DISABLED"] = {
+    text = TITLE .. "\n\nTimelineReminders has been disabled.\nA UI reload is required.",
+    button1 = "Reload UI",
+    OnAccept = ReloadUI,
+    OnShow = PopupOnShow,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = false,
+    showAlert = false,
+}
+
 StaticPopupDialogs["CRT_MISSING_ADDONS"] = {
     text = TITLE .. "\n\nRequired addon(s) missing:\n\n|cffff4040%s|r",
     button1 = "Ok",
@@ -172,10 +181,6 @@ local TestCommands = {
     readycheckgood = function()
         Private:OpenReadyCheckPopup(false, true)
     end,
-    resettrtemplate = function()
-        Private.db.hasForcedTRTemplates = false
-        CoffeeRaidTools:Print("TR template force flag reset. Will re-apply on next load.")
-    end,
     closereadycheck = function()
         Private:CloseReadyCheckPopup()
     end,
@@ -186,7 +191,7 @@ local TestCommands = {
         Private:SendMessage("BigWigs_StopBreak", nil, 0, UnitName("player"), false, false)
     end,
     update = function()
-        TogglePopup("CRT_UPDATE_AVAILABLE", "CoffeeRaidTools\nTimelineReminders")
+        TogglePopup("CRT_UPDATE_AVAILABLE", "CoffeeRaidTools")
     end,
 }
 

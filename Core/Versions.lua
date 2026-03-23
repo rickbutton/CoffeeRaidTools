@@ -6,7 +6,7 @@ local Blizz = Private.Blizz
 local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
 
----@alias AddonShortcode "CRT" | "BW" | "NSRT" | "MRT" | "RCLC" | "TR"
+---@alias AddonShortcode "CRT" | "BW" | "NSRT" | "MRT" | "RCLC"
 ---@alias TrackedShortcode AddonShortcode | "MRTHASH" | "NSRTHASH"
 
 local BROADCAST_INTERVAL = 3
@@ -54,11 +54,6 @@ Private.AddonsToTrack = {
     {
         name = "RCLootCouncil",
         shortcode = "RCLC",
-        matcher = Matchers.EQUAL,
-    },
-    {
-        name = "TimelineReminders",
-        shortcode = "TR",
         matcher = Matchers.EQUAL,
     },
 }

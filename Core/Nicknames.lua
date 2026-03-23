@@ -37,8 +37,8 @@ function CoffeeRaidTools:GetNickname(unit, noFormat)
         format = CoffeeRaidTools:GetNameFormatString(unit)
     end
 
-    if TimelineReminders then
-        local name = TimelineReminders:GetNickname(unit)
+    if NSAPI then
+        local name = NSAPI:GetName(unit)
         return name, format
     else
         local name = CoffeeRaidTools:GetCharacterNameWithRealm(unit)

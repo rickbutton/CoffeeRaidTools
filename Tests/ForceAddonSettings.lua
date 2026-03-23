@@ -47,10 +47,13 @@ function Tests:EnforceNSRTSetsReminderSettingsEnabled()
     IsTrue(NSRT.ReminderSettings.enabled)
 end
 
-function Tests:EnforceNSRTSetsUseTLReminders()
-    Replace("NSRT", {})
+function Tests:EnforceNSRTSetsUseTLRemindersFalse()
+    Replace("NSRT", { ReminderSettings = { UseTLReminders = true } })
+    Replace(Blizz, "BNGetInfo", function()
+        return nil, nil
+    end)
     Private.EnforceNSRT()
-    IsTrue(NSRT.ReminderSettings.UseTLReminders)
+    IsFalse(NSRT.ReminderSettings.UseTLReminders)
 end
 
 function Tests:EnforceNSRTPreservesExistingValues()
@@ -60,115 +63,56 @@ function Tests:EnforceNSRTPreservesExistingValues()
     IsTrue(NSRT.ReadyCheckSettings.RepairCheck)
 end
 
-function Tests:EnforceTimelineRemindersNilSafe()
-    Replace("LiquidRemindersSaved", nil)
-    Private.EnforceTimelineReminders()
-    IsFalse(LiquidRemindersSaved)
-end
-
-function Tests:EnforceTimelineRemindersSetsNestedPaths()
-    Replace("LiquidRemindersSaved", {})
+function Tests:EnforceNSRTSetsGlobalNickNames()
+    Replace("NSRT", {})
     Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
-    Private.EnforceTimelineReminders()
-    IsTrue(LiquidRemindersSaved.settings.timeline.nsrtNote)
-    IsTrue(LiquidRemindersSaved.settings.timeline.mrtNote)
-    IsTrue(LiquidRemindersSaved.settings.groupMode.allowBroadcast)
+    Private.EnforceNSRT()
+    IsTrue(NSRT.Settings["GlobalNickNames"])
 end
 
-function Tests:EnforceTimelineRemindersCreatesIntermediateTables()
-    Replace("LiquidRemindersSaved", {})
-    Replace(Blizz, "BNGetInfo", function()
-        return nil, nil
-    end)
-    Private.EnforceTimelineReminders()
-    AreEqual(type(LiquidRemindersSaved.settings), "table")
-    AreEqual(type(LiquidRemindersSaved.settings.timeline), "table")
-    AreEqual(type(LiquidRemindersSaved.settings.groupMode), "table")
-end
-
-function Tests:EnforceTimelineRemindersNickname()
-    Replace("LiquidRemindersSaved", {})
+function Tests:EnforceNSRTSetsMyNickName()
+    Replace("NSRT", {})
     Replace(Blizz, "BNGetInfo", function()
         return nil, "waffletwo#1858"
     end)
-    Private.EnforceTimelineReminders()
-    AreEqual("Waffle", LiquidRemindersSaved.nickname)
+    Private.EnforceNSRT()
+    AreEqual("Waffle", NSRT.Settings["MyNickName"])
 end
 
-function Tests:EnforceTimelineRemindersNicknameCaseInsensitive()
-    Replace("LiquidRemindersSaved", {})
+function Tests:EnforceNSRTSetsMyNickNameCaseInsensitive()
+    Replace("NSRT", {})
     Replace(Blizz, "BNGetInfo", function()
         return nil, "WaffleTwo#1858"
     end)
-    Private.EnforceTimelineReminders()
-    AreEqual("Waffle", LiquidRemindersSaved.nickname)
+    Private.EnforceNSRT()
+    AreEqual("Waffle", NSRT.Settings["MyNickName"])
 end
 
-function Tests:EnforceTimelineRemindersUnknownBattleTag()
-    Replace("LiquidRemindersSaved", { nickname = "Original" })
+function Tests:EnforceNSRTSkipsNickNameForUnknownBattleTag()
+    Replace("NSRT", { Settings = { MyNickName = "Original" } })
     Replace(Blizz, "BNGetInfo", function()
         return nil, "unknown#0000"
     end)
-    Private.EnforceTimelineReminders()
-    AreEqual("Original", LiquidRemindersSaved.nickname)
+    Private.EnforceNSRT()
+    AreEqual("Original", NSRT.Settings["MyNickName"])
 end
 
-function Tests:ForceTRDefaultTemplatesSetsTTSOnBothTemplateTypes()
-    Replace("LiquidRemindersSaved", {})
-    Replace(Blizz, "GetTtsVoices", function()
-        return { { voiceID = 42 } }
-    end)
-    Private.db.hasForcedTRTemplates = false
+function Tests:EnforceNSRTSetsSpellTTS()
+    Replace("NSRT", {})
     Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
-    Private.EnforceTimelineReminders()
-    IsTrue(LiquidRemindersSaved.defaultTemplates.TEXT.tts.enabled)
-    AreEqual(42, LiquidRemindersSaved.defaultTemplates.TEXT.tts.voice)
-    AreEqual(0, LiquidRemindersSaved.defaultTemplates.TEXT.tts.time)
-    IsTrue(LiquidRemindersSaved.defaultTemplates.SPELL.tts.enabled)
-    AreEqual(42, LiquidRemindersSaved.defaultTemplates.SPELL.tts.voice)
-    AreEqual(0, LiquidRemindersSaved.defaultTemplates.SPELL.tts.time)
+    Private.EnforceNSRT()
+    IsTrue(NSRT.ReminderSettings.SpellTTS)
 end
 
-function Tests:ForceTRDefaultTemplatesUsesVoiceIDZeroWhenNoVoices()
-    Replace("LiquidRemindersSaved", {})
-    Replace(Blizz, "GetTtsVoices", function()
-        return nil
-    end)
-    Private.db.hasForcedTRTemplates = false
+function Tests:EnforceNSRTSetsTextTTS()
+    Replace("NSRT", {})
     Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
-    Private.EnforceTimelineReminders()
-    AreEqual(0, LiquidRemindersSaved.defaultTemplates.TEXT.tts.voice)
-    AreEqual(0, LiquidRemindersSaved.defaultTemplates.SPELL.tts.voice)
-end
-
-function Tests:ForceTRDefaultTemplatesSetsHasForcedFlag()
-    Replace("LiquidRemindersSaved", {})
-    Replace(Blizz, "GetTtsVoices", function()
-        return nil
-    end)
-    Private.db.hasForcedTRTemplates = false
-    Replace(Blizz, "BNGetInfo", function()
-        return nil, nil
-    end)
-    Private.EnforceTimelineReminders()
-    IsTrue(Private.db.hasForcedTRTemplates)
-end
-
-function Tests:ForceTRDefaultTemplatesSkipsWhenAlreadyForced()
-    Replace("LiquidRemindersSaved", {})
-    Replace(Blizz, "GetTtsVoices", function()
-        return nil
-    end)
-    Private.db.hasForcedTRTemplates = true
-    Replace(Blizz, "BNGetInfo", function()
-        return nil, nil
-    end)
-    Private.EnforceTimelineReminders()
-    IsFalse(LiquidRemindersSaved.defaultTemplates)
+    Private.EnforceNSRT()
+    IsTrue(NSRT.ReminderSettings.TextTTS)
 end
