@@ -108,13 +108,14 @@ local function DrawTab(container)
                 btn:SetRelativeWidth(0.2)
                 row:AddChild(btn)
 
-                local rosterNames = {}
+                local rosterNames = { Unknown = "Unknown" }
                 local rosterOrder = {}
                 for nickname in pairs(Private.RosterNicknames) do
                     rosterNames[nickname] = nickname
                     tinsert(rosterOrder, nickname)
                 end
                 table.sort(rosterOrder)
+                tinsert(rosterOrder, "Unknown")
 
                 ---@type AceGUIDropdown
                 local dropdown = AceGUI:Create("Dropdown")

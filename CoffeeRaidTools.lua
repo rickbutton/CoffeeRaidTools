@@ -201,6 +201,14 @@ local TestCommands = {
     update = function()
         TogglePopup("CRT_UPDATE_AVAILABLE", "CoffeeRaidTools")
     end,
+    pa = function(args)
+        local spellID = tonumber(args)
+        if not spellID then
+            CoffeeRaidTools:Print("Usage: /crt test pa <spellID>")
+            return
+        end
+        Private:TestPrivateAuraSound(spellID)
+    end,
 }
 
 local ChatCommands = {
@@ -234,9 +242,10 @@ function CoffeeRaidTools:ChatCommandHandler(input)
         if subcommand == "" then
             Private.Tests:RunAll()
         else
-            local handler = TestCommands[subcommand]
+            local sub, subrest = subcommand:match("^(%S+)%s*(.*)$")
+            local handler = TestCommands[sub]
             if handler then
-                handler()
+                handler(subrest)
             else
                 CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
             end

@@ -59,6 +59,7 @@ end
 ---@param spellID number
 ---@param soundFile string
 local function RegisterSound(unit, spellID, soundFile)
+    Private:DebugPrint("PrivateAuras: RegisterSound", unit, spellID, soundFile)
     if not Blizz.AuraIsPrivate(spellID) then
         return
     end
@@ -80,42 +81,8 @@ local function RegisterSound(unit, spellID, soundFile)
             registeredSounds[unit] = {}
         end
         registeredSounds[unit][spellID] = soundID
-    end
-end
-
-local function RegisterPrivateAuraSounds()
-    if Private:IsInCombat() then
-        return
-    end
-
-    RemoveAllSounds()
-
-    for _, section in ipairs(Private.PrivateAuraSections) do
-        for _, config in ipairs(section.spells) do
-            if not Private.db.disabledPrivateAuras[config.spellID] then
-                if config.perUnit then
-                    local soundBase = ADDON_MEDIA .. config.soundDir .. "\\"
-                    for unit in Private:IterateGroupMembers() do
-                        local nickname = CoffeeRaidTools:GetNickname(unit, true)
-                        if nickname and not Blizz.issecretvalue(nickname) then
-                            if not Private.RosterNicknames[nickname] then
-                                Private:DebugPrint("PrivateAuras: no roster entry for", tostring(nickname))
-                                CoffeeRaidTools:Print(
-                                    "|cffff4040Warning:|r No roster entry for "
-                                        .. tostring(nickname)
-                                        .. ". Using fallback sound."
-                                )
-                                RegisterSound(unit, config.spellID, soundBase .. FALLBACK_NICKNAME .. ".mp3")
-                            else
-                                RegisterSound(unit, config.spellID, soundBase .. nickname .. ".mp3")
-                            end
-                        end
-                    end
-                else
-                    RegisterSound("player", config.spellID, ADDON_MEDIA .. config.soundFile .. ".mp3")
-                end
-            end
-        end
+    else
+        Private:DebugPrint("PrivateAuras: AddPrivateAuraAppliedSound returned nil for", unit, spellID)
     end
 end
 
@@ -130,7 +97,82 @@ function Private:GetPrivateAuraSoundPath(config, nickname)
     end
 end
 
+---@param warnOnMissing? boolean
+local function RegisterPrivateAuraSounds(warnOnMissing)
+    if Private:IsInCombat() then
+        return
+    end
+
+    RemoveAllSounds()
+
+    for _, section in ipairs(Private.PrivateAuraSections) do
+        for _, config in ipairs(section.spells) do
+            if not Private.db.disabledPrivateAuras[config.spellID] then
+                if config.perUnit then
+                    for unit in Private:IterateGroupMembers() do
+                        local nickname = CoffeeRaidTools:GetNickname(unit, true)
+                        if nickname and not Blizz.issecretvalue(nickname) then
+                            ---@type string?
+                            local rosterNickname = nickname
+                            if not Private.RosterNicknames[nickname] then
+                                Private:DebugPrint("PrivateAuras: no roster entry for", tostring(nickname))
+                                if warnOnMissing then
+                                    CoffeeRaidTools:Print(
+                                        "|cffff4040Warning:|r No roster entry for "
+                                            .. tostring(nickname)
+                                            .. ". Using fallback sound."
+                                    )
+                                end
+                                rosterNickname = nil
+                            end
+                            RegisterSound(unit, config.spellID, Private:GetPrivateAuraSoundPath(config, rosterNickname))
+                        end
+                    end
+                else
+                    RegisterSound("player", config.spellID, Private:GetPrivateAuraSoundPath(config))
+                end
+            end
+        end
+    end
+end
+
 Private.RegisterPrivateAuraSounds = RegisterPrivateAuraSounds
+
+---@param spellID number
+function Private:TestPrivateAuraSound(spellID)
+    local config
+    for _, section in ipairs(Private.PrivateAuraSections) do
+        for _, spell in ipairs(section.spells) do
+            if spell.spellID == spellID then
+                config = spell
+                break
+            end
+        end
+    end
+
+    if not config then
+        CoffeeRaidTools:Print("No private aura config for spell ID " .. spellID)
+        return
+    end
+
+    if config.perUnit then
+        local nickname = CoffeeRaidTools:GetNickname("target", true)
+        if not nickname or Blizz.issecretvalue(nickname) then
+            CoffeeRaidTools:Print("No valid target selected")
+            return
+        end
+        ---@type string?
+        local rosterNickname = nickname
+        if not Private.RosterNicknames[nickname] then
+            rosterNickname = nil
+        end
+        CoffeeRaidTools:Print("Playing: " .. Private:GetPrivateAuraSoundPath(config, rosterNickname))
+        Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config, rosterNickname), "master")
+    else
+        CoffeeRaidTools:Print("Playing: " .. Private:GetPrivateAuraSoundPath(config))
+        Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
+    end
+end
 
 Private:RegisterEvent("GROUP_ROSTER_UPDATE", function()
     RegisterPrivateAuraSounds()
@@ -149,5 +191,9 @@ Private:RegisterEvent("PLAYER_REGEN_ENABLED", function()
 end)
 
 Private:RegisterEvent("READY_CHECK", function()
-    RegisterPrivateAuraSounds()
+    RegisterPrivateAuraSounds(true)
+end)
+
+Private:RegisterMessage("BigWigs_StartPull", function()
+    RegisterPrivateAuraSounds(true)
 end)

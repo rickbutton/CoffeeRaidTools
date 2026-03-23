@@ -1,5 +1,5 @@
 - minimap icon turns red when group/player has invalid or non-matching state
 - versions in player tab not offset correctly sometimes randomly
-- bigwigs private aura configuration, disable in favor of NSRT?
+- bigwigs private aura sound configuration, disable in favor of NSRT? or replicate NSRT sounds in CRT?
 - do not release thingy
 - start deploying everything via tool
