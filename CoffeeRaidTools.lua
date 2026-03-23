@@ -42,6 +42,9 @@ if Private.db.hasForcedTRTemplates == nil then
     Private.db.hasForcedTRTemplates = false
 end
 
+Private.catalystWarningEnabled = true
+Private.greatVaultWarningEnabled = true
+
 Private.IsInRaid = IsInRaid
 Private.IsInGroup = IsInGroup
 Private.UnitGUID = UnitGUID

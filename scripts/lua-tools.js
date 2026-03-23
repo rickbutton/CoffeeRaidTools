@@ -47,6 +47,7 @@ const readOnlyGlobals = [
   "InCombatLockdown",
   "UnitClassBase", "UnitExists", "UnitGUID", "UnitIsGroupLeader", "UnitIsUnit", "UnitNameUnmodified",
   "issecretvalue", "canaccessvalue", "issecrettable", "canaccesstable",
+  "Enum", "hooksecurefunc", "ItemInteractionFrame", "WeeklyRewardsFrame",
   "GameTooltip", "UIParent", "UISpecialFrames",
   "GameFontHighlightSmall", "GameFontNormal", "GameFontNormalLarge", "GameFontNormalSmall",
   "LE_PARTY_CATEGORY_INSTANCE", "LE_PARTY_CATEGORY_HOME", "RAID_CLASS_COLORS",
