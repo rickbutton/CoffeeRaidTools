@@ -1,5 +1,7 @@
 ---@class Private
 local Private = select(2, ...)
+---@type Blizz
+local Blizz = Private.Blizz
 
 local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
@@ -103,7 +105,7 @@ local function StringHash(text)
 end
 
 local function GetMRTNoteHash()
-    if Private.IsAddOnLoaded("MRT") then
+    if Blizz.IsAddOnLoaded("MRT") then
         if VMRT and VMRT.Note.Text1 then
             local text = VMRT.Note.Text1
             local hashed = StringHash(text)
@@ -115,7 +117,7 @@ local function GetMRTNoteHash()
 end
 
 local function GetNSRTNoteHash()
-    if Private.IsAddOnLoaded("NorthernSkyRaidTools") then
+    if Blizz.IsAddOnLoaded("NorthernSkyRaidTools") then
         if NSAPI and NSAPI.GetReminderString then
             local _, sharedReminder = NSAPI:GetReminderString()
             if sharedReminder and sharedReminder ~= "" then
@@ -128,8 +130,8 @@ local function GetNSRTNoteHash()
 end
 
 local function GetAddonVersion(name)
-    if Private.IsAddOnLoaded(name) then
-        return Private.GetAddOnMetadata(name, "Version") or "NONE"
+    if Blizz.IsAddOnLoaded(name) then
+        return Blizz.GetAddOnMetadata(name, "Version") or "NONE"
     end
     return "NONE"
 end
@@ -171,8 +173,8 @@ local function ResetGroupVersionsData()
     local newData = {}
     for unit in Private:IterateGroupMembers() do
         if Private:UnitIsRealPlayer(unit) and UnitExists(unit) then
-            local guid = Private.UnitGUID(unit)
-            if not Private.issecretvalue(guid) and guid then
+            local guid = Blizz.UnitGUID(unit)
+            if not Blizz.issecretvalue(guid) and guid then
                 newData[guid] = oldData[guid]
             end
         end
@@ -205,9 +207,9 @@ end
 
 ---@return GroupBroadcastTarget
 local function GetGroupBroadcastTarget()
-    if Private.IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+    if Blizz.IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
         return "INSTANCE_CHAT"
-    elseif Private.IsInRaid() then
+    elseif Blizz.IsInRaid() then
         return "RAID"
     else
         return "PARTY"
@@ -251,8 +253,8 @@ local lastVersionBroadcastTime = 0
 
 local function BroadcastVersions()
     Private:DebugPrint("BroadcastVersions()")
-    local playerGuid = Private.UnitGUID("player")
-    if not Private.issecretvalue(playerGuid) and playerGuid then
+    local playerGuid = Blizz.UnitGUID("player")
+    if not Blizz.issecretvalue(playerGuid) and playerGuid then
         SetGroupVersionData(playerGuid, Private:GetLocalVersionTable())
     end
 
@@ -279,7 +281,7 @@ end
 
 local function HandleVersionRequest(sender)
     local isSelf = UnitIsUnit(sender, "player")
-    if not Private.issecretvalue(isSelf) and isSelf then
+    if not Blizz.issecretvalue(isSelf) and isSelf then
         return
     end
 
@@ -288,12 +290,12 @@ end
 
 local function HandleVersionResponse(sender, data)
     local isSelf = UnitIsUnit(sender, "player")
-    if not Private.issecretvalue(isSelf) and isSelf then
+    if not Blizz.issecretvalue(isSelf) and isSelf then
         return
     end
 
-    local guid = Private.UnitGUID(sender)
-    if not Private.issecretvalue(guid) and guid then
+    local guid = Blizz.UnitGUID(sender)
+    if not Blizz.issecretvalue(guid) and guid then
         SetGroupVersionData(guid, data)
     end
 end
@@ -352,12 +354,12 @@ end
 
 ---@return VersionTable
 function Private:GetExpectedVersionTable()
-    if Private.IsInGroup() then
+    if Blizz.IsInGroup() then
         local gv = Private:GetGroupVersionsTable()
         for unit in Private:IterateGroupMembers() do
-            if Private.UnitIsGroupLeader(unit) then
-                local guid = Private.UnitGUID(unit)
-                if not Private.issecretvalue(guid) and guid then
+            if Blizz.UnitIsGroupLeader(unit) then
+                local guid = Blizz.UnitGUID(unit)
+                if not Blizz.issecretvalue(guid) and guid then
                     local leaderVersions = gv[guid]
                     if leaderVersions then
                         return leaderVersions
@@ -473,7 +475,7 @@ end)
 
 ---@return table<string, string>?
 local function ParseGuildInfoVersions()
-    local info = Private.GetGuildInfoText()
+    local info = Blizz.GetGuildInfoText()
     if not info then
         return nil
     end

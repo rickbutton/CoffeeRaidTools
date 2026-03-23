@@ -1,5 +1,6 @@
 ---@class Private
 local Private = select(2, ...)
+local Blizz = Private.Blizz
 
 local Tests, Asserts = Private.Tests:CreateSuite("ForceAddonSettings")
 local AreEqual, IsTrue, IsFalse, Replace = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse, Asserts.Replace
@@ -67,7 +68,7 @@ end
 
 function Tests:EnforceTimelineRemindersSetsNestedPaths()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
     Private.EnforceTimelineReminders()
@@ -78,7 +79,7 @@ end
 
 function Tests:EnforceTimelineRemindersCreatesIntermediateTables()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
     Private.EnforceTimelineReminders()
@@ -89,7 +90,7 @@ end
 
 function Tests:EnforceTimelineRemindersNickname()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, "waffletwo#1858"
     end)
     Private.EnforceTimelineReminders()
@@ -98,7 +99,7 @@ end
 
 function Tests:EnforceTimelineRemindersNicknameCaseInsensitive()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, "WaffleTwo#1858"
     end)
     Private.EnforceTimelineReminders()
@@ -107,7 +108,7 @@ end
 
 function Tests:EnforceTimelineRemindersUnknownBattleTag()
     Replace("LiquidRemindersSaved", { nickname = "Original" })
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, "unknown#0000"
     end)
     Private.EnforceTimelineReminders()
@@ -116,11 +117,11 @@ end
 
 function Tests:ForceTRDefaultTemplatesSetsTTSOnBothTemplateTypes()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "GetTtsVoices", function()
+    Replace(Blizz, "GetTtsVoices", function()
         return { { voiceID = 42 } }
     end)
     Private.db.hasForcedTRTemplates = false
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
     Private.EnforceTimelineReminders()
@@ -134,11 +135,11 @@ end
 
 function Tests:ForceTRDefaultTemplatesUsesVoiceIDZeroWhenNoVoices()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "GetTtsVoices", function()
+    Replace(Blizz, "GetTtsVoices", function()
         return nil
     end)
     Private.db.hasForcedTRTemplates = false
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
     Private.EnforceTimelineReminders()
@@ -148,11 +149,11 @@ end
 
 function Tests:ForceTRDefaultTemplatesSetsHasForcedFlag()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "GetTtsVoices", function()
+    Replace(Blizz, "GetTtsVoices", function()
         return nil
     end)
     Private.db.hasForcedTRTemplates = false
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
     Private.EnforceTimelineReminders()
@@ -161,11 +162,11 @@ end
 
 function Tests:ForceTRDefaultTemplatesSkipsWhenAlreadyForced()
     Replace("LiquidRemindersSaved", {})
-    Replace(Private, "GetTtsVoices", function()
+    Replace(Blizz, "GetTtsVoices", function()
         return nil
     end)
     Private.db.hasForcedTRTemplates = true
-    Replace(Private, "BNGetInfo", function()
+    Replace(Blizz, "BNGetInfo", function()
         return nil, nil
     end)
     Private.EnforceTimelineReminders()

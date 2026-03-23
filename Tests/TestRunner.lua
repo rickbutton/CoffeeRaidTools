@@ -49,6 +49,9 @@ function Private.Tests:CreateSuite(name)
         end
     end
 
+    -- Replace should only target tables that we own (Private, Blizz, CoffeeRaidTools).
+    -- Never replace functions directly on Blizzard-provided objects or in global scope (_G).
+    -- If production code calls a Blizzard API, wrap it in Blizz and replace on Blizz instead.
     function asserts.Replace(tableOrName, keyOrValue, replacement)
         if type(tableOrName) == "string" then
             local original = _G[tableOrName]

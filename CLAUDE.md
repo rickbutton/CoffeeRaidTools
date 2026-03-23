@@ -28,6 +28,8 @@ pnpm run build:watch   # Watch mode
 ### Key Patterns
 - Private namespace via `select(2, ...)` — use `Private` for all internal state
 - Public API only on the `CoffeeRaidTools` global
+- Blizzard API wrappers live on `Private.Blizz` — never call WoW globals directly from feature code
+- Files that need Blizzard APIs should define `local Blizz = Private.Blizz` near the top (with `---@type Blizz` annotation)
 - Tab registration via `Private:RegisterTab()`
 - Chat commands: `/crt` (open frame), `/crt debug` (toggle debug mode)
 
@@ -74,6 +76,12 @@ Run `pnpm run vendor` to clone or update all vendor repos. Do this before implem
 - Annotate `AceGUI:Create()` with specific widget type (e.g., `---@type AceGUILabel`)
 - Prefer Ace3 over direct WoW API; check Ace3 library annotations for public methods before accessing private widget fields
 - Only comment genuinely complex logic
+
+### Testing
+- `Replace` in tests should only target tables we own (`Private`, `Blizz`, `CoffeeRaidTools`)
+- Never use `Replace` on Blizzard-provided objects or global scope (`_G`) directly
+- If code under test calls a Blizzard API, the API should be wrapped in `Private.Blizz` and replaced on `Blizz` in the test
+- If a Blizzard API is not yet wrapped, add it to `Private.Blizz` in `CoffeeRaidTools.lua` rather than replacing on `_G`
 
 ### General
 - Never create duplicate/versioned files — edit in place

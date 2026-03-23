@@ -1,5 +1,6 @@
 ---@class Private
 local Private = select(2, ...)
+local Blizz = Private.Blizz
 
 local Tests, Asserts = Private.Tests:CreateSuite("ReadyCheck")
 local IsTrue, IsFalse, Replace = Asserts.IsTrue, Asserts.IsFalse, Asserts.Replace
@@ -16,7 +17,7 @@ end
 
 function Tests:ShouldShowPopupInRaidWhenInRaid()
     Private.db.readyCheckPopup = "inraid"
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return true
     end)
     IsTrue(Private.ShouldShowPopup())
@@ -24,7 +25,7 @@ end
 
 function Tests:ShouldShowPopupInRaidWhenNotInRaid()
     Private.db.readyCheckPopup = "inraid"
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return false
     end)
     IsFalse(Private.ShouldShowPopup())
@@ -32,7 +33,7 @@ end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenBothTrue()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return true
     end)
     Replace(Private, "IsInCoffeeRaid", function()
@@ -43,7 +44,7 @@ end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenNotCoffee()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return true
     end)
     Replace(Private, "IsInCoffeeRaid", function()
@@ -54,7 +55,7 @@ end
 
 function Tests:ShouldShowPopupInRaidCoffeeWhenNotInRaid()
     Private.db.readyCheckPopup = "inraidcoffee"
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return false
     end)
     IsFalse(Private.ShouldShowPopup())
@@ -80,10 +81,10 @@ function Tests:IsInCoffeeRaidMajorityCoffee()
     Replace(Private, "UnitIsRealPlayer", function()
         return true
     end)
-    Replace(Private, "GetGuildInfo", function(unit)
+    Replace(Blizz, "GetGuildInfo", function(unit)
         return guildInfo[unit]
     end)
-    Replace(Private, "UnitGUID", function(unit)
+    Replace(Blizz, "UnitGUID", function(unit)
         return guids[unit]
     end)
     IsTrue(Private.IsInCoffeeRaid())
@@ -104,10 +105,10 @@ function Tests:IsInCoffeeRaidMinorityCoffee()
     Replace(Private, "UnitIsRealPlayer", function()
         return true
     end)
-    Replace(Private, "GetGuildInfo", function(unit)
+    Replace(Blizz, "GetGuildInfo", function(unit)
         return guildInfo[unit]
     end)
-    Replace(Private, "UnitGUID", function(unit)
+    Replace(Blizz, "UnitGUID", function(unit)
         return guids[unit]
     end)
     IsFalse(Private.IsInCoffeeRaid())

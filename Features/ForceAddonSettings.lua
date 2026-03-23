@@ -2,6 +2,8 @@
 
 ---@class Private
 local Private = select(2, ...)
+---@type Blizz
+local Blizz = Private.Blizz
 
 -- NSRT enforcement
 
@@ -144,7 +146,7 @@ function Private:ForceTRDefaultTemplates()
         LiquidRemindersSaved.defaultTemplates = {}
     end
 
-    local voices = Private.GetTtsVoices()
+    local voices = Blizz.GetTtsVoices()
     local voiceID = voices and voices[1] and voices[1].voiceID or 0
 
     for _, templateType in ipairs({ "TEXT", "SPELL" }) do
@@ -186,7 +188,7 @@ local function EnforceTimelineReminders()
     end
 
     -- Nickname enforcement
-    local battleTag = select(2, Private.BNGetInfo())
+    local battleTag = select(2, Blizz.BNGetInfo())
     if battleTag then
         local expectedNickname = BattleTagToNickname[battleTag:lower()]
         if expectedNickname and LiquidRemindersSaved.nickname ~= expectedNickname then
@@ -247,7 +249,7 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 
         local missing = {}
         for _, addon in ipairs(Private.AddonsToTrack) do
-            if addon.name ~= "CoffeeRaidTools" and not Private.IsAddOnLoaded(addon.name) then
+            if addon.name ~= "CoffeeRaidTools" and not Blizz.IsAddOnLoaded(addon.name) then
                 missing[#missing + 1] = addon.name
             end
         end

@@ -1,5 +1,6 @@
 ---@class Private
 local Private = select(2, ...)
+local Blizz = Private.Blizz
 
 local Tests, Asserts = Private.Tests:CreateSuite("Messaging")
 local AreEqual, IsTrue, IsFalse, Replace = Asserts.AreEqual, Asserts.IsTrue, Asserts.IsFalse, Asserts.Replace
@@ -60,30 +61,30 @@ function Tests:DecodeEmptyStringReturnsNil()
 end
 
 function Tests:GetGroupBroadcastTargetInstanceChat()
-    Replace(Private, "IsInGroup", function(category)
+    Replace(Blizz, "IsInGroup", function(category)
         return category == LE_PARTY_CATEGORY_INSTANCE
     end)
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return false
     end)
     AreEqual("INSTANCE_CHAT", Private.GetGroupBroadcastTarget())
 end
 
 function Tests:GetGroupBroadcastTargetRaid()
-    Replace(Private, "IsInGroup", function()
+    Replace(Blizz, "IsInGroup", function()
         return false
     end)
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return true
     end)
     AreEqual("RAID", Private.GetGroupBroadcastTarget())
 end
 
 function Tests:GetGroupBroadcastTargetParty()
-    Replace(Private, "IsInGroup", function()
+    Replace(Blizz, "IsInGroup", function()
         return false
     end)
-    Replace(Private, "IsInRaid", function()
+    Replace(Blizz, "IsInRaid", function()
         return false
     end)
     AreEqual("PARTY", Private.GetGroupBroadcastTarget())

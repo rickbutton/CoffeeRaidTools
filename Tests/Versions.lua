@@ -1,5 +1,6 @@
 ---@class Private
 local Private = select(2, ...)
+local Blizz = Private.Blizz
 
 local Tests, Asserts = Private.Tests:CreateSuite("Versions")
 local AreEqual, IsTrue, Replace = Asserts.AreEqual, Asserts.IsTrue, Asserts.Replace
@@ -28,10 +29,10 @@ function Tests:StringHashReturnsString()
 end
 
 function Tests:GetAddonVersionLoaded()
-    Replace(Private, "IsAddOnLoaded", function(name)
+    Replace(Blizz, "IsAddOnLoaded", function(name)
         return name == "TestAddon"
     end)
-    Replace(Private, "GetAddOnMetadata", function(name, key)
+    Replace(Blizz, "GetAddOnMetadata", function(name, key)
         if name == "TestAddon" and key == "Version" then
             return "1.2.3"
         end
@@ -40,31 +41,31 @@ function Tests:GetAddonVersionLoaded()
 end
 
 function Tests:GetAddonVersionNotLoaded()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return false
     end)
     AreEqual("NONE", Private.GetAddonVersion("FakeAddon"))
 end
 
 function Tests:GetAddonVersionNilMetadata()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
-    Replace(Private, "GetAddOnMetadata", function()
+    Replace(Blizz, "GetAddOnMetadata", function()
         return nil
     end)
     AreEqual("NONE", Private.GetAddonVersion("TestAddon"))
 end
 
 function Tests:GetMRTNoteHashNotLoaded()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return false
     end)
     AreEqual("NONE", Private.GetMRTNoteHash())
 end
 
 function Tests:GetMRTNoteHashLoadedNoNote()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
     Replace("VMRT", nil)
@@ -72,7 +73,7 @@ function Tests:GetMRTNoteHashLoadedNoNote()
 end
 
 function Tests:GetMRTNoteHashLoadedWithNote()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
     Replace("VMRT", { Note = { Text1 = "test note content" } })
@@ -83,14 +84,14 @@ function Tests:GetMRTNoteHashLoadedWithNote()
 end
 
 function Tests:GetNSRTNoteHashNotLoaded()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return false
     end)
     AreEqual("NONE", Private.GetNSRTNoteHash())
 end
 
 function Tests:GetNSRTNoteHashLoadedNoAPI()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
     Replace("NSAPI", nil)
@@ -98,7 +99,7 @@ function Tests:GetNSRTNoteHashLoadedNoAPI()
 end
 
 function Tests:GetNSRTNoteHashLoadedWithReminder()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
     Replace("NSAPI", {
@@ -113,7 +114,7 @@ function Tests:GetNSRTNoteHashLoadedWithReminder()
 end
 
 function Tests:GetNSRTNoteHashLoadedEmptyReminder()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
     Replace("NSAPI", {
@@ -125,10 +126,10 @@ function Tests:GetNSRTNoteHashLoadedEmptyReminder()
 end
 
 function Tests:CollectLocalVersionTableHasAllShortcodes()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
-    Replace(Private, "GetAddOnMetadata", function()
+    Replace(Blizz, "GetAddOnMetadata", function()
         return "1.0.0"
     end)
     Replace("VMRT", { Note = { Text1 = "note" } })
@@ -143,10 +144,10 @@ function Tests:CollectLocalVersionTableHasAllShortcodes()
 end
 
 function Tests:CollectLocalVersionTableMRTHASHMatchesNote()
-    Replace(Private, "IsAddOnLoaded", function()
+    Replace(Blizz, "IsAddOnLoaded", function()
         return true
     end)
-    Replace(Private, "GetAddOnMetadata", function()
+    Replace(Blizz, "GetAddOnMetadata", function()
         return "1.0.0"
     end)
     Replace("VMRT", { Note = { Text1 = "my raid note" } })
@@ -158,7 +159,7 @@ end
 -- Guild info version check
 
 function Tests:ParseGuildInfoVersionsReturnsBothAddons()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "Welcome to the guild!\n<CRT:42 TR:1.2.3>"
     end)
     local versions = Private.ParseGuildInfoVersions()
@@ -168,7 +169,7 @@ function Tests:ParseGuildInfoVersionsReturnsBothAddons()
 end
 
 function Tests:ParseGuildInfoVersionsCRTOnly()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<CRT:42>"
     end)
     local versions = Private.ParseGuildInfoVersions()
@@ -178,7 +179,7 @@ function Tests:ParseGuildInfoVersionsCRTOnly()
 end
 
 function Tests:ParseGuildInfoVersionsTROnly()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<TR:5.0.0-beta>"
     end)
     local versions = Private.ParseGuildInfoVersions()
@@ -188,35 +189,35 @@ function Tests:ParseGuildInfoVersionsTROnly()
 end
 
 function Tests:ParseGuildInfoVersionsNoTag()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "Welcome to the guild!"
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:ParseGuildInfoVersionsNilText()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return nil
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:ParseGuildInfoVersionsEmptyTag()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<>"
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:ParseGuildInfoVersionsPartialTag()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<CRT:>"
     end)
     AreEqual(nil, Private.ParseGuildInfoVersions())
 end
 
 function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<CRT:99 TR:1.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -234,7 +235,7 @@ function Tests:CheckGuildVersionsReturnsCRTWhenOutdated()
 end
 
 function Tests:CheckGuildVersionsReturnsTRWhenOutdated()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<CRT:42 TR:2.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -252,7 +253,7 @@ function Tests:CheckGuildVersionsReturnsTRWhenOutdated()
 end
 
 function Tests:CheckGuildVersionsReturnsBothWhenOutdated()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<CRT:99 TR:2.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -269,7 +270,7 @@ function Tests:CheckGuildVersionsReturnsBothWhenOutdated()
 end
 
 function Tests:CheckGuildVersionsReturnsEmptyWhenCurrent()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<CRT:42 TR:1.0>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -286,21 +287,21 @@ function Tests:CheckGuildVersionsReturnsEmptyWhenCurrent()
 end
 
 function Tests:CheckGuildVersionsReturnsNilWhenNoTag()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "No version here"
     end)
     AreEqual(nil, Private.CheckGuildVersions())
 end
 
 function Tests:CheckGuildVersionsReturnsNilWhenNoGuildInfo()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return nil
     end)
     AreEqual(nil, Private.CheckGuildVersions())
 end
 
 function Tests:CheckGuildVersionsSkipsUnknownShortcodes()
-    Replace(Private, "GetGuildInfoText", function()
+    Replace(Blizz, "GetGuildInfoText", function()
         return "<CRT:42 UNKNOWN:99>"
     end)
     Replace(Private, "GetAddonVersion", function(name)
@@ -316,7 +317,7 @@ end
 
 function Tests:GetExpectedVersionTableReturnsLeaderVersions()
     local leaderVersions = { CRT = "99", MRTHASH = "abc" }
-    Replace(Private, "IsInGroup", function()
+    Replace(Blizz, "IsInGroup", function()
         return true
     end)
     Replace(Private, "IterateGroupMembers", function()
@@ -327,10 +328,10 @@ function Tests:GetExpectedVersionTableReturnsLeaderVersions()
             return units[i]
         end
     end)
-    Replace(Private, "UnitIsGroupLeader", function(unit)
+    Replace(Blizz, "UnitIsGroupLeader", function(unit)
         return unit == "raid1"
     end)
-    Replace(Private, "UnitGUID", function(unit)
+    Replace(Blizz, "UnitGUID", function(unit)
         return "guid-" .. unit
     end)
     Replace(Private, "GetGroupVersionsTable", function()
@@ -341,7 +342,7 @@ end
 
 function Tests:GetExpectedVersionTableFallsBackWhenNotInGroup()
     local localVersions = { CRT = "1.0" }
-    Replace(Private, "IsInGroup", function()
+    Replace(Blizz, "IsInGroup", function()
         return false
     end)
     Replace(Private, "GetLocalVersionTable", function()
@@ -352,7 +353,7 @@ end
 
 function Tests:GetExpectedVersionTableFallsBackWhenLeaderNotResponded()
     local localVersions = { CRT = "1.0" }
-    Replace(Private, "IsInGroup", function()
+    Replace(Blizz, "IsInGroup", function()
         return true
     end)
     Replace(Private, "IterateGroupMembers", function()
@@ -363,10 +364,10 @@ function Tests:GetExpectedVersionTableFallsBackWhenLeaderNotResponded()
             return units[i]
         end
     end)
-    Replace(Private, "UnitIsGroupLeader", function(unit)
+    Replace(Blizz, "UnitIsGroupLeader", function(unit)
         return unit == "raid1"
     end)
-    Replace(Private, "UnitGUID", function()
+    Replace(Blizz, "UnitGUID", function()
         return "guid-leader"
     end)
     Replace(Private, "GetGroupVersionsTable", function()
@@ -380,7 +381,7 @@ end
 
 function Tests:GetExpectedVersionTableWorksWhenPlayerIsLeader()
     local leaderVersions = { CRT = "42" }
-    Replace(Private, "IsInGroup", function()
+    Replace(Blizz, "IsInGroup", function()
         return true
     end)
     Replace(Private, "IterateGroupMembers", function()
@@ -391,10 +392,10 @@ function Tests:GetExpectedVersionTableWorksWhenPlayerIsLeader()
             return units[i]
         end
     end)
-    Replace(Private, "UnitIsGroupLeader", function(unit)
+    Replace(Blizz, "UnitIsGroupLeader", function(unit)
         return unit == "player"
     end)
-    Replace(Private, "UnitGUID", function(unit)
+    Replace(Blizz, "UnitGUID", function(unit)
         return "guid-" .. unit
     end)
     Replace(Private, "GetGroupVersionsTable", function()
@@ -405,7 +406,7 @@ end
 
 function Tests:GetExpectedVersionTableFallsBackWhenLeaderGUIDSecret()
     local localVersions = { CRT = "1.0" }
-    Replace(Private, "IsInGroup", function()
+    Replace(Blizz, "IsInGroup", function()
         return true
     end)
     Replace(Private, "IterateGroupMembers", function()
@@ -416,13 +417,13 @@ function Tests:GetExpectedVersionTableFallsBackWhenLeaderGUIDSecret()
             return units[i]
         end
     end)
-    Replace(Private, "UnitIsGroupLeader", function()
+    Replace(Blizz, "UnitIsGroupLeader", function()
         return true
     end)
-    Replace(Private, "UnitGUID", function()
+    Replace(Blizz, "UnitGUID", function()
         return "secret-guid"
     end)
-    Replace(Private, "issecretvalue", function()
+    Replace(Blizz, "issecretvalue", function()
         return true
     end)
     Replace(Private, "GetLocalVersionTable", function()
