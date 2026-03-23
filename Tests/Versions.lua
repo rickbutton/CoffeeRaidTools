@@ -57,32 +57,6 @@ function Tests:GetAddonVersionNilMetadata()
     AreEqual("NONE", Private.GetAddonVersion("TestAddon"))
 end
 
-function Tests:GetMRTNoteHashNotLoaded()
-    Replace(Blizz, "IsAddOnLoaded", function()
-        return false
-    end)
-    AreEqual("NONE", Private.GetMRTNoteHash())
-end
-
-function Tests:GetMRTNoteHashLoadedNoNote()
-    Replace(Blizz, "IsAddOnLoaded", function()
-        return true
-    end)
-    Replace("VMRT", nil)
-    AreEqual("NONE", Private.GetMRTNoteHash())
-end
-
-function Tests:GetMRTNoteHashLoadedWithNote()
-    Replace(Blizz, "IsAddOnLoaded", function()
-        return true
-    end)
-    Replace("VMRT", { Note = { Text1 = "test note content" } })
-    local hash = Private.GetMRTNoteHash()
-    IsTrue(hash ~= "NONE")
-    AreEqual(type(hash), "string")
-    AreEqual(hash, Private.StringHash("test note content"))
-end
-
 function Tests:GetNSRTNoteHashNotLoaded()
     Replace(Blizz, "IsAddOnLoaded", function()
         return false
@@ -132,28 +106,12 @@ function Tests:CollectLocalVersionTableHasAllShortcodes()
     Replace(Blizz, "GetAddOnMetadata", function()
         return "1.0.0"
     end)
-    Replace("VMRT", { Note = { Text1 = "note" } })
-
     local versions = Private.CollectLocalVersionTable()
 
     for _, addon in ipairs(Private.AddonsToTrack) do
         IsTrue(versions[addon.shortcode] ~= nil)
     end
-    IsTrue(versions["MRTHASH"] ~= nil)
     IsTrue(versions["NSRTHASH"] ~= nil)
-end
-
-function Tests:CollectLocalVersionTableMRTHASHMatchesNote()
-    Replace(Blizz, "IsAddOnLoaded", function()
-        return true
-    end)
-    Replace(Blizz, "GetAddOnMetadata", function()
-        return "1.0.0"
-    end)
-    Replace("VMRT", { Note = { Text1 = "my raid note" } })
-
-    local versions = Private.CollectLocalVersionTable()
-    AreEqual(Private.StringHash("my raid note"), versions["MRTHASH"])
 end
 
 -- Guild info version check
@@ -264,7 +222,7 @@ end
 -- GetExpectedVersionTable
 
 function Tests:GetExpectedVersionTableReturnsLeaderVersions()
-    local leaderVersions = { CRT = "99", MRTHASH = "abc" }
+    local leaderVersions = { CRT = "99", NSRTHASH = "abc" }
     Replace(Blizz, "IsInGroup", function()
         return true
     end)

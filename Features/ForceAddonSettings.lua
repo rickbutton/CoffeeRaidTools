@@ -128,6 +128,11 @@ local function EnforceNSRT()
         NSRT.ReminderSettings.UseTLReminders = false
     end
 
+    if NSRT.ReminderSettings.MRTNote ~= false then
+        Private:DebugPrint("NSRT ReminderSettings.MRTNote: " .. tostring(NSRT.ReminderSettings.MRTNote) .. " -> false")
+        NSRT.ReminderSettings.MRTNote = false
+    end
+
     if NSRT.ReminderSettings.SpellTTS ~= true then
         Private:DebugPrint("NSRT ReminderSettings.SpellTTS: " .. tostring(NSRT.ReminderSettings.SpellTTS) .. " -> true")
         NSRT.ReminderSettings.SpellTTS = true

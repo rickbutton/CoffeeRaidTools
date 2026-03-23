@@ -6,8 +6,8 @@ local Blizz = Private.Blizz
 local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
 
----@alias AddonShortcode "CRT" | "BW" | "NSRT" | "MRT" | "RCLC"
----@alias TrackedShortcode AddonShortcode | "MRTHASH" | "NSRTHASH"
+---@alias AddonShortcode "CRT" | "BW" | "NSRT" | "RCLC"
+---@alias TrackedShortcode AddonShortcode | "NSRTHASH"
 
 local BROADCAST_INTERVAL = 3
 
@@ -45,11 +45,6 @@ Private.AddonsToTrack = {
         name = "NorthernSkyRaidTools",
         shortcode = "NSRT",
         matcher = Matchers.EQUAL,
-    },
-    {
-        name = "MRT",
-        shortcode = "MRT",
-        matcher = Matchers.EXISTS,
     },
     {
         name = "RCLootCouncil",
@@ -99,18 +94,6 @@ local function StringHash(text)
     return "" .. math.fmod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
 end
 
-local function GetMRTNoteHash()
-    if Blizz.IsAddOnLoaded("MRT") then
-        if VMRT and VMRT.Note.Text1 then
-            local text = VMRT.Note.Text1
-            local hashed = StringHash(text)
-            return hashed
-        end
-        return "NONE"
-    end
-    return "NONE"
-end
-
 local function GetNSRTNoteHash()
     if Blizz.IsAddOnLoaded("NorthernSkyRaidTools") then
         if NSAPI and NSAPI.GetReminderString then
@@ -155,7 +138,6 @@ local function CollectLocalVersionTable()
     end
 
     -- hash notes
-    versions["MRTHASH"] = GetMRTNoteHash()
     versions["NSRTHASH"] = GetNSRTNoteHash()
 
     return versions
@@ -372,7 +354,6 @@ function Private:BroadcastGroupMessage(op, data)
 end
 
 Private.StringHash = StringHash
-Private.GetMRTNoteHash = GetMRTNoteHash
 Private.GetNSRTNoteHash = GetNSRTNoteHash
 Private.GetAddonVersion = GetAddonVersion
 Private.CollectLocalVersionTable = CollectLocalVersionTable
@@ -385,41 +366,6 @@ local function InvalidateLocalVersions()
 end
 
 Private.InvalidateLocalVersions = InvalidateLocalVersions
-
-local noteChangeTimer = nil
-
-local function HandleMRTNoteChange()
-    Private:DebugPrint("HandleMRTNoteChange called")
-    if noteChangeTimer then
-        Private:DebugPrint("Cancelling existing note change timer")
-        noteChangeTimer:Cancel()
-    end
-    noteChangeTimer = C_Timer.NewTimer(2, function()
-        noteChangeTimer = nil
-        local oldHash = Private:GetLocalVersion("MRTHASH")
-        InvalidateLocalVersions()
-        local newHash = Private:GetLocalVersion("MRTHASH")
-        Private:DebugPrint("MRT note hash check: old=", oldHash, "new=", newHash)
-        if oldHash ~= newHash then
-            Private:DebugPrint("MRT note hash changed:", oldHash, "->", newHash)
-            BroadcastVersions()
-        else
-            Private:DebugPrint("MRT note hash unchanged, skipping broadcast")
-        end
-    end)
-end
-
-local function TryRegisterMRTCallback()
-    if GMRT and GMRT.F then
-        Private:DebugPrint("Registering GMRT Note_UpdateText callback")
-        GMRT.F:RegisterCallback("Note_UpdateText", function(...)
-            Private:DebugPrint("Note_UpdateText callback fired, args:", ...)
-            HandleMRTNoteChange()
-        end, "CoffeeRaidTools")
-        return true
-    end
-    return false
-end
 
 local nsrtNoteChangeTimer = nil
 
@@ -458,9 +404,6 @@ end
 
 Private:RegisterEvent("PLAYER_LOGIN", function()
     Private:UnregisterEvent("PLAYER_LOGIN")
-    if not TryRegisterMRTCallback() then
-        Private:DebugPrint("GMRT not available at PLAYER_LOGIN, MRT callback not registered")
-    end
     if not TryRegisterNSRTCallback() then
         Private:DebugPrint("NSAPI not available at PLAYER_LOGIN, NSRT callback not registered")
     end

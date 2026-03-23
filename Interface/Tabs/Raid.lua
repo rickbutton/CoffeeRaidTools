@@ -53,10 +53,6 @@ local function GeneratePlayerStatus(playerVersions, expectedVersions)
         end
     end
 
-    if playerVersions["MRTHASH"] ~= expectedVersions["MRTHASH"] then
-        table.insert(failures, "MRTNOTE")
-    end
-
     if playerVersions["NSRTHASH"] ~= expectedVersions["NSRTHASH"] then
         table.insert(failures, "NSRTNOTE")
     end
@@ -87,7 +83,6 @@ local function GenerateTooltipText(playerVersions)
         table.insert(entries, addon.shortcode .. "=" .. (playerVersions[addon.shortcode] or "NONE"))
     end
 
-    table.insert(entries, "MRTHASH=" .. (playerVersions["MRTHASH"] or "NONE"))
     table.insert(entries, "NSRTHASH=" .. (playerVersions["NSRTHASH"] or "NONE"))
 
     return table.concat(entries, "\n")
@@ -169,10 +164,8 @@ local function GenerateMockPlayerData(expectedVersions, allGood)
         end
 
         if scenario == 1 then
-            playerVersions["MRTHASH"] = expectedVersions["MRTHASH"]
             playerVersions["NSRTHASH"] = expectedVersions["NSRTHASH"]
         else
-            playerVersions["MRTHASH"] = math.random() > 0.6 and expectedVersions["MRTHASH"] or "different_hash"
             playerVersions["NSRTHASH"] = math.random() > 0.6 and expectedVersions["NSRTHASH"] or "different_hash"
         end
 

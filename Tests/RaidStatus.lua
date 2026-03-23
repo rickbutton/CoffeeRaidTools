@@ -9,20 +9,18 @@ function Tests:StatusAllGood()
         CRT = "1.0",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local player = {
         CRT = "1.0",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local status = Private.GeneratePlayerStatus(player, expected)
@@ -43,20 +41,18 @@ function Tests:StatusMissingExistsAddon()
         CRT = "1.0",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local player = {
         CRT = "1.0",
         BW = "NONE",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local status = Private.GeneratePlayerStatus(player, expected)
@@ -70,20 +66,18 @@ function Tests:StatusWrongEqualVersion()
         CRT = "1.0",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local player = {
         CRT = "0.9",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local status = Private.GeneratePlayerStatus(player, expected)
@@ -96,20 +90,18 @@ function Tests:StatusMissingEqualAddon()
         CRT = "1.0",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local player = {
         CRT = "NONE",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local status = Private.GeneratePlayerStatus(player, expected)
@@ -117,51 +109,23 @@ function Tests:StatusMissingEqualAddon()
     AreEqual("CRT", status.failures[1])
 end
 
-function Tests:StatusMRTHashMismatch()
-    local expected = {
-        CRT = "1.0",
-        BW = "2.0",
-        NSRT = "1.0",
-        MRT = "3.0",
-        RCLC = "1.0",
-
-        MRTHASH = "abc",
-        NSRTHASH = "def",
-    }
-    local player = {
-        CRT = "1.0",
-        BW = "2.0",
-        NSRT = "1.0",
-        MRT = "3.0",
-        RCLC = "1.0",
-
-        MRTHASH = "different",
-        NSRTHASH = "def",
-    }
-    local status = Private.GeneratePlayerStatus(player, expected)
-    IsFalse(status.good)
-    AreEqual("MRTNOTE", status.failures[1])
-end
-
 function Tests:StatusNSRTHashMismatch()
     local expected = {
         CRT = "1.0",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "def",
     }
     local player = {
         CRT = "1.0",
         BW = "2.0",
         NSRT = "1.0",
-        MRT = "3.0",
+
         RCLC = "1.0",
 
-        MRTHASH = "abc",
         NSRTHASH = "different",
     }
     local status = Private.GeneratePlayerStatus(player, expected)
@@ -189,15 +153,13 @@ function Tests:TooltipTextNormal()
         CRT = "1.0",
         BW = "2.0",
         NSRT = "3.0",
-        MRT = "4.0",
         RCLC = "5.0",
-        MRTHASH = "abc",
+
         NSRTHASH = "def",
     }
     local result = Private.GenerateTooltipText(player)
     IsTrue(result:find("CRT=1.0") ~= nil)
     IsTrue(result:find("BW=2.0") ~= nil)
-    IsTrue(result:find("MRTHASH=abc") ~= nil)
     IsTrue(result:find("NSRTHASH=def") ~= nil)
 end
 

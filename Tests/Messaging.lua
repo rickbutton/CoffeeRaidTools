@@ -35,7 +35,6 @@ function Tests:RoundTripPreservesAllVersionFields()
     for _, addon in ipairs(Private.AddonsToTrack) do
         versionData[addon.shortcode] = "v" .. addon.shortcode
     end
-    versionData["MRTHASH"] = "somehash123"
     versionData["NSRTHASH"] = "nsrthash456"
 
     local encoded = Private.EncodeMessage({ op = "VRES", data = versionData })
@@ -44,7 +43,6 @@ function Tests:RoundTripPreservesAllVersionFields()
     for _, addon in ipairs(Private.AddonsToTrack) do
         AreEqual("v" .. addon.shortcode, decoded.data[addon.shortcode])
     end
-    AreEqual("somehash123", decoded.data["MRTHASH"])
     AreEqual("nsrthash456", decoded.data["NSRTHASH"])
 end
 
