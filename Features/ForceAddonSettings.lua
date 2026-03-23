@@ -5,32 +5,6 @@ local Private = select(2, ...)
 ---@type Blizz
 local Blizz = Private.Blizz
 
-local BattleTagToNickname = {
-    ["waffletwo#1858"] = "Waffle",
-    ["bestman#1653"] = "Bestman",
-    ["eeld#1234"] = "Eeld",
-    ["bonestorm#11570"] = "Rocky",
-    ["hm3boost#1688"] = "Bubble",
-    ["pwnstar#11783"] = "Apollo",
-    ["notlad#11770"] = "Peer",
-    ["h8shot#1402"] = "Gold",
-    ["mazed#11112"] = "Nmu",
-    ["hundiddy#1280"] = "Hun",
-    ["phaszr#1199"] = "Lancr",
-    ["itsneahvil#1266"] = "Dez",
-    ["ophidian#1948"] = "Sad",
-    ["mordrag#11554"] = "Jerk",
-    ["sluff#11368"] = "Sluff",
-    ["apexmachine#1449"] = "Apex",
-    ["squeethetree#1185"] = "Squishes",
-    ["xuedo#1579"] = "Xhul",
-    ["drcuddlesphd#1611"] = "Drcuddles",
-    ["jaybirrd#11458"] = "Errmac",
-    ["klaus#12266"] = "Kami",
-    ["tenille#1412"] = "Tenillee",
-    ["puma#1523"] = "Annoyance",
-}
-
 -- NSRT enforcement
 
 local ReadyCheckForceTrue = {
@@ -165,7 +139,7 @@ local function EnforceNSRT()
 
     local battleTag = select(2, Blizz.BNGetInfo())
     if battleTag then
-        local expectedNickname = BattleTagToNickname[battleTag:lower()]
+        local expectedNickname = Private.BattleTagToNickname[battleTag:lower()]
         if expectedNickname and NSRT.Settings["MyNickName"] ~= expectedNickname then
             Private:DebugPrint(
                 "NSRT Settings.MyNickName: " .. tostring(NSRT.Settings["MyNickName"]) .. " -> " .. expectedNickname

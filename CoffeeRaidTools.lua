@@ -38,6 +38,10 @@ if Private.db.onlyShowMismatches == nil then
     Private.db.onlyShowMismatches = false
 end
 
+if Private.db.disabledPrivateAuras == nil then
+    Private.db.disabledPrivateAuras = {}
+end
+
 Private.catalystWarningEnabled = true
 Private.greatVaultWarningEnabled = true
 
@@ -57,6 +61,10 @@ Blizz.GetAddOnMetadata = C_AddOns.GetAddOnMetadata
 Blizz.GetAddOnEnableState = C_AddOns.GetAddOnEnableState
 Blizz.DisableAddOn = C_AddOns.DisableAddOn
 Blizz.issecretvalue = issecretvalue
+Blizz.PlaySoundFile = PlaySoundFile
+Blizz.AddPrivateAuraAppliedSound = C_UnitAuras.AddPrivateAuraAppliedSound
+Blizz.RemovePrivateAuraAppliedSound = C_UnitAuras.RemovePrivateAuraAppliedSound
+Blizz.AuraIsPrivate = C_UnitAuras.AuraIsPrivate
 
 function Blizz.GetTtsVoices()
     return C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()

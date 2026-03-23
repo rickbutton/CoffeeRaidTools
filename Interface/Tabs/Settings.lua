@@ -1,5 +1,7 @@
 ---@class Private
 local Private = select(2, ...)
+---@type Blizz
+local Blizz = Private.Blizz
 local AceGUI = LibStub("AceGUI-3.0")
 
 local function CreateSectionTitle(text)
@@ -51,12 +53,6 @@ end
 
 local function DrawTab(container)
     container:AddChild(CreateSpacer())
-    container:AddChild(CreateSectionTitle("General"))
-    container:AddChild(CreateSpacer())
-
-    container:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
-
-    container:AddChild(CreateSpacer())
     container:AddChild(CreateSectionTitle("Ready Check"))
     container:AddChild(CreateSpacer())
 
@@ -67,10 +63,97 @@ local function DrawTab(container)
         inraidcoffee = "In Raid with Coffee Players",
     }, { "never", "inraid", "inraidcoffee", "always" }))
 
+    container:AddChild(CreateSpacer())
+    container:AddChild(CreateSectionTitle("Private Aura Sounds"))
+    container:AddChild(CreateSpacer())
+
+    for _, section in ipairs(Private.PrivateAuraSections) do
+        ---@type AceGUILabel
+        local bossLabel = AceGUI:Create("Label")
+        bossLabel:SetText(section.boss)
+        bossLabel:SetFullWidth(true)
+        bossLabel:SetFont(GameFontNormal:GetFont())
+        bossLabel:SetColor(0.8, 0.8, 0.8)
+        container:AddChild(bossLabel)
+
+        for _, config in ipairs(section.spells) do
+            ---@type AceGUISimpleGroup
+            local row = AceGUI:Create("SimpleGroup")
+            row:SetFullWidth(true)
+            row:SetLayout("Flow")
+
+            ---@type AceGUICheckBox
+            local cb = AceGUI:Create("CheckBox")
+            cb:SetLabel(config.label)
+            cb:SetValue(not Private.db.disabledPrivateAuras[config.spellID])
+            cb:SetCallback("OnValueChanged", function(widget, event, value)
+                Private.db.disabledPrivateAuras[config.spellID] = (not value) or nil
+            end)
+            cb:SetCallback("OnEnter", function()
+                ---@diagnostic disable-next-line: invisible
+                GameTooltip:SetOwner(cb.frame, "ANCHOR_RIGHT")
+                GameTooltip:SetSpellByID(config.spellID)
+                GameTooltip:Show()
+            end)
+            cb:SetCallback("OnLeave", function()
+                GameTooltip:Hide()
+            end)
+            cb:SetRelativeWidth(0.35)
+            row:AddChild(cb)
+
+            if config.perUnit then
+                ---@type AceGUIButton
+                local btn = AceGUI:Create("Button")
+                btn:SetText("Test")
+                btn:SetRelativeWidth(0.2)
+                row:AddChild(btn)
+
+                local rosterNames = {}
+                local rosterOrder = {}
+                for nickname in pairs(Private.RosterNicknames) do
+                    rosterNames[nickname] = nickname
+                    tinsert(rosterOrder, nickname)
+                end
+                table.sort(rosterOrder)
+
+                ---@type AceGUIDropdown
+                local dropdown = AceGUI:Create("Dropdown")
+                dropdown:SetList(rosterNames, rosterOrder)
+                dropdown:SetRelativeWidth(0.35)
+
+                local playerNickname = CoffeeRaidTools:GetNickname("player", true)
+                if playerNickname and rosterNames[playerNickname] then
+                    dropdown:SetValue(playerNickname)
+                end
+
+                row:AddChild(dropdown)
+
+                btn:SetCallback("OnClick", function()
+                    local selected = dropdown:GetValue()
+                    if selected then
+                        Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config, selected), "master")
+                    end
+                end)
+            else
+                ---@type AceGUIButton
+                local btn = AceGUI:Create("Button")
+                btn:SetText("Test")
+                btn:SetRelativeWidth(0.2)
+                btn:SetCallback("OnClick", function()
+                    Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
+                end)
+                row:AddChild(btn)
+            end
+
+            container:AddChild(row)
+        end
+    end
+
     if Private.db.devMode then
         container:AddChild(CreateSpacer())
         container:AddChild(CreateSectionTitle("Dev Mode"))
         container:AddChild(CreateSpacer())
+        container:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
         container:AddChild(CreateSettingsCheckbox("runTestsOnLoad", "Run Tests on Addon Load"))
         container:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
     end
