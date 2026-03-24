@@ -52,6 +52,8 @@ local function CreateSettingsDropdown(key, label, values, order)
 end
 
 local function DrawTab(container)
+    container:SetLayout("Fill")
+
     ---@type AceGUIScrollFrame
     local scrollFrame = AceGUI:Create("ScrollFrame")
     scrollFrame:SetFullWidth(true)
