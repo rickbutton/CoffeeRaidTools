@@ -17,6 +17,8 @@
         "GameFontNormalSmall",
         "GameFontNormal",
         "LE_PARTY_CATEGORY_INSTANCE",
-        "GameTooltip"
+        "GameTooltip",
+        "ACCEPT",
+        "CANCEL"
     ]
 }

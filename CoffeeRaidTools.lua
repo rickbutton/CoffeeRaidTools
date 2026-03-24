@@ -42,6 +42,10 @@ if Private.db.disabledPrivateAuras == nil then
     Private.db.disabledPrivateAuras = {}
 end
 
+if Private.db.disableConflictingBigWigsPrivateAuraSounds == nil then
+    Private.db.disableConflictingBigWigsPrivateAuraSounds = true
+end
+
 Private.catalystWarningEnabled = true
 Private.greatVaultWarningEnabled = true
 
@@ -65,6 +69,7 @@ Blizz.PlaySoundFile = PlaySoundFile
 Blizz.AddPrivateAuraAppliedSound = C_UnitAuras.AddPrivateAuraAppliedSound
 Blizz.RemovePrivateAuraAppliedSound = C_UnitAuras.RemovePrivateAuraAppliedSound
 Blizz.AuraIsPrivate = C_UnitAuras.AuraIsPrivate
+Blizz.GetSpellName = C_Spell.GetSpellName
 
 function Blizz.GetTtsVoices()
     return C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()
@@ -193,10 +198,10 @@ local TestCommands = {
         Private:CloseReadyCheckPopup()
     end,
     break10 = function()
-        Private:SendMessage("BigWigs_StartBreak", nil, 10, UnitName("player"), false, false, "Break time", 134062)
+        Private:SendMessage("CRT_BigWigs_StartBreak", nil, 10, UnitName("player"), false, false, "Break time", 134062)
     end,
     breakstop = function()
-        Private:SendMessage("BigWigs_StopBreak", nil, 0, UnitName("player"), false, false)
+        Private:SendMessage("CRT_BigWigs_StopBreak", nil, 0, UnitName("player"), false, false)
     end,
     update = function()
         TogglePopup("CRT_UPDATE_AVAILABLE", "CoffeeRaidTools")

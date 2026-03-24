@@ -52,31 +52,61 @@ local function CreateSettingsDropdown(key, label, values, order)
 end
 
 local function DrawTab(container)
-    container:AddChild(CreateSpacer())
-    container:AddChild(CreateSectionTitle("Ready Check"))
-    container:AddChild(CreateSpacer())
+    ---@type AceGUIScrollFrame
+    local scrollFrame = AceGUI:Create("ScrollFrame")
+    scrollFrame:SetFullWidth(true)
+    scrollFrame:SetFullHeight(true)
+    scrollFrame:SetLayout("List")
+    container:AddChild(scrollFrame)
 
-    container:AddChild(CreateSettingsDropdown("readyCheckPopup", "Check Players on Ready Check", {
+    scrollFrame:AddChild(CreateSpacer())
+    scrollFrame:AddChild(CreateSectionTitle("Ready Check"))
+    scrollFrame:AddChild(CreateSpacer())
+
+    scrollFrame:AddChild(CreateSettingsDropdown("readyCheckPopup", "Check Players on Ready Check", {
         never = "Never",
         always = "Always",
         inraid = "In Raid",
         inraidcoffee = "In Raid with Coffee Players",
     }, { "never", "inraid", "inraidcoffee", "always" }))
 
-    container:AddChild(CreateSpacer())
-    container:AddChild(CreateSectionTitle("Private Aura Sounds"))
-    container:AddChild(CreateSpacer())
+    scrollFrame:AddChild(CreateSpacer())
+    scrollFrame:AddChild(CreateSectionTitle("Private Aura Sounds"))
+    scrollFrame:AddChild(CreateSpacer())
+
+    do
+        ---@type AceGUICheckBox
+        local cb = AceGUI:Create("CheckBox")
+        cb:SetLabel("Disable BigWigs private aura sounds for CRT-managed spells")
+        cb:SetValue(Private.db.disableConflictingBigWigsPrivateAuraSounds)
+        cb:SetCallback("OnValueChanged", function(widget, event, value)
+            Private.db.disableConflictingBigWigsPrivateAuraSounds = value
+            Private:UpdateBigWigsPrivateAuras()
+        end)
+        cb:SetFullWidth(true)
+        scrollFrame:AddChild(cb)
+    end
+
+    scrollFrame:AddChild(CreateSpacer())
 
     for _, section in ipairs(Private.PrivateAuraSections) do
+        scrollFrame:AddChild(CreateSpacer())
+
         ---@type AceGUILabel
         local bossLabel = AceGUI:Create("Label")
         bossLabel:SetText(section.boss)
         bossLabel:SetFullWidth(true)
         bossLabel:SetFont(GameFontNormal:GetFont())
         bossLabel:SetColor(0.8, 0.8, 0.8)
-        container:AddChild(bossLabel)
+        scrollFrame:AddChild(bossLabel)
 
-        for _, config in ipairs(section.spells) do
+        for i, config in ipairs(section.spells) do
+            if i > 1 then
+                scrollFrame:AddChild(CreateSpacer())
+            end
+
+            local primaryID = config.spellIDs[1]
+
             ---@type AceGUISimpleGroup
             local row = AceGUI:Create("SimpleGroup")
             row:SetFullWidth(true)
@@ -84,15 +114,15 @@ local function DrawTab(container)
 
             ---@type AceGUICheckBox
             local cb = AceGUI:Create("CheckBox")
-            cb:SetLabel(config.label)
-            cb:SetValue(not Private.db.disabledPrivateAuras[config.spellID])
+            cb:SetLabel(Blizz.GetSpellName(primaryID) or tostring(primaryID))
+            cb:SetValue(not Private.db.disabledPrivateAuras[primaryID])
             cb:SetCallback("OnValueChanged", function(widget, event, value)
-                Private.db.disabledPrivateAuras[config.spellID] = (not value) or nil
+                Private.db.disabledPrivateAuras[primaryID] = (not value) or nil
             end)
             cb:SetCallback("OnEnter", function()
                 ---@diagnostic disable-next-line: invisible
                 GameTooltip:SetOwner(cb.frame, "ANCHOR_RIGHT")
-                GameTooltip:SetSpellByID(config.spellID)
+                GameTooltip:SetSpellByID(primaryID)
                 GameTooltip:Show()
             end)
             cb:SetCallback("OnLeave", function()
@@ -146,17 +176,17 @@ local function DrawTab(container)
                 row:AddChild(btn)
             end
 
-            container:AddChild(row)
+            scrollFrame:AddChild(row)
         end
     end
 
     if Private.db.devMode then
-        container:AddChild(CreateSpacer())
-        container:AddChild(CreateSectionTitle("Dev Mode"))
-        container:AddChild(CreateSpacer())
-        container:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
-        container:AddChild(CreateSettingsCheckbox("runTestsOnLoad", "Run Tests on Addon Load"))
-        container:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
+        scrollFrame:AddChild(CreateSpacer())
+        scrollFrame:AddChild(CreateSectionTitle("Dev Mode"))
+        scrollFrame:AddChild(CreateSpacer())
+        scrollFrame:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
+        scrollFrame:AddChild(CreateSettingsCheckbox("runTestsOnLoad", "Run Tests on Addon Load"))
+        scrollFrame:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
     end
 end
 

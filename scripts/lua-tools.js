@@ -52,6 +52,7 @@ const readOnlyGlobals = [
   "GameFontHighlightSmall", "GameFontNormal", "GameFontNormalLarge", "GameFontNormalSmall",
   "LE_PARTY_CATEGORY_INSTANCE", "LE_PARTY_CATEGORY_HOME", "RAID_CLASS_COLORS",
   "LibStub",
+  "BigWigs", "BigWigsLoader",
 ];
 
 // Writable globals (addon globals, saved variables, third-party addons)

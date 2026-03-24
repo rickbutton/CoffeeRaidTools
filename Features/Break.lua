@@ -96,5 +96,5 @@ local function HandleBreakStop()
     CloseBreakDisplay()
 end
 
-Private:RegisterMessage("BigWigs_StartBreak", HandleBreakStart)
-Private:RegisterMessage("BigWigs_StopBreak", HandleBreakStop)
+Private:RegisterMessage("CRT_BigWigs_StartBreak", HandleBreakStart)
+Private:RegisterMessage("CRT_BigWigs_StopBreak", HandleBreakStop)

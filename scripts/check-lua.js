@@ -20,6 +20,7 @@ const globals = mergeGlobals([
   ...writableGlobals,
   "AuraUpdater", "INT", "RAID", "PARTY", "INSTANCE_CHAT", "CLOSE",
   "LE_PARTY_CATEGORY_INSTANCE", "LE_PARTY_CATEGORY_HOME",
+  "BigWigs", "BigWigsLoader",
 ]);
 
 const luarc = {

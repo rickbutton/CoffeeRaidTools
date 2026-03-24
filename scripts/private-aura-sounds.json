@@ -1,0 +1,72 @@
+[
+  {
+    "boss": "Imperator Averzian",
+    "bigwigsModule": "BigWigs_Bosses_Imperator Averzian",
+    "raid": "The Voidspire",
+    "spells": [
+      { "spellIDs": [1280023], "comment": "Void Marked", "phrase": "shield" },
+      { "spellIDs": [1283069], "comment": "Weakened (Voidspawn fixate)", "phrase": "fixate" }
+    ]
+  },
+  {
+    "boss": "Vorasius",
+    "bigwigsModule": "BigWigs_Bosses_Vorasius",
+    "raid": "The Voidspire",
+    "spells": [
+      { "spellIDs": [1254113], "comment": "Fixate", "phrase": "fixate" }
+    ]
+  },
+  {
+    "boss": "Fallen-King Salhadaar",
+    "bigwigsModule": "BigWigs_Bosses_Fallen-King Salhadaar",
+    "raid": "The Voidspire",
+    "spells": [
+      { "spellIDs": [1268992, 1253024], "comment": "Shattering Twilight", "phrase": "spread" },
+      { "spellIDs": [1248697], "comment": "Despotic Command", "phrase": "drop pool" }
+    ]
+  },
+  {
+    "boss": "Vaelgor & Ezzorak",
+    "bigwigsModule": "BigWigs_Bosses_Vaelgor & Ezzorak",
+    "raid": "The Voidspire",
+    "spells": [
+      {
+        "spellIDs": [1255612],
+        "comment": "Dread Breath",
+        "phrase": "Breath on {name}",
+        "soundDir": "DreadBreath",
+        "perUnit": true
+      },
+      { "spellIDs": [1270497], "comment": "Shadowmark", "phrase": "spread" }
+    ]
+  },
+  {
+    "boss": "Lightblinded Vanguard",
+    "bigwigsModule": "BigWigs_Bosses_Lightblinded Vanguard",
+    "raid": "The Voidspire",
+    "spells": [
+      { "spellIDs": [1246487], "comment": "Avenger's Shield", "phrase": "spread" }
+    ]
+  },
+  {
+    "boss": "Crown of the Cosmos",
+    "bigwigsModule": "BigWigs_Bosses_Crown of the Cosmos",
+    "raid": "The Voidspire",
+    "spells": [
+      { "spellIDs": [1233602], "comment": "Silverstrike Arrow", "phrase": "arrow on you", "soundFile": "ArrowOnYou" },
+      { "spellIDs": [1283236], "comment": "Void Expulsion", "phrase": "drop pool" },
+      { "spellIDs": [1260027, 1232470], "comment": "Grasp of Emptiness", "phrase": "obelisk" },
+      { "spellIDs": [1259861, 1237623], "comment": "Ranger Captain's Mark", "phrase": "arrow on you", "soundFile": "ArrowOnYou" },
+      { "spellIDs": [1239111], "comment": "Aspect of the End", "phrase": "tether" }
+    ]
+  },
+  {
+    "boss": "Chimaerus the Undreamt God",
+    "bigwigsModule": "BigWigs_Bosses_Chimaerus the Undreamt God",
+    "raid": "The Dreamrift",
+    "spells": [
+      { "spellIDs": [1264756], "comment": "Rift Madness", "phrase": "swap" },
+      { "spellIDs": [1257087], "comment": "Consuming Miasma", "phrase": "clear" }
+    ]
+  }
+]

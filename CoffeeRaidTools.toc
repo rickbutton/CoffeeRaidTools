@@ -14,12 +14,15 @@ Core/Util.lua
 Core/Nicknames.lua
 Core/Roster.lua
 Core/Versions.lua
+Core/BigWigsBridge.lua
 
 Features/ForceAddonSettings.lua
 Features/ReadyCheck.lua
 Features/Break.lua
 Features/GearWarnings.lua
-Features/PrivateAuras.lua
+Features/PrivateAuraSoundsData.lua
+Features/PrivateAuraSounds.lua
+Features/BigWigsOverrides.lua
 
 Interface/Minimap.lua
 Interface/Frame.lua
@@ -35,4 +38,4 @@ Tests/ForceAddonSettings.lua
 Tests/ReadyCheck.lua
 Tests/ChatCommands.lua
 Tests/TabRegistry.lua
-Tests/PrivateAuras.lua
+Tests/PrivateAuraSounds.lua
