@@ -46,6 +46,26 @@ if Private.db.disableConflictingBigWigsPrivateAuraSounds == nil then
     Private.db.disableConflictingBigWigsPrivateAuraSounds = true
 end
 
+if Private.db.dispelGlowEnabled == nil then
+    Private.db.dispelGlowEnabled = "healer"
+end
+
+if Private.db.dispelGlowType == nil then
+    Private.db.dispelGlowType = "pixel"
+end
+
+if Private.db.dispelGlowColor == nil then
+    Private.db.dispelGlowColor = { 0.2, 0.8, 1.0, 1.0 }
+end
+
+if Private.db.dispelGlowBossOverrides == nil then
+    Private.db.dispelGlowBossOverrides = {}
+end
+
+if Private.db.dispelGlowKnownBosses == nil then
+    Private.db.dispelGlowKnownBosses = {}
+end
+
 Private.catalystWarningEnabled = true
 Private.greatVaultWarningEnabled = true
 
@@ -70,6 +90,9 @@ Blizz.AddPrivateAuraAppliedSound = C_UnitAuras.AddPrivateAuraAppliedSound
 Blizz.RemovePrivateAuraAppliedSound = C_UnitAuras.RemovePrivateAuraAppliedSound
 Blizz.AuraIsPrivate = C_UnitAuras.AuraIsPrivate
 Blizz.GetSpellName = C_Spell.GetSpellName
+Blizz.GetSpecializationRole = GetSpecializationRole
+Blizz.GetAuraDataByIndex = C_UnitAuras.GetAuraDataByIndex
+Blizz.GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 
 function Blizz.GetTtsVoices()
     return C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()

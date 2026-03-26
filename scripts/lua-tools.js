@@ -42,7 +42,7 @@ const readOnlyGlobals = [
   "tinsert", "wipe",
   "BNGetInfo", "C_AddOns", "C_Secrets", "C_Timer", "C_UnitAuras", "C_VoiceChat", "CreateFrame",
   "GetGuildInfo", "GetGuildInfoText", "GetNormalizedRealmName", "GetNumGroupMembers", "GetNumSubgroupMembers",
-  "GetTime", "IsInGroup", "IsInRaid", "ReloadUI",
+  "GetSpecializationRole", "GetTime", "IsInGroup", "IsInRaid", "ReloadUI",
   "StaticPopup_Hide", "StaticPopup_Show", "StaticPopup_Visible",
   "InCombatLockdown", "PlaySoundFile",
   "UnitClassBase", "UnitExists", "UnitGUID", "UnitIsGroupLeader", "UnitIsUnit", "UnitNameUnmodified",

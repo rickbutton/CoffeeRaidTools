@@ -182,6 +182,92 @@ local function DrawTab(container)
         end
     end
 
+    -- Dispel Glows section
+    scrollFrame:AddChild(CreateSpacer())
+    scrollFrame:AddChild(CreateSectionTitle("Dispel Glows"))
+    scrollFrame:AddChild(CreateSpacer())
+
+    do
+        scrollFrame:AddChild(CreateSettingsDropdown("dispelGlowEnabled", "Enable Dispel Glows", {
+            disabled = "Disabled",
+            healer = "When Healer",
+            always = "Always",
+        }, { "disabled", "healer", "always" }))
+
+        scrollFrame:AddChild(CreateSpacer())
+
+        local glowTypeDropdown = CreateSettingsDropdown("dispelGlowType", "Glow Type", {
+            pixel = "Pixel",
+            autocast = "AutoCast",
+            proc = "Proc",
+        }, { "pixel", "autocast", "proc" })
+        glowTypeDropdown:SetCallback("OnValueChanged", function(widget, event, value)
+            Private.db.dispelGlowType = value
+            Private:RefreshDispelGlows()
+        end)
+        scrollFrame:AddChild(glowTypeDropdown)
+
+        scrollFrame:AddChild(CreateSpacer())
+
+        ---@type AceGUIColorPicker
+        local colorPicker = AceGUI:Create("ColorPicker")
+        colorPicker:SetLabel("Glow Color")
+        local c = Private.db.dispelGlowColor
+        colorPicker:SetColor(c[1], c[2], c[3], c[4])
+        colorPicker:SetHasAlpha(true)
+        colorPicker:SetCallback("OnValueChanged", function(_, _, r, g, b, a)
+            Private.db.dispelGlowColor = { r, g, b, a }
+            Private:RefreshDispelGlows()
+        end)
+        scrollFrame:AddChild(colorPicker)
+
+        -- Per-boss overrides
+        local knownBosses = Private.db.dispelGlowKnownBosses
+        local overrides = Private.db.dispelGlowBossOverrides
+        local hasAnyBoss = next(knownBosses) ~= nil
+
+        if hasAnyBoss then
+            scrollFrame:AddChild(CreateSpacer())
+
+            ---@type AceGUILabel
+            local bossHeader = AceGUI:Create("Label")
+            bossHeader:SetText("Per-Boss Overrides")
+            bossHeader:SetFullWidth(true)
+            bossHeader:SetFont(GameFontNormal:GetFont())
+            bossHeader:SetColor(0.8, 0.8, 0.8)
+            scrollFrame:AddChild(bossHeader)
+
+            -- Sort bosses by name for stable display
+            local sortedIDs = {}
+            for id in pairs(knownBosses) do
+                tinsert(sortedIDs, id)
+            end
+            table.sort(sortedIDs, function(a, b)
+                return (knownBosses[a] or "") < (knownBosses[b] or "")
+            end)
+
+            for _, encounterID in ipairs(sortedIDs) do
+                local bossName = knownBosses[encounterID]
+                ---@type AceGUICheckBox
+                local cb = AceGUI:Create("CheckBox")
+                cb:SetLabel(bossName)
+                local override = overrides[encounterID]
+                local enabled = override == nil or override.enabled
+                cb:SetValue(enabled)
+                cb:SetCallback("OnValueChanged", function(_, _, value)
+                    if value then
+                        overrides[encounterID] = nil
+                    else
+                        overrides[encounterID] = { name = bossName, enabled = false }
+                    end
+                    Private:RefreshDispelGlows()
+                end)
+                cb:SetFullWidth(true)
+                scrollFrame:AddChild(cb)
+            end
+        end
+    end
+
     if Private.db.devMode then
         scrollFrame:AddChild(CreateSpacer())
         scrollFrame:AddChild(CreateSectionTitle("Dev Mode"))
