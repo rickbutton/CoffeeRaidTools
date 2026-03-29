@@ -93,7 +93,8 @@ local function RegisterPrivateAuraSounds(warnOnMissing)
                                 local rosterNickname = nickname
                                 if not Private.RosterNicknames[nickname] then
                                     Private:DebugPrint("PrivateAuras: no roster entry for", tostring(nickname))
-                                    if warnOnMissing then
+                                    local _, instanceType = Blizz.GetInstanceInfo()
+                                    if warnOnMissing and instanceType == "raid" then
                                         CoffeeRaidTools:Print(
                                             "|cffff4040Warning:|r No roster entry for "
                                                 .. tostring(nickname)

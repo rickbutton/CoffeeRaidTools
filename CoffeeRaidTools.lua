@@ -54,6 +54,7 @@ Private.Blizz = {}
 local Blizz = Private.Blizz
 
 Blizz.IsInRaid = IsInRaid
+Blizz.GetInstanceInfo = GetInstanceInfo
 Blizz.IsInGroup = IsInGroup
 Blizz.UnitGUID = UnitGUID
 Blizz.GetGuildInfo = GetGuildInfo
