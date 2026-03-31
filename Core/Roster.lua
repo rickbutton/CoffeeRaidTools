@@ -28,6 +28,7 @@ local Roster = {
     { nickname = "Peer", battletag = "notlad#11770" },
     { nickname = "Rocky", battletag = "bonestorm#11570" },
     { nickname = "Sad", battletag = "ophidian#1948" },
+    { nickname = "Script", battletag = "unlethal#1980" },
     { nickname = "Sicarius", battletag = "acheronfate#1797" },
     { nickname = "Sluff", battletag = "sluff#11368" },
     { nickname = "Squish", battletag = "squeethetree#1185" },
