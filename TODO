@@ -1,5 +1,5 @@
 - minimap icon turns red when group/player has invalid or non-matching state
 - versions in player tab not offset correctly sometimes randomly
-- do not release thingy
-- start deploying everything via tool
 - fix broken break images
+- do roster check only in raid instance
+- wowutils droptimizer sync?

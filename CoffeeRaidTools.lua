@@ -46,8 +46,8 @@ if Private.db.disableConflictingBigWigsPrivateAuraSounds == nil then
     Private.db.disableConflictingBigWigsPrivateAuraSounds = true
 end
 
-Private.catalystWarningEnabled = true
-Private.greatVaultWarningEnabled = true
+Private.catalystWarningEnabled = false
+Private.greatVaultWarningEnabled = false
 
 Private.Blizz = {}
 ---@class Blizz
