@@ -19,6 +19,7 @@ local Roster = {
     { nickname = "Errmac", battletag = "jaybirrd#11458" },
     { nickname = "Frosty", battletag = "psykiatrick#1489" },
     { nickname = "Gold", battletag = "h8shot#1402" },
+    { nickname = "Howlzz", battletag = "grimmz#11262" },
     { nickname = "Hun", battletag = "hundiddy#1280" },
     { nickname = "Jerk", battletag = "mordrag#11554" },
     { nickname = "Kami", battletag = "klaus#12266" },
