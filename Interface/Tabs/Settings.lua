@@ -182,6 +182,27 @@ local function DrawTab(container)
         end
     end
 
+    scrollFrame:AddChild(CreateSpacer())
+    scrollFrame:AddChild(CreateSectionTitle("Memory Game (Midnight Falls)"))
+    scrollFrame:AddChild(CreateSpacer())
+
+    scrollFrame:AddChild(CreateSettingsCheckbox("memoryGamePicker", "Show rune picker buttons during mechanic"))
+
+    do
+        ---@type AceGUIButton
+        local unlockBtn = AceGUI:Create("Button")
+        unlockBtn:SetText("Unlock Frames")
+        unlockBtn:SetRelativeWidth(0.4)
+
+        local unlocked = false
+        unlockBtn:SetCallback("OnClick", function()
+            unlocked = not unlocked
+            Private:MemoryGameSetTestMode(unlocked)
+            unlockBtn:SetText(unlocked and "Lock Frames" or "Unlock Frames")
+        end)
+        scrollFrame:AddChild(unlockBtn)
+    end
+
     if Private.db.devMode then
         scrollFrame:AddChild(CreateSpacer())
         scrollFrame:AddChild(CreateSectionTitle("Dev Mode"))

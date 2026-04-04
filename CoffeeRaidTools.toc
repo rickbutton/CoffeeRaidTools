@@ -23,6 +23,7 @@ Features/GearWarnings.lua
 Features/PrivateAuraSoundsData.lua
 Features/PrivateAuraSounds.lua
 Features/BigWigsOverrides.lua
+Features/MemoryGame.lua
 
 Interface/Minimap.lua
 Interface/Frame.lua

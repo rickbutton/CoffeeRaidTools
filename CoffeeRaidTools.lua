@@ -46,6 +46,14 @@ if Private.db.disableConflictingBigWigsPrivateAuraSounds == nil then
     Private.db.disableConflictingBigWigsPrivateAuraSounds = true
 end
 
+if Private.db.memoryGamePicker == nil then
+    Private.db.memoryGamePicker = false
+end
+
+if Private.db.memoryGamePositions == nil then
+    Private.db.memoryGamePositions = {}
+end
+
 Private.catalystWarningEnabled = false
 Private.greatVaultWarningEnabled = false
 
@@ -71,6 +79,15 @@ Blizz.AddPrivateAuraAppliedSound = C_UnitAuras.AddPrivateAuraAppliedSound
 Blizz.RemovePrivateAuraAppliedSound = C_UnitAuras.RemovePrivateAuraAppliedSound
 Blizz.AuraIsPrivate = C_UnitAuras.AuraIsPrivate
 Blizz.GetSpellName = C_Spell.GetSpellName
+
+Blizz.GetTime = GetTime
+Blizz.CreateFrame = CreateFrame
+Blizz.UIParent = UIParent
+Blizz.GameFontNormalLarge = GameFontNormalLarge
+
+function Blizz.NewTimer(duration, callback)
+    return C_Timer.NewTimer(duration, callback)
+end
 
 function Blizz.GetTtsVoices()
     return C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()
@@ -233,6 +250,16 @@ local ChatCommands = {
         Private.db.devMode = not Private.db.devMode
         CoffeeRaidTools:Print("Dev mode " .. (Private.db.devMode and "enabled" or "disabled"))
     end,
+    encountertools = function(args)
+        local sub = args and args:trim():lower() or ""
+        if sub == "unlock" then
+            Private.encounterToolsUnlocked = not Private.encounterToolsUnlocked
+            Private:SendMessage("CRT_EncounterTools_SetTestMode", Private.encounterToolsUnlocked)
+            CoffeeRaidTools:Print("Encounter tools " .. (Private.encounterToolsUnlocked and "unlocked" or "locked"))
+        else
+            CoffeeRaidTools:Print("Usage: /crt encountertools unlock")
+        end
+    end,
 }
 
 function CoffeeRaidTools:ChatCommandHandler(input)
@@ -261,7 +288,7 @@ function CoffeeRaidTools:ChatCommandHandler(input)
 
     local handler = ChatCommands[first]
     if handler then
-        handler()
+        handler(rest)
     else
         CoffeeRaidTools:Print("Unknown command: " .. cmd)
     end
