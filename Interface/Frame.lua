@@ -24,7 +24,7 @@ local function CreateFrame()
     local frame = AceGUI:Create("Frame")
     frame:SetLayout("Fill")
     frame:SetTitle("Coffee Raid Tools")
-    frame:SetStatusText("@project-version@")
+    frame:SetStatusText(Private.VERSION)
     frame:SetCallback("OnClose", DestroyFrame)
     frame:EnableResize(false)
 

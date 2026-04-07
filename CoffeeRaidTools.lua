@@ -6,6 +6,8 @@ local Private = select(2, ...)
 local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(Private)
 
+Private.VERSION = "@project-version"
+
 ---@class CoffeeRaidTools : AceAddon-3.0, AceConsole-3.0, AceComm-3.0
 CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0", "AceComm-3.0")
 
@@ -79,19 +81,22 @@ Blizz.AddPrivateAuraAppliedSound = C_UnitAuras.AddPrivateAuraAppliedSound
 Blizz.RemovePrivateAuraAppliedSound = C_UnitAuras.RemovePrivateAuraAppliedSound
 Blizz.AuraIsPrivate = C_UnitAuras.AuraIsPrivate
 Blizz.GetSpellName = C_Spell.GetSpellName
-
 Blizz.GetTime = GetTime
 Blizz.CreateFrame = CreateFrame
+Blizz.UnitClass = UnitClass
+Blizz.UnitGroupRolesAssigned = UnitGroupRolesAssigned
+Blizz.UnitIsVisible = UnitIsVisible
+Blizz.UnitExists = UnitExists
+Blizz.UnitIsUnit = UnitIsUnit
+Blizz.SendChatMessage = SendChatMessage
+Blizz.GetSpellCooldown = C_Spell.GetSpellCooldown
+Blizz.GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
+Blizz.GetSpellInfo = C_Spell.GetSpellInfo
+Blizz.ShouldAurasBeSecret = C_Secrets.ShouldAurasBeSecret
 Blizz.UIParent = UIParent
 Blizz.GameFontNormalLarge = GameFontNormalLarge
-
-function Blizz.NewTimer(duration, callback)
-    return C_Timer.NewTimer(duration, callback)
-end
-
-function Blizz.GetTtsVoices()
-    return C_VoiceChat and C_VoiceChat.GetTtsVoices and C_VoiceChat.GetTtsVoices()
-end
+Blizz.NewTimer = C_Timer.NewTimer
+Blizz.GetTtsVoices = C_VoiceChat.GetTtsVoices()
 
 ---@class TabDescription
 ---@field key string

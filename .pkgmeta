@@ -22,3 +22,9 @@ ignore:
     - *.md
     - package.json
     - pnpm-lock.yaml
+plain-copy:
+    - Core/*.lua
+    - Features/*.lua
+    - Interface/*.lua
+    - Interface/Tabs/*.lua
+    - Tests/*.lua
