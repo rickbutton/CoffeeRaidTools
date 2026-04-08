@@ -131,9 +131,9 @@ local function EnforceNSRT()
     -- Nickname sharing: 1=Raid, 2=Guild, 3=Both, 4=None
     local nickNameSettings = { "ShareNickNames", "AcceptNickNames", "NickNamesSyncAccept", "NickNamesSyncSend" }
     for _, key in ipairs(nickNameSettings) do
-        if NSRT.Settings[key] ~= 2 then
-            Private:DebugPrint("NSRT Settings." .. key .. ": " .. tostring(NSRT.Settings[key]) .. " -> 2 (Guild)")
-            NSRT.Settings[key] = 2
+        if NSRT.Settings[key] ~= 3 then
+            Private:DebugPrint("NSRT Settings." .. key .. ": " .. tostring(NSRT.Settings[key]) .. " -> 3 (Both)")
+            NSRT.Settings[key] = 3
         end
     end
 

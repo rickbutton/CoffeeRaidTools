@@ -6,7 +6,7 @@ local Private = select(2, ...)
 local AceEvent = LibStub("AceEvent-3.0")
 AceEvent:Embed(Private)
 
-Private.VERSION = "@project-version"
+Private.VERSION = "@project-version@"
 
 ---@class CoffeeRaidTools : AceAddon-3.0, AceConsole-3.0, AceComm-3.0
 CoffeeRaidTools = LibStub("AceAddon-3.0"):NewAddon(AddonName, "AceConsole-3.0", "AceComm-3.0")
