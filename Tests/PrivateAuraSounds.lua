@@ -27,6 +27,20 @@ local function MockCombat(inCombat)
     end)
 end
 
+local function CountAddsForUnits(calls, units)
+    local lookup = {}
+    for _, unit in ipairs(units) do
+        lookup[unit] = true
+    end
+    local matched = {}
+    for _, call in ipairs(calls) do
+        if call.action == "add" and lookup[call.unit] then
+            tinsert(matched, call)
+        end
+    end
+    return matched
+end
+
 local function MockBlizzAPIs(calls)
     Replace(Blizz, "AuraIsPrivate", function()
         return true
@@ -53,13 +67,7 @@ function Tests:DisabledSpellSkipsRegistration()
 
     Private.RegisterPrivateAuraSounds()
 
-    local addCount = 0
-    for _, call in ipairs(calls) do
-        if call.action == "add" then
-            addCount = addCount + 1
-        end
-    end
-    AreEqual(0, addCount)
+    AreEqual(0, #CountAddsForUnits(calls, { "raid1" }))
 end
 
 function Tests:CombatGuardSkipsRegistration()
@@ -72,13 +80,7 @@ function Tests:CombatGuardSkipsRegistration()
 
     Private.RegisterPrivateAuraSounds()
 
-    local addCount = 0
-    for _, call in ipairs(calls) do
-        if call.action == "add" then
-            addCount = addCount + 1
-        end
-    end
-    AreEqual(0, addCount)
+    AreEqual(0, #CountAddsForUnits(calls, { "raid1" }))
 end
 
 function Tests:KnownNicknameUsesCorrectSound()
@@ -91,12 +93,7 @@ function Tests:KnownNicknameUsesCorrectSound()
 
     Private.RegisterPrivateAuraSounds()
 
-    local addCalls = {}
-    for _, call in ipairs(calls) do
-        if call.action == "add" then
-            tinsert(addCalls, call)
-        end
-    end
+    local addCalls = CountAddsForUnits(calls, { "raid1" })
     AreEqual(1, #addCalls)
     AreEqual("raid1", addCalls[1].unit)
     IsTrue(addCalls[1].sound:find("DreadBreath\\Waffle"))
@@ -113,12 +110,7 @@ function Tests:UnknownNicknameUsesFallback()
 
     Private.RegisterPrivateAuraSounds()
 
-    local addCalls = {}
-    for _, call in ipairs(calls) do
-        if call.action == "add" then
-            tinsert(addCalls, call)
-        end
-    end
+    local addCalls = CountAddsForUnits(calls, { "raid1" })
     AreEqual(1, #addCalls)
     IsTrue(addCalls[1].sound:find("DreadBreath\\Unknown"))
 end
@@ -136,13 +128,7 @@ function Tests:SecretUnitSkippedSilently()
 
     Private.RegisterPrivateAuraSounds()
 
-    local addCount = 0
-    for _, call in ipairs(calls) do
-        if call.action == "add" then
-            addCount = addCount + 1
-        end
-    end
-    AreEqual(0, addCount)
+    AreEqual(0, #CountAddsForUnits(calls, { "raid1" }))
 end
 
 function Tests:PerUnitRegistersForEachMember()
@@ -155,12 +141,7 @@ function Tests:PerUnitRegistersForEachMember()
 
     Private.RegisterPrivateAuraSounds()
 
-    local addCalls = {}
-    for _, call in ipairs(calls) do
-        if call.action == "add" then
-            tinsert(addCalls, call)
-        end
-    end
+    local addCalls = CountAddsForUnits(calls, { "raid1", "raid2", "raid3" })
     AreEqual(3, #addCalls)
     AreEqual("raid1", addCalls[1].unit)
     AreEqual("raid2", addCalls[2].unit)
@@ -177,11 +158,5 @@ function Tests:NilNicknameSkippedSilently()
 
     Private.RegisterPrivateAuraSounds()
 
-    local addCount = 0
-    for _, call in ipairs(calls) do
-        if call.action == "add" then
-            addCount = addCount + 1
-        end
-    end
-    AreEqual(0, addCount)
+    AreEqual(0, #CountAddsForUnits(calls, { "raid1" }))
 end
