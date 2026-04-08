@@ -31,6 +31,7 @@ function Tests:GetTabDescriptionFindsRegistered()
     Private:RegisterTab("unittest_find", "Find Me", function() end)
     local tab = Private:GetTabDescription("unittest_find")
     IsTrue(tab ~= nil)
+    ---@cast tab -nil
     AreEqual("unittest_find", tab.key)
     AreEqual("Find Me", tab.title)
     RestoreTabs()

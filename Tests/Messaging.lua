@@ -9,6 +9,7 @@ function Tests:RoundTripSimpleMessage()
     local original = { op = "VREQ", data = {} }
     local encoded = Private.EncodeMessage(original)
     local decoded = Private.DecodeMessage(encoded)
+    ---@cast decoded -nil
     AreEqual("VREQ", decoded.op)
 end
 
@@ -17,6 +18,7 @@ function Tests:RoundTripVersionResponse()
     local original = { op = "VRES", data = versionData }
     local encoded = Private.EncodeMessage(original)
     local decoded = Private.DecodeMessage(encoded)
+    ---@cast decoded -nil
     AreEqual("VRES", decoded.op)
     AreEqual("1.0.0", decoded.data.CRT)
     AreEqual("2.0.0", decoded.data.BW)
@@ -27,6 +29,7 @@ function Tests:RoundTripReload()
     local original = { op = "RELOAD", data = {} }
     local encoded = Private.EncodeMessage(original)
     local decoded = Private.DecodeMessage(encoded)
+    ---@cast decoded -nil
     AreEqual("RELOAD", decoded.op)
 end
 
@@ -39,6 +42,7 @@ function Tests:RoundTripPreservesAllVersionFields()
 
     local encoded = Private.EncodeMessage({ op = "VRES", data = versionData })
     local decoded = Private.DecodeMessage(encoded)
+    ---@cast decoded -nil
 
     for _, addon in ipairs(Private.AddonsToTrack) do
         AreEqual("v" .. addon.shortcode, decoded.data[addon.shortcode])

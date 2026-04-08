@@ -26,8 +26,4 @@ local dataObject = LDB:NewDataObject("CoffeeRaidTools", {
     end,
 })
 
-if Private.db.minimapIcon == nil then
-    Private.db.minimapIcon = {}
-end
-
 LDBIcon:Register("CoffeeRaidTools", dataObject, Private.db.minimapIcon)

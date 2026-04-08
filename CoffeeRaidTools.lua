@@ -56,6 +56,10 @@ if Private.db.memoryGamePositions == nil then
     Private.db.memoryGamePositions = {}
 end
 
+if Private.db.minimapIcon == nil then
+    Private.db.minimapIcon = {}
+end
+
 Private.catalystWarningEnabled = false
 Private.greatVaultWarningEnabled = false
 
