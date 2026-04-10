@@ -43,13 +43,13 @@ function Private.HasSoulstoneOnHealer()
     return false
 end
 
-Private:RegisterMessage("CRT_BigWigs_StartPull", function()
-    local classID = select(3, Blizz.UnitClass("player"))
-    if classID ~= WARLOCK_CLASS_ID then
-        return
-    end
-
-    if not Private.HasSoulstoneOnHealer() then
-        Blizz.SendChatMessage("I didn't soulstone a healer! Please Ping Me!", "YELL")
-    end
-end)
+--Private:RegisterMessage("CRT_BigWigs_StartPull", function()
+--    local classID = select(3, Blizz.UnitClass("player"))
+--    if classID ~= WARLOCK_CLASS_ID then
+--        return
+--    end
+--
+--    if not Private.HasSoulstoneOnHealer() then
+--        Blizz.SendChatMessage("I didn't soulstone a healer! Please Ping Me!", "YELL")
+--    end
+--end)
