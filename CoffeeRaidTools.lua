@@ -97,6 +97,7 @@ Blizz.GetSpellCooldown = C_Spell.GetSpellCooldown
 Blizz.GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
 Blizz.GetSpellInfo = C_Spell.GetSpellInfo
 Blizz.ShouldAurasBeSecret = C_Secrets.ShouldAurasBeSecret
+Blizz.IsQuestFlaggedCompleted = C_QuestLog.IsQuestFlaggedCompleted
 Blizz.UIParent = UIParent
 Blizz.GameFontNormalLarge = GameFontNormalLarge
 Blizz.NewTimer = C_Timer.NewTimer

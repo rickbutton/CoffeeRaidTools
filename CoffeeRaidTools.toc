@@ -25,6 +25,7 @@ Features/PrivateAuraSounds.lua
 Features/BigWigsOverrides.lua
 Features/MemoryGame.lua
 Features/SoulstoneCheck.lua
+Features/RaidBuffReminder.lua
 
 Interface/Minimap.lua
 Interface/Frame.lua
