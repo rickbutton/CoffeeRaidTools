@@ -60,7 +60,7 @@ local MEMORY_GAME_TIMERS = {
     },
     [15] = {
         { time = 10, reversed = false },
-        { time = 80, reversed = true },
+        { time = 80, reversed = false },
         { time = 150, reversed = false },
     },
 }
