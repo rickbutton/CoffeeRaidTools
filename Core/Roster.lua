@@ -11,6 +11,7 @@ local Roster = {
     { nickname = "Annoyance", battletag = "puma#1523" },
     { nickname = "Apex", battletag = "apexmachine#1449" },
     { nickname = "Apollo", battletag = "pwnstar#11783" },
+    { nickname = "Belek", battletag = "belek#11269" },
     { nickname = "Bestman", battletag = "bestman#1653" },
     { nickname = "Bubble", battletag = "hm3boost#1688" },
     { nickname = "Dez", battletag = "itsneahvil#1266" },
