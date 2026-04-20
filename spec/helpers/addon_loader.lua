@@ -78,7 +78,6 @@ loadAddonFile("Features/ForceAddonSettings.lua")
 loadAddonFile("Features/ReadyCheck.lua")
 loadAddonFile("Features/PrivateAuraSoundsData.lua")
 loadAddonFile("Features/PrivateAuraSounds.lua")
-loadAddonFile("Features/SoulstoneCheck.lua")
 
 loadAddonFile("Interface/Tabs/Raid.lua")
 
