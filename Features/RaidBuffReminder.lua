@@ -1,7 +1,5 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 
 local INSTANCE_QUEST_MAP = {
     [2912] = 93922, -- Voidspire
@@ -22,13 +20,13 @@ local function ShowReminder()
         return
     end
 
-    reminderFrame = Blizz.CreateFrame("Frame", nil, Blizz.UIParent)
+    reminderFrame = CreateFrame("Frame", nil, UIParent)
     reminderFrame:SetAllPoints()
     reminderFrame:SetFrameStrata("HIGH")
 
     local text = reminderFrame:CreateFontString(nil, "OVERLAY")
     text:SetPoint("CENTER", 0, 0)
-    text:SetFont(Blizz.GameFontNormalLarge:GetFont(), 48, "OUTLINE")
+    text:SetFont(GameFontNormalLarge:GetFont(), 48, "OUTLINE")
     text:SetTextColor(1, 0.2, 0.2, 1)
     text:SetText("GET RAID BUFF")
 
@@ -42,10 +40,10 @@ local function HideReminder()
 end
 
 local function Update()
-    local _, _, _, _, _, _, _, instanceID = Blizz.GetInstanceInfo()
+    local _, _, _, _, _, _, _, instanceID = GetInstanceInfo()
     local questID = INSTANCE_QUEST_MAP[instanceID]
 
-    if questID and not Blizz.IsQuestFlaggedCompleted(questID) then
+    if questID and not C_QuestLog.IsQuestFlaggedCompleted(questID) then
         Private:DebugPrint("RaidBuff: showing reminder, instance", instanceID, "quest", questID)
         ShowReminder()
     else

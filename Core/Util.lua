@@ -1,12 +1,10 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 
 ---@param reversed boolean?
 ---@param forceParty boolean?
 function Private:IterateGroupMembers(reversed, forceParty)
-    local unit = (not forceParty and Blizz.IsInRaid()) and "raid" or "party"
+    local unit = (not forceParty and IsInRaid()) and "raid" or "party"
     local numGroupMembers = unit == "party" and GetNumSubgroupMembers() or GetNumGroupMembers()
     local i = reversed and numGroupMembers or (unit == "party" and 0 or 1)
     return function()
@@ -147,8 +145,8 @@ end
 
 ---@param unit string
 function Private:UnitIsRealPlayer(unit)
-    local guid = Blizz.UnitGUID(unit)
-    if Blizz.issecretvalue(guid) then
+    local guid = UnitGUID(unit)
+    if issecretvalue(guid) then
         return false
     end
     return guid and guid:find("^Player-") ~= nil

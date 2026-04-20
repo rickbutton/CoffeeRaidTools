@@ -1,7 +1,5 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 local AceGUI = LibStub("AceGUI-3.0")
 
 local function CreateSectionTitle(text)
@@ -116,7 +114,7 @@ local function DrawTab(container)
 
             ---@type AceGUICheckBox
             local cb = AceGUI:Create("CheckBox")
-            cb:SetLabel(Blizz.GetSpellName(primaryID) or tostring(primaryID))
+            cb:SetLabel(C_Spell.GetSpellName(primaryID) or tostring(primaryID))
             cb:SetValue(not Private.db.disabledPrivateAuras[primaryID])
             cb:SetCallback("OnValueChanged", function(widget, event, value)
                 Private.db.disabledPrivateAuras[primaryID] = (not value) or nil
@@ -164,7 +162,7 @@ local function DrawTab(container)
                 btn:SetCallback("OnClick", function()
                     local selected = dropdown:GetValue()
                     if selected then
-                        Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config, selected), "master")
+                        PlaySoundFile(Private:GetPrivateAuraSoundPath(config, selected), "master")
                     end
                 end)
             else
@@ -173,7 +171,7 @@ local function DrawTab(container)
                 btn:SetText("Test")
                 btn:SetRelativeWidth(0.2)
                 btn:SetCallback("OnClick", function()
-                    Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
+                    PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
                 end)
                 row:AddChild(btn)
             end
@@ -208,7 +206,6 @@ local function DrawTab(container)
         scrollFrame:AddChild(CreateSectionTitle("Dev Mode"))
         scrollFrame:AddChild(CreateSpacer())
         scrollFrame:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
-        scrollFrame:AddChild(CreateSettingsCheckbox("runTestsOnLoad", "Run Tests on Addon Load"))
         scrollFrame:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
     end
 end

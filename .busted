@@ -1,0 +1,7 @@
+return {
+    default = {
+        helper = "spec/setup.lua",
+        verbose = true,
+        ["auto-insulate"] = false,
+    },
+}

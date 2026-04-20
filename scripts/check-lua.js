@@ -36,6 +36,7 @@ const luarc = {
   workspace: {
     library: [annotationsPath + "/Core", annotationsPath + "/FrameXML"],
     checkThirdParty: false,
+    ignoreDir: ["spec", ".release"],
   },
   diagnostics: { globals, disable: ["assign-type-mismatch"] },
   type: { weakUnionCheck: true },

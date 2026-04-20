@@ -32,10 +32,6 @@ if Private.db.devMode == nil then
     Private.db.devMode = false
 end
 
-if Private.db.runTestsOnLoad == nil then
-    Private.db.runTestsOnLoad = false
-end
-
 if Private.db.onlyShowMismatches == nil then
     Private.db.onlyShowMismatches = false
 end
@@ -62,46 +58,6 @@ end
 
 Private.catalystWarningEnabled = false
 Private.greatVaultWarningEnabled = false
-
-Private.Blizz = {}
----@class Blizz
-local Blizz = Private.Blizz
-
-Blizz.IsInRaid = IsInRaid
-Blizz.GetInstanceInfo = GetInstanceInfo
-Blizz.IsInGroup = IsInGroup
-Blizz.UnitGUID = UnitGUID
-Blizz.GetGuildInfo = GetGuildInfo
-Blizz.BNGetInfo = BNGetInfo
-Blizz.UnitIsGroupLeader = UnitIsGroupLeader
-Blizz.GetGuildInfoText = GetGuildInfoText
-Blizz.IsAddOnLoaded = C_AddOns.IsAddOnLoaded
-Blizz.GetAddOnMetadata = C_AddOns.GetAddOnMetadata
-Blizz.GetAddOnEnableState = C_AddOns.GetAddOnEnableState
-Blizz.DisableAddOn = C_AddOns.DisableAddOn
-Blizz.issecretvalue = issecretvalue
-Blizz.PlaySoundFile = PlaySoundFile
-Blizz.AddPrivateAuraAppliedSound = C_UnitAuras.AddPrivateAuraAppliedSound
-Blizz.RemovePrivateAuraAppliedSound = C_UnitAuras.RemovePrivateAuraAppliedSound
-Blizz.AuraIsPrivate = C_UnitAuras.AuraIsPrivate
-Blizz.GetSpellName = C_Spell.GetSpellName
-Blizz.GetTime = GetTime
-Blizz.CreateFrame = CreateFrame
-Blizz.UnitClass = UnitClass
-Blizz.UnitGroupRolesAssigned = UnitGroupRolesAssigned
-Blizz.UnitIsVisible = UnitIsVisible
-Blizz.UnitExists = UnitExists
-Blizz.UnitIsUnit = UnitIsUnit
-Blizz.SendChatMessage = SendChatMessage
-Blizz.GetSpellCooldown = C_Spell.GetSpellCooldown
-Blizz.GetAuraDataBySpellName = C_UnitAuras.GetAuraDataBySpellName
-Blizz.GetSpellInfo = C_Spell.GetSpellInfo
-Blizz.ShouldAurasBeSecret = C_Secrets.ShouldAurasBeSecret
-Blizz.IsQuestFlaggedCompleted = C_QuestLog.IsQuestFlaggedCompleted
-Blizz.UIParent = UIParent
-Blizz.GameFontNormalLarge = GameFontNormalLarge
-Blizz.NewTimer = C_Timer.NewTimer
-Blizz.GetTtsVoices = C_VoiceChat.GetTtsVoices()
 
 ---@class TabDescription
 ---@field key string
@@ -196,11 +152,7 @@ StaticPopupDialogs["CRT_UPDATE_AVAILABLE"] = {
 
 function CoffeeRaidTools:OnInitialize() end
 
-function CoffeeRaidTools:OnEnable()
-    if Private.db.devMode and Private.db.runTestsOnLoad then
-        Private.Tests:RunAll()
-    end
-end
+function CoffeeRaidTools:OnEnable() end
 
 function CoffeeRaidTools:OnDisable() end
 
@@ -283,15 +235,15 @@ function CoffeeRaidTools:ChatCommandHandler(input)
     if first == "test" then
         local subcommand = rest and rest:trim() or ""
         if subcommand == "" then
-            Private.Tests:RunAll()
+            CoffeeRaidTools:Print("Usage: /crt test <subcommand>")
+            return
+        end
+        local sub, subrest = subcommand:match("^(%S+)%s*(.*)$")
+        local handler = TestCommands[sub]
+        if handler then
+            handler(subrest)
         else
-            local sub, subrest = subcommand:match("^(%S+)%s*(.*)$")
-            local handler = TestCommands[sub]
-            if handler then
-                handler(subrest)
-            else
-                CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
-            end
+            CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
         end
         return
     end

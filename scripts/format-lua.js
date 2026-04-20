@@ -2,4 +2,6 @@
 const { luaFiles, run } = require("./lua-tools");
 
 const check = process.argv.includes("--check") ? "--check " : "";
-run(`stylua ${check}${luaFiles}`);
+// --respect-ignores makes stylua consult .styluaignore when files are passed
+// directly, rather than only when recursing into a directory.
+run(`stylua --respect-ignores ${check}${luaFiles}`);

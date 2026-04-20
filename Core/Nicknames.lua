@@ -1,7 +1,5 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 
 ---@param unit string
 function CoffeeRaidTools:GetNameFormatString(unit)
@@ -17,7 +15,7 @@ end
 ---@param unit string
 function CoffeeRaidTools:GetCharacterNameWithRealm(unit)
     local name, realm = UnitNameUnmodified(unit)
-    if Blizz.issecretvalue(name) then
+    if issecretvalue(name) then
         return name
     end
     if not realm then

@@ -24,7 +24,6 @@ Features/PrivateAuraSoundsData.lua
 Features/PrivateAuraSounds.lua
 Features/BigWigsOverrides.lua
 Features/MemoryGame.lua
-Features/SoulstoneCheck.lua
 Features/RaidBuffReminder.lua
 
 Interface/Minimap.lua
@@ -32,14 +31,3 @@ Interface/Frame.lua
 Interface/Tabs/Local.lua
 Interface/Tabs/Raid.lua
 Interface/Tabs/Settings.lua
-
-Tests/TestRunner.lua
-Tests/Versions.lua
-Tests/Messaging.lua
-Tests/RaidStatus.lua
-Tests/ForceAddonSettings.lua
-Tests/ReadyCheck.lua
-Tests/ChatCommands.lua
-Tests/TabRegistry.lua
-Tests/PrivateAuraSounds.lua
-Tests/SoulstoneCheck.lua
