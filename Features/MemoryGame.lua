@@ -1,7 +1,5 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 
 local ENCOUNTER_ID = 3183
 local RUNE_ICON_SIZE = 46
@@ -96,8 +94,8 @@ end
 local function SavePosition(dbKey, frame)
     local cx = frame:GetLeft() + frame:GetWidth() / 2
     local cy = frame:GetBottom() + frame:GetHeight() / 2
-    local parentCx = Blizz.UIParent:GetWidth() / 2
-    local parentCy = Blizz.UIParent:GetHeight() / 2
+    local parentCx = UIParent:GetWidth() / 2
+    local parentCy = UIParent:GetHeight() / 2
     local x = cx - parentCx
     local y = cy - parentCy
     Private:DebugPrint("MemoryGame SavePosition", dbKey, "x=", x, "y=", y)
@@ -221,7 +219,7 @@ local function OnRuneDetected(msg)
     if hideTimer then
         hideTimer:Cancel()
     end
-    hideTimer = Blizz.NewTimer(HIDE_DELAY, function()
+    hideTimer = C_Timer.NewTimer(HIDE_DELAY, function()
         ResetClock()
         HidePicker()
         hideTimer = nil
@@ -253,7 +251,7 @@ local function BuildClockFrame()
         return
     end
 
-    clockFrame = Blizz.CreateFrame("Frame", "CRTMemoryClockFrame", Blizz.UIParent, "BackdropTemplate")
+    clockFrame = CreateFrame("Frame", "CRTMemoryClockFrame", UIParent, "BackdropTemplate")
     clockFrame:SetSize(CLOCK_FRAME_SIZE, CLOCK_FRAME_SIZE)
     clockFrame:SetPoint("CENTER", nil, "CENTER", -400, 200)
     clockFrame:SetClampedToScreen(true)
@@ -266,7 +264,7 @@ local function BuildClockFrame()
 
     for i = 1, #RUNES do
         local pos = CLOCK_POSITIONS[i]
-        local slot = Blizz.CreateFrame("Frame", nil, clockFrame, "BackdropTemplate")
+        local slot = CreateFrame("Frame", nil, clockFrame, "BackdropTemplate")
         slot:SetSize(RUNE_ICON_SIZE, RUNE_ICON_SIZE)
         slot:SetBackdrop(BACKDROP)
         slot:SetBackdropColor(unpack(C.slotEmpty))
@@ -310,7 +308,7 @@ local function BuildPickerFrame()
     local FRAME_W = #RUNES * RUNE_ICON_SIZE + (#RUNES - 1) * SLOT_GAP + PAD * 2 + 2
     local FRAME_H = RUNE_ICON_SIZE + PAD * 2
 
-    pickerFrame = Blizz.CreateFrame("Frame", "CRTMemoryPickerFrame", Blizz.UIParent, "BackdropTemplate")
+    pickerFrame = CreateFrame("Frame", "CRTMemoryPickerFrame", UIParent, "BackdropTemplate")
     pickerFrame:SetSize(FRAME_W, FRAME_H)
     pickerFrame:SetPoint("CENTER", nil, "CENTER", -400, 100)
     pickerFrame:SetClampedToScreen(true)
@@ -323,7 +321,7 @@ local function BuildPickerFrame()
 
     for i = 1, #RUNES do
         local rune = RUNES[i]
-        local btn = Blizz.CreateFrame(
+        local btn = CreateFrame(
             "Button",
             "CRTMemoryRuneBtn" .. i,
             pickerFrame,
@@ -390,12 +388,12 @@ local function StartEncounter(difficultyID)
 
     -- Schedule picker show/hide at mechanic times
     for _, entry in ipairs(timers) do
-        local showTimer = Blizz.NewTimer(entry.time, function()
+        local showTimer = C_Timer.NewTimer(entry.time, function()
             ResetClock()
             inverted = entry.reversed
             UpdateSlotNumbers()
             ShowPicker()
-            local autoHide = Blizz.NewTimer(HIDE_DELAY, function()
+            local autoHide = C_Timer.NewTimer(HIDE_DELAY, function()
                 HidePicker()
                 ResetClock()
             end)

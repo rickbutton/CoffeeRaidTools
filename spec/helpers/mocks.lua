@@ -1,5 +1,4 @@
 -- Mocking helper modeled after the old TestRunner's Replace() pattern.
--- Only used for targets we own (Private, Blizz, CoffeeRaidTools, _G flag slots).
 -- Spec files call Replace() inside an `it` block; after_each(Restore) cleans up.
 
 local M = {}

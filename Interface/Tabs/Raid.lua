@@ -1,7 +1,5 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 local AceGUI = LibStub("AceGUI-3.0")
 
 local function CreateSpacer()
@@ -182,8 +180,8 @@ local function GetPlayerData()
     local players = {}
     for unit in Private:IterateGroupMembers() do
         local playerName, nameFormat = CoffeeRaidTools:GetNickname(unit)
-        local guid = Blizz.UnitGUID(unit)
-        if not Blizz.issecretvalue(guid) and guid and Private:UnitIsRealPlayer(unit) then
+        local guid = UnitGUID(unit)
+        if not issecretvalue(guid) and guid and Private:UnitIsRealPlayer(unit) then
             local versions = groupVersions[guid]
             if versions then
                 table.insert(players, { name = string.format(nameFormat, playerName), versions = versions })

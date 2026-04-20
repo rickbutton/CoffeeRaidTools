@@ -1,7 +1,5 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 local AceGUI = LibStub("AceGUI-3.0")
 
 local AUTO_DISMISS_SECONDS = 5
@@ -103,8 +101,8 @@ local function IsInCoffeeRaid()
     for unit in Private:IterateGroupMembers() do
         if Private:UnitIsRealPlayer(unit) then
             totalMembers = totalMembers + 1
-            local guildName = Blizz.GetGuildInfo(unit)
-            if not Blizz.issecretvalue(guildName) and guildName == "Coffee" then
+            local guildName = GetGuildInfo(unit)
+            if not issecretvalue(guildName) and guildName == "Coffee" then
                 coffeeMembers = coffeeMembers + 1
             end
         end
@@ -121,9 +119,9 @@ local function ShouldShowPopup()
     elseif setting == "always" then
         return true
     elseif setting == "inraid" then
-        return Blizz.IsInRaid()
+        return IsInRaid()
     elseif setting == "inraidcoffee" then
-        return Blizz.IsInRaid() and Private.IsInCoffeeRaid()
+        return IsInRaid() and Private.IsInCoffeeRaid()
     end
     return false
 end

@@ -61,30 +61,30 @@ describe("Messaging", function()
 
     describe("GetGroupBroadcastTarget", function()
         it("returns INSTANCE_CHAT when in an instance group", function()
-            Replace(Blizz, "IsInGroup", function(category)
+            Replace("IsInGroup", function(category)
                 return category == LE_PARTY_CATEGORY_INSTANCE
             end)
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return false
             end)
             assert.are.equal("INSTANCE_CHAT", Private.GetGroupBroadcastTarget())
         end)
 
         it("returns RAID when in a raid", function()
-            Replace(Blizz, "IsInGroup", function()
+            Replace("IsInGroup", function()
                 return false
             end)
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return true
             end)
             assert.are.equal("RAID", Private.GetGroupBroadcastTarget())
         end)
 
         it("returns PARTY as the fallback", function()
-            Replace(Blizz, "IsInGroup", function()
+            Replace("IsInGroup", function()
                 return false
             end)
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return false
             end)
             assert.are.equal("PARTY", Private.GetGroupBroadcastTarget())

@@ -10,25 +10,25 @@ describe("SoulstoneCheck", function()
     end
 
     local function mockNotRestricted()
-        Replace(Blizz, "ShouldAurasBeSecret", function()
+        Replace(C_Secrets, "ShouldAurasBeSecret", function()
             return false
         end)
     end
 
     local function mockSpellReady()
-        Replace(Blizz, "GetSpellCooldown", function()
+        Replace(C_Spell, "GetSpellCooldown", function()
             return { duration = 0, startTime = 0 }
         end)
     end
 
     local function mockSpellInfo()
-        Replace(Blizz, "GetSpellInfo", function()
+        Replace(C_Spell, "GetSpellInfo", function()
             return { name = "Soulstone" }
         end)
     end
 
     local function mockTime(t)
-        Replace(Blizz, "GetTime", function()
+        Replace("GetTime", function()
             return t
         end)
     end
@@ -36,7 +36,7 @@ describe("SoulstoneCheck", function()
     after_each(Restore)
 
     it("returns true when auras are secret", function()
-        Replace(Blizz, "ShouldAurasBeSecret", function()
+        Replace(C_Secrets, "ShouldAurasBeSecret", function()
             return true
         end)
         assert.is_true(Private.HasSoulstoneOnHealer())
@@ -45,7 +45,7 @@ describe("SoulstoneCheck", function()
     it("returns true when Soulstone has a long cooldown", function()
         mockNotRestricted()
         mockTime(100)
-        Replace(Blizz, "GetSpellCooldown", function()
+        Replace(C_Spell, "GetSpellCooldown", function()
             return { duration = 120, startTime = 50 }
         end)
         -- remaining = 120 + 50 - 100 = 70 (> 30)
@@ -58,13 +58,13 @@ describe("SoulstoneCheck", function()
         mockSpellInfo()
         mockTime(100)
         mockGroupMembers({ "raid1", "raid2" })
-        Replace(Blizz, "UnitGroupRolesAssigned", function(unit)
+        Replace("UnitGroupRolesAssigned", function(unit)
             return unit == "raid1" and "HEALER" or "DAMAGER"
         end)
-        Replace(Blizz, "UnitIsVisible", function()
+        Replace("UnitIsVisible", function()
             return true
         end)
-        Replace(Blizz, "GetAuraDataBySpellName", function()
+        Replace(C_UnitAuras, "GetAuraDataBySpellName", function()
             return nil
         end)
         assert.is_false(Private.HasSoulstoneOnHealer())
@@ -76,19 +76,19 @@ describe("SoulstoneCheck", function()
         mockSpellInfo()
         mockTime(100)
         mockGroupMembers({ "raid1" })
-        Replace(Blizz, "UnitGroupRolesAssigned", function()
+        Replace("UnitGroupRolesAssigned", function()
             return "HEALER"
         end)
-        Replace(Blizz, "UnitIsVisible", function()
+        Replace("UnitIsVisible", function()
             return true
         end)
-        Replace(Blizz, "GetAuraDataBySpellName", function()
+        Replace(C_UnitAuras, "GetAuraDataBySpellName", function()
             return { sourceUnit = "player", expirationTime = 900 }
         end)
-        Replace(Blizz, "UnitExists", function()
+        Replace("UnitExists", function()
             return true
         end)
-        Replace(Blizz, "UnitIsUnit", function()
+        Replace("UnitIsUnit", function()
             return true
         end)
         -- remaining = 900 - 100 = 800 (> 300)
@@ -101,19 +101,19 @@ describe("SoulstoneCheck", function()
         mockSpellInfo()
         mockTime(100)
         mockGroupMembers({ "raid1" })
-        Replace(Blizz, "UnitGroupRolesAssigned", function()
+        Replace("UnitGroupRolesAssigned", function()
             return "HEALER"
         end)
-        Replace(Blizz, "UnitIsVisible", function()
+        Replace("UnitIsVisible", function()
             return true
         end)
-        Replace(Blizz, "GetAuraDataBySpellName", function()
+        Replace(C_UnitAuras, "GetAuraDataBySpellName", function()
             return { sourceUnit = "player", expirationTime = 350 }
         end)
-        Replace(Blizz, "UnitExists", function()
+        Replace("UnitExists", function()
             return true
         end)
-        Replace(Blizz, "UnitIsUnit", function()
+        Replace("UnitIsUnit", function()
             return true
         end)
         -- remaining = 350 - 100 = 250 (< 300)
@@ -126,19 +126,19 @@ describe("SoulstoneCheck", function()
         mockSpellInfo()
         mockTime(100)
         mockGroupMembers({ "raid1" })
-        Replace(Blizz, "UnitGroupRolesAssigned", function()
+        Replace("UnitGroupRolesAssigned", function()
             return "HEALER"
         end)
-        Replace(Blizz, "UnitIsVisible", function()
+        Replace("UnitIsVisible", function()
             return true
         end)
-        Replace(Blizz, "GetAuraDataBySpellName", function()
+        Replace(C_UnitAuras, "GetAuraDataBySpellName", function()
             return { sourceUnit = "raid5", expirationTime = 900 }
         end)
-        Replace(Blizz, "UnitExists", function()
+        Replace("UnitExists", function()
             return true
         end)
-        Replace(Blizz, "UnitIsUnit", function()
+        Replace("UnitIsUnit", function()
             return false
         end)
         assert.is_false(Private.HasSoulstoneOnHealer())
@@ -150,13 +150,13 @@ describe("SoulstoneCheck", function()
         mockSpellInfo()
         mockTime(100)
         mockGroupMembers({ "raid1" })
-        Replace(Blizz, "UnitGroupRolesAssigned", function()
+        Replace("UnitGroupRolesAssigned", function()
             return "DAMAGER"
         end)
-        Replace(Blizz, "UnitIsVisible", function()
+        Replace("UnitIsVisible", function()
             return true
         end)
-        Replace(Blizz, "GetAuraDataBySpellName", function()
+        Replace(C_UnitAuras, "GetAuraDataBySpellName", function()
             return nil
         end)
         assert.is_false(Private.HasSoulstoneOnHealer())
@@ -168,10 +168,10 @@ describe("SoulstoneCheck", function()
         mockSpellInfo()
         mockTime(100)
         mockGroupMembers({ "raid1" })
-        Replace(Blizz, "UnitGroupRolesAssigned", function()
+        Replace("UnitGroupRolesAssigned", function()
             return "HEALER"
         end)
-        Replace(Blizz, "UnitIsVisible", function()
+        Replace("UnitIsVisible", function()
             return false
         end)
         assert.is_false(Private.HasSoulstoneOnHealer())

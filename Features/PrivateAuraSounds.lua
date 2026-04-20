@@ -1,7 +1,5 @@
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 
 local ADDON_MEDIA = "Interface\\AddOns\\CoffeeRaidTools\\Media\\TTS\\"
 local FALLBACK_NICKNAME = "Unknown"
@@ -25,7 +23,7 @@ local registeredSounds = {} -- [unitToken][spellID] = soundID
 local function RemoveAllSounds()
     for _, spells in pairs(registeredSounds) do
         for _, soundID in pairs(spells) do
-            Blizz.RemovePrivateAuraAppliedSound(soundID)
+            C_UnitAuras.RemovePrivateAuraAppliedSound(soundID)
         end
     end
     wipe(registeredSounds)
@@ -36,16 +34,16 @@ end
 ---@param soundFile string
 local function RegisterSound(unit, spellID, soundFile)
     Private:DebugPrint("PrivateAuras: RegisterSound", unit, spellID, soundFile)
-    if not Blizz.AuraIsPrivate(spellID) then
+    if not C_UnitAuras.AuraIsPrivate(spellID) then
         return
     end
 
     if registeredSounds[unit] and registeredSounds[unit][spellID] then
-        Blizz.RemovePrivateAuraAppliedSound(registeredSounds[unit][spellID])
+        C_UnitAuras.RemovePrivateAuraAppliedSound(registeredSounds[unit][spellID])
         registeredSounds[unit][spellID] = nil
     end
 
-    local soundID = Blizz.AddPrivateAuraAppliedSound({
+    local soundID = C_UnitAuras.AddPrivateAuraAppliedSound({
         unitToken = unit,
         spellID = spellID,
         soundFileName = soundFile,
@@ -88,12 +86,12 @@ local function RegisterPrivateAuraSounds(warnOnMissing)
                     if config.perUnit then
                         for unit in Private:IterateGroupMembers() do
                             local nickname = CoffeeRaidTools:GetNickname(unit, true)
-                            if nickname and not Blizz.issecretvalue(nickname) then
+                            if nickname and not issecretvalue(nickname) then
                                 ---@type string?
                                 local rosterNickname = nickname
                                 if not Private.RosterNicknames[nickname] then
                                     Private:DebugPrint("PrivateAuras: no roster entry for", tostring(nickname))
-                                    local _, instanceType = Blizz.GetInstanceInfo()
+                                    local _, instanceType = GetInstanceInfo()
                                     if warnOnMissing and instanceType == "raid" then
                                         CoffeeRaidTools:Print(
                                             "|cffff4040Warning:|r No roster entry for "
@@ -138,7 +136,7 @@ function Private:TestPrivateAuraSound(spellID)
 
     if config.perUnit then
         local nickname = CoffeeRaidTools:GetNickname("target", true)
-        if not nickname or Blizz.issecretvalue(nickname) then
+        if not nickname or issecretvalue(nickname) then
             CoffeeRaidTools:Print("No valid target selected")
             return
         end
@@ -148,10 +146,10 @@ function Private:TestPrivateAuraSound(spellID)
             rosterNickname = nil
         end
         CoffeeRaidTools:Print("Playing: " .. Private:GetPrivateAuraSoundPath(config, rosterNickname))
-        Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config, rosterNickname), "master")
+        PlaySoundFile(Private:GetPrivateAuraSoundPath(config, rosterNickname), "master")
     else
         CoffeeRaidTools:Print("Playing: " .. Private:GetPrivateAuraSoundPath(config))
-        Blizz.PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
+        PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
     end
 end
 

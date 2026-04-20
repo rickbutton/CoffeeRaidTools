@@ -83,4 +83,3 @@ loadAddonFile("Features/SoulstoneCheck.lua")
 loadAddonFile("Interface/Tabs/Raid.lua")
 
 _G.Private = Private
-_G.Blizz = Private.Blizz

@@ -30,8 +30,7 @@ Unit tests live in `spec/` and run via [busted](https://lunarmodules.github.io/b
 ### Key Patterns
 - Private namespace via `select(2, ...)` — use `Private` for all internal state
 - Public API only on the `CoffeeRaidTools` global
-- Blizzard API wrappers live on `Private.Blizz` — never call WoW globals directly from feature code
-- Files that need Blizzard APIs should define `local Blizz = Private.Blizz` near the top (with `---@type Blizz` annotation)
+- Call WoW APIs directly (`IsInRaid()`, `C_AddOns.IsAddOnLoaded()`, etc.) — tests mock them on `_G` / the `C_*` namespace tables
 - Tab registration via `Private:RegisterTab()`
 - Chat commands: `/crt` (open frame), `/crt debug` (toggle debug mode)
 
@@ -82,10 +81,9 @@ Run `pnpm run vendor` to clone or update all vendor repos. Do this before implem
 ### Testing
 - Unit tests use [busted](https://lunarmodules.github.io/busted/) and live in `spec/*_spec.lua`. Run with `pnpm test` (invokes `busted --lua=lua5.1`).
 - Test harness: `.busted` points busted at `spec/setup.lua`, which loads `spec/helpers/wow_mocks.lua` (WoW global stubs), then `spec/helpers/addon_loader.lua` (Ace3 libs from `.release/CoffeeRaidTools/Libs/` + every addon `.lua` file), then `spec/helpers/mocks.lua` (the `Replace`/`Restore` mocking helpers). The first `pnpm test` run shells out to `pnpm run build:full` to populate `Libs/`.
-- Spec files get `Private`, `Blizz`, `CoffeeRaidTools`, `Replace`, and `Restore` as globals. Call `after_each(Restore)` to unwind `Replace` calls between tests.
-- `Replace` in tests should only target tables we own (`Private`, `Blizz`, `CoffeeRaidTools`), plus the two-arg `Replace(name, value)` form for global slots we assign to (like `NSRT` / `NSAPI`).
-- Never use `Replace` on Blizzard-provided objects directly. If code under test calls a Blizzard API, wrap it in `Private.Blizz` first and replace on `Blizz` in the test.
-- When adding a new WoW API call: add it to `Private.Blizz` in `CoffeeRaidTools.lua`, and if Ace3 or the addon needs it at load time (not just in a test), add a stub to `spec/helpers/wow_mocks.lua` so the addon loads cleanly under busted.
+- Spec files get `Private`, `CoffeeRaidTools`, `Replace`, and `Restore` as globals. Call `after_each(Restore)` to unwind `Replace` calls between tests.
+- Mock WoW APIs wherever the addon calls them: `Replace("IsInRaid", fn)` for plain globals (two-arg form sets `_G.IsInRaid`), `Replace(C_AddOns, "IsAddOnLoaded", fn)` for namespaced APIs.
+- When adding a new WoW API call to the addon: if Ace3 or the addon needs it at load time (not just in a test), add a stub to `spec/helpers/wow_mocks.lua` so the addon loads cleanly under busted.
 
 ### General
 - Never create duplicate/versioned files — edit in place

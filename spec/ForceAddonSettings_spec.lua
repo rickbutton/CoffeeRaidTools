@@ -45,7 +45,7 @@ describe("ForceAddonSettings", function()
 
     it("forces UseTLReminders off", function()
         Replace("NSRT", { ReminderSettings = { UseTLReminders = true } })
-        Replace(Blizz, "BNGetInfo", function()
+        Replace("BNGetInfo", function()
             return nil, nil
         end)
         Private.EnforceNSRT()
@@ -61,7 +61,7 @@ describe("ForceAddonSettings", function()
 
     it("enables GlobalNickNames", function()
         Replace("NSRT", {})
-        Replace(Blizz, "BNGetInfo", function()
+        Replace("BNGetInfo", function()
             return nil, nil
         end)
         Private.EnforceNSRT()
@@ -70,7 +70,7 @@ describe("ForceAddonSettings", function()
 
     it("sets MyNickName from the battle tag", function()
         Replace("NSRT", {})
-        Replace(Blizz, "BNGetInfo", function()
+        Replace("BNGetInfo", function()
             return nil, "waffletwo#1858"
         end)
         Private.EnforceNSRT()
@@ -79,7 +79,7 @@ describe("ForceAddonSettings", function()
 
     it("matches battle tags case-insensitively", function()
         Replace("NSRT", {})
-        Replace(Blizz, "BNGetInfo", function()
+        Replace("BNGetInfo", function()
             return nil, "WaffleTwo#1858"
         end)
         Private.EnforceNSRT()
@@ -88,7 +88,7 @@ describe("ForceAddonSettings", function()
 
     it("leaves MyNickName alone for unknown battle tags", function()
         Replace("NSRT", { Settings = { MyNickName = "Original" } })
-        Replace(Blizz, "BNGetInfo", function()
+        Replace("BNGetInfo", function()
             return nil, "unknown#0000"
         end)
         Private.EnforceNSRT()
@@ -97,7 +97,7 @@ describe("ForceAddonSettings", function()
 
     it("enables SpellTTS", function()
         Replace("NSRT", {})
-        Replace(Blizz, "BNGetInfo", function()
+        Replace("BNGetInfo", function()
             return nil, nil
         end)
         Private.EnforceNSRT()
@@ -106,7 +106,7 @@ describe("ForceAddonSettings", function()
 
     it("enables TextTTS", function()
         Replace("NSRT", {})
-        Replace(Blizz, "BNGetInfo", function()
+        Replace("BNGetInfo", function()
             return nil, nil
         end)
         Private.EnforceNSRT()

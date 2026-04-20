@@ -35,21 +35,21 @@ describe("PrivateAuraSounds", function()
         return matched
     end
 
-    local function mockBlizzAPIs(calls)
-        Replace(Blizz, "AuraIsPrivate", function()
+    local function mockAuraAPIs(calls)
+        Replace(C_UnitAuras, "AuraIsPrivate", function()
             return true
         end)
-        Replace(Blizz, "AddPrivateAuraAppliedSound", function(info)
+        Replace(C_UnitAuras, "AddPrivateAuraAppliedSound", function(info)
             table.insert(
                 calls,
                 { action = "add", unit = info.unitToken, spellID = info.spellID, sound = info.soundFileName }
             )
             return #calls
         end)
-        Replace(Blizz, "RemovePrivateAuraAppliedSound", function(soundID)
+        Replace(C_UnitAuras, "RemovePrivateAuraAppliedSound", function(soundID)
             table.insert(calls, { action = "remove", soundID = soundID })
         end)
-        Replace(Blizz, "issecretvalue", function()
+        Replace("issecretvalue", function()
             return false
         end)
     end
@@ -60,7 +60,7 @@ describe("PrivateAuraSounds", function()
         Private.db.disabledPrivateAuras = { [1255612] = true }
         mockCombat(false)
         local calls = {}
-        mockBlizzAPIs(calls)
+        mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
         mockNickname({ raid1 = "Waffle" })
 
@@ -73,7 +73,7 @@ describe("PrivateAuraSounds", function()
         Private.db.disabledPrivateAuras = {}
         mockCombat(true)
         local calls = {}
-        mockBlizzAPIs(calls)
+        mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
         mockNickname({ raid1 = "Waffle" })
 
@@ -86,7 +86,7 @@ describe("PrivateAuraSounds", function()
         Private.db.disabledPrivateAuras = {}
         mockCombat(false)
         local calls = {}
-        mockBlizzAPIs(calls)
+        mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
         mockNickname({ raid1 = "Waffle" })
 
@@ -102,7 +102,7 @@ describe("PrivateAuraSounds", function()
         Private.db.disabledPrivateAuras = {}
         mockCombat(false)
         local calls = {}
-        mockBlizzAPIs(calls)
+        mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
         mockNickname({ raid1 = "SomeRandomPerson" })
         Replace(CoffeeRaidTools, "Print", function() end)
@@ -118,8 +118,8 @@ describe("PrivateAuraSounds", function()
         Private.db.disabledPrivateAuras = {}
         mockCombat(false)
         local calls = {}
-        mockBlizzAPIs(calls)
-        Replace(Blizz, "issecretvalue", function(value)
+        mockAuraAPIs(calls)
+        Replace("issecretvalue", function(value)
             return value == "SECRET"
         end)
         mockIterateGroupMembers({ "raid1" })
@@ -134,7 +134,7 @@ describe("PrivateAuraSounds", function()
         Private.db.disabledPrivateAuras = {}
         mockCombat(false)
         local calls = {}
-        mockBlizzAPIs(calls)
+        mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1", "raid2", "raid3" })
         mockNickname({ raid1 = "Waffle", raid2 = "Gold", raid3 = "Hun" })
 
@@ -151,7 +151,7 @@ describe("PrivateAuraSounds", function()
         Private.db.disabledPrivateAuras = {}
         mockCombat(false)
         local calls = {}
-        mockBlizzAPIs(calls)
+        mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
         mockNickname({})
 

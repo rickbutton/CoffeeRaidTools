@@ -2,8 +2,6 @@
 
 ---@class Private
 local Private = select(2, ...)
----@type Blizz
-local Blizz = Private.Blizz
 
 -- NSRT enforcement
 
@@ -143,7 +141,7 @@ local function EnforceNSRT()
         end
     end
 
-    local battleTag = select(2, Blizz.BNGetInfo())
+    local battleTag = select(2, BNGetInfo())
     if battleTag then
         local expectedNickname = Private.BattleTagToNickname[battleTag:lower()]
         if expectedNickname and NSRT.Settings["MyNickName"] ~= expectedNickname then
@@ -182,15 +180,15 @@ frame:SetScript("OnEvent", function(self, event, addonName)
         self:UnregisterEvent("PLAYER_LOGIN")
 
         -- Disable TimelineReminders if it is still enabled
-        if Blizz.GetAddOnEnableState("TimelineReminders") > 0 then
-            Blizz.DisableAddOn("TimelineReminders")
+        if C_AddOns.GetAddOnEnableState("TimelineReminders") > 0 then
+            C_AddOns.DisableAddOn("TimelineReminders")
             StaticPopup_Show("CRT_TR_DISABLED")
             return
         end
 
         local missing = {}
         for _, addon in ipairs(Private.AddonsToTrack) do
-            if addon.name ~= "CoffeeRaidTools" and not Blizz.IsAddOnLoaded(addon.name) then
+            if addon.name ~= "CoffeeRaidTools" and not C_AddOns.IsAddOnLoaded(addon.name) then
                 missing[#missing + 1] = addon.name
             end
         end

@@ -14,7 +14,7 @@ describe("ReadyCheck", function()
 
         it("returns true for inraid when the player is in a raid", function()
             Private.db.readyCheckPopup = "inraid"
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return true
             end)
             assert.is_true(Private.ShouldShowPopup())
@@ -22,7 +22,7 @@ describe("ReadyCheck", function()
 
         it("returns false for inraid when the player is not in a raid", function()
             Private.db.readyCheckPopup = "inraid"
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return false
             end)
             assert.is_false(Private.ShouldShowPopup())
@@ -30,7 +30,7 @@ describe("ReadyCheck", function()
 
         it("returns true for inraidcoffee when both conditions are met", function()
             Private.db.readyCheckPopup = "inraidcoffee"
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return true
             end)
             Replace(Private, "IsInCoffeeRaid", function()
@@ -41,7 +41,7 @@ describe("ReadyCheck", function()
 
         it("returns false for inraidcoffee when the raid is not a Coffee raid", function()
             Private.db.readyCheckPopup = "inraidcoffee"
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return true
             end)
             Replace(Private, "IsInCoffeeRaid", function()
@@ -52,7 +52,7 @@ describe("ReadyCheck", function()
 
         it("returns false for inraidcoffee when the player is not in a raid", function()
             Private.db.readyCheckPopup = "inraidcoffee"
-            Replace(Blizz, "IsInRaid", function()
+            Replace("IsInRaid", function()
                 return false
             end)
             assert.is_false(Private.ShouldShowPopup())
@@ -80,10 +80,10 @@ describe("ReadyCheck", function()
             Replace(Private, "UnitIsRealPlayer", function()
                 return true
             end)
-            Replace(Blizz, "GetGuildInfo", function(unit)
+            Replace("GetGuildInfo", function(unit)
                 return guildInfo[unit]
             end)
-            Replace(Blizz, "UnitGUID", function(unit)
+            Replace("UnitGUID", function(unit)
                 return guids[unit]
             end)
             assert.is_true(Private.IsInCoffeeRaid())
@@ -104,10 +104,10 @@ describe("ReadyCheck", function()
             Replace(Private, "UnitIsRealPlayer", function()
                 return true
             end)
-            Replace(Blizz, "GetGuildInfo", function(unit)
+            Replace("GetGuildInfo", function(unit)
                 return guildInfo[unit]
             end)
-            Replace(Blizz, "UnitGUID", function(unit)
+            Replace("UnitGUID", function(unit)
                 return guids[unit]
             end)
             assert.is_false(Private.IsInCoffeeRaid())
