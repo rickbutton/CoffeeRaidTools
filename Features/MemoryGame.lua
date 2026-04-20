@@ -321,12 +321,8 @@ local function BuildPickerFrame()
 
     for i = 1, #RUNES do
         local rune = RUNES[i]
-        local btn = CreateFrame(
-            "Button",
-            "CRTMemoryRuneBtn" .. i,
-            pickerFrame,
-            "SecureActionButtonTemplate, BackdropTemplate"
-        )
+        local btn =
+            CreateFrame("Button", "CRTMemoryRuneBtn" .. i, pickerFrame, "SecureActionButtonTemplate, BackdropTemplate")
         btn:SetSize(RUNE_ICON_SIZE, RUNE_ICON_SIZE)
         btn:SetPoint("BOTTOMLEFT", pickerFrame, "BOTTOMLEFT", PAD + (i - 1) * (RUNE_ICON_SIZE + SLOT_GAP), PAD)
         btn:SetBackdrop(BACKDROP)
