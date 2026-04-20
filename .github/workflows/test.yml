@@ -28,9 +28,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Make packager executable
-        run: chmod +x scripts/package.sh
-
       - run: pnpm test
 
   luacheck:
