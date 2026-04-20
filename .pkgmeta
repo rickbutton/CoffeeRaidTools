@@ -18,6 +18,8 @@ externals:
 ignore:
     - .luaTypes/*
     - scripts/*
+    - spec/*
+    - .busted
     - TODO
     - *.md
     - package.json
@@ -27,4 +29,3 @@ plain-copy:
     - Features/*.lua
     - Interface/*.lua
     - Interface/Tabs/*.lua
-    - Tests/*.lua

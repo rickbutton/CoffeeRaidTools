@@ -6,6 +6,7 @@
     "build": "node scripts/build.js",
     "build:full": "node scripts/build.js full",
     "build:watch": "node scripts/build.js watch",
+    "test": "node scripts/test.js",
     "test:compiler": "lua scripts/compiler/test.lua",
     "check": "node scripts/check-lua.js",
     "lint": "node scripts/lint-lua.js",

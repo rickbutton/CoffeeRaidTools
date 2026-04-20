@@ -32,10 +32,6 @@ if Private.db.devMode == nil then
     Private.db.devMode = false
 end
 
-if Private.db.runTestsOnLoad == nil then
-    Private.db.runTestsOnLoad = false
-end
-
 if Private.db.onlyShowMismatches == nil then
     Private.db.onlyShowMismatches = false
 end
@@ -196,11 +192,7 @@ StaticPopupDialogs["CRT_UPDATE_AVAILABLE"] = {
 
 function CoffeeRaidTools:OnInitialize() end
 
-function CoffeeRaidTools:OnEnable()
-    if Private.db.devMode and Private.db.runTestsOnLoad then
-        Private.Tests:RunAll()
-    end
-end
+function CoffeeRaidTools:OnEnable() end
 
 function CoffeeRaidTools:OnDisable() end
 
@@ -283,15 +275,15 @@ function CoffeeRaidTools:ChatCommandHandler(input)
     if first == "test" then
         local subcommand = rest and rest:trim() or ""
         if subcommand == "" then
-            Private.Tests:RunAll()
+            CoffeeRaidTools:Print("Usage: /crt test <subcommand>")
+            return
+        end
+        local sub, subrest = subcommand:match("^(%S+)%s*(.*)$")
+        local handler = TestCommands[sub]
+        if handler then
+            handler(subrest)
         else
-            local sub, subrest = subcommand:match("^(%S+)%s*(.*)$")
-            local handler = TestCommands[sub]
-            if handler then
-                handler(subrest)
-            else
-                CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
-            end
+            CoffeeRaidTools:Print("Unknown test command: " .. subcommand)
         end
         return
     end

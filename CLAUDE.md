@@ -11,6 +11,7 @@ pnpm install           # Install dependencies
 pnpm run build         # Build to .release/CoffeeRaidTools/
 pnpm run build:full    # Full build with external library checkout
 pnpm run build:watch   # Watch mode
+pnpm test              # Run busted unit tests (requires lua5.1 + busted on PATH)
 ```
 
 ## Architecture
@@ -23,7 +24,8 @@ pnpm run build:watch   # Watch mode
 5. `Interface/Minimap.lua` — Minimap button
 6. `Interface/Frame.lua` — Main frame controller (closes on ESC)
 7. `Interface/Tabs/` — Local, Raid, Settings
-8. `Tests/TestRunner.lua` + `Tests/*.lua` — WoWUnit test suites
+
+Unit tests live in `spec/` and run via [busted](https://lunarmodules.github.io/busted/); see the "Testing" section below.
 
 ### Key Patterns
 - Private namespace via `select(2, ...)` — use `Private` for all internal state
@@ -78,10 +80,12 @@ Run `pnpm run vendor` to clone or update all vendor repos. Do this before implem
 - Only comment genuinely complex logic
 
 ### Testing
-- `Replace` in tests should only target tables we own (`Private`, `Blizz`, `CoffeeRaidTools`)
-- Never use `Replace` on Blizzard-provided objects or global scope (`_G`) directly
-- If code under test calls a Blizzard API, the API should be wrapped in `Private.Blizz` and replaced on `Blizz` in the test
-- If a Blizzard API is not yet wrapped, add it to `Private.Blizz` in `CoffeeRaidTools.lua` rather than replacing on `_G`
+- Unit tests use [busted](https://lunarmodules.github.io/busted/) and live in `spec/*_spec.lua`. Run with `pnpm test` (invokes `busted --lua=lua5.1`).
+- Test harness: `.busted` points busted at `spec/setup.lua`, which loads `spec/helpers/wow_mocks.lua` (WoW global stubs), then `spec/helpers/addon_loader.lua` (Ace3 libs from `.release/CoffeeRaidTools/Libs/` + every addon `.lua` file), then `spec/helpers/mocks.lua` (the `Replace`/`Restore` mocking helpers). The first `pnpm test` run shells out to `pnpm run build:full` to populate `Libs/`.
+- Spec files get `Private`, `Blizz`, `CoffeeRaidTools`, `Replace`, and `Restore` as globals. Call `after_each(Restore)` to unwind `Replace` calls between tests.
+- `Replace` in tests should only target tables we own (`Private`, `Blizz`, `CoffeeRaidTools`), plus the two-arg `Replace(name, value)` form for global slots we assign to (like `NSRT` / `NSAPI`).
+- Never use `Replace` on Blizzard-provided objects directly. If code under test calls a Blizzard API, wrap it in `Private.Blizz` first and replace on `Blizz` in the test.
+- When adding a new WoW API call: add it to `Private.Blizz` in `CoffeeRaidTools.lua`, and if Ace3 or the addon needs it at load time (not just in a test), add a stub to `spec/helpers/wow_mocks.lua` so the addon loads cleanly under busted.
 
 ### General
 - Never create duplicate/versioned files — edit in place

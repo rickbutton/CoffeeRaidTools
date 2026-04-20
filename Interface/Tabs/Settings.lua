@@ -208,7 +208,6 @@ local function DrawTab(container)
         scrollFrame:AddChild(CreateSectionTitle("Dev Mode"))
         scrollFrame:AddChild(CreateSpacer())
         scrollFrame:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
-        scrollFrame:AddChild(CreateSettingsCheckbox("runTestsOnLoad", "Run Tests on Addon Load"))
         scrollFrame:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
     end
 end
