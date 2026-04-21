@@ -1,6 +1,6 @@
 {
     "files.eol": "\n",
-    "wowAPI.luals.frameXML": true,
+    "wowAPI.luals.frameXML": false,
     "wowAPI.luals.configurationScope": "User",
     "Lua.workspace.ignoreDir": [".vscode"],
     "Lua.runtime.special": {
@@ -20,5 +20,22 @@
         "GameTooltip",
         "ACCEPT",
         "CANCEL"
+    ],
+    "Lua.diagnostics.disable": [
+        "ambiguity-1",
+        "cast-local-type",
+        "deprecated",
+        "duplicate-set-field",
+        "inject-field",
+        "lowercase-global",
+        "missing-fields",
+        "missing-parameter",
+        "missing-return",
+        "need-check-nil",
+        "param-type-mismatch",
+        "redundant-parameter",
+        "unbalanced-assignments",
+        "undefined-field",
+        "undefined-global"
     ]
 }
