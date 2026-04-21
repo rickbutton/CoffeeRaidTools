@@ -5,6 +5,8 @@ local Private = select(2, ...)
 
 -- NSRT enforcement
 
+local COFFEE_PROFILE = "Coffee"
+
 local ReadyCheckForceTrue = {
     "RepairCheck",
     "GemCheck",
@@ -39,123 +41,197 @@ local QoLForceTrue = {
     "GatewayUseableDisplay",
 }
 
+local NickNameSettings = {
+    { key = "ShareNickNames", value = 3 }, -- Both
+    { key = "AcceptNickNames", value = 3 }, -- Both
+    { key = "NickNamesSyncAccept", value = 4 }, -- None
+    { key = "NickNamesSyncSend", value = 3 }, -- None
+}
+
+-- Mirrors NSI.ignored in vendor/NorthernSkyRaidTools/Profiles.lua; keep in sync.
+local PROFILE_IGNORED_KEYS = {
+    Profiles = true,
+    ProfileKeys = true,
+    CurrentProfile = true,
+    MainProfile = true,
+}
+
+local function DebugSet(path, before, after)
+    Private:DebugPrint("NSRT " .. path .. ": " .. tostring(before) .. " -> " .. tostring(after))
+end
+
+---Apply enforced settings to a root table shaped like NSRT.
+---
+---@param root table
+---@param battleTag string?
+---@param pathLabel string
+local function EnforceOnRoot(root, battleTag, pathLabel)
+    if not root.ReadyCheckSettings then
+        root.ReadyCheckSettings = {}
+    end
+    for _, key in ipairs(ReadyCheckForceTrue) do
+        if root.ReadyCheckSettings[key] ~= true then
+            DebugSet(pathLabel .. "ReadyCheckSettings." .. key, root.ReadyCheckSettings[key], true)
+            root.ReadyCheckSettings[key] = true
+        end
+    end
+
+    if not root.EncounterAlerts then
+        root.EncounterAlerts = {}
+    end
+    for _, id in ipairs(EncounterAlertIDs) do
+        if not root.EncounterAlerts[id] then
+            root.EncounterAlerts[id] = {}
+        end
+        if root.EncounterAlerts[id].enabled ~= true then
+            DebugSet(pathLabel .. "EncounterAlerts[" .. id .. "].enabled", root.EncounterAlerts[id].enabled, true)
+            root.EncounterAlerts[id].enabled = true
+        end
+    end
+
+    if not root.QoL then
+        root.QoL = {}
+    end
+    for _, key in ipairs(QoLForceTrue) do
+        if root.QoL[key] ~= true then
+            DebugSet(pathLabel .. "QoL." .. key, root.QoL[key], true)
+            root.QoL[key] = true
+        end
+    end
+
+    if not root.ReminderSettings then
+        root.ReminderSettings = {}
+    end
+    if root.ReminderSettings.enabled ~= true then
+        DebugSet(pathLabel .. "ReminderSettings.enabled", root.ReminderSettings.enabled, true)
+        root.ReminderSettings.enabled = true
+    end
+    if root.ReminderSettings.UseTLReminders ~= false then
+        DebugSet(pathLabel .. "ReminderSettings.UseTLReminders", root.ReminderSettings.UseTLReminders, false)
+        root.ReminderSettings.UseTLReminders = false
+    end
+    if root.ReminderSettings.MRTNote ~= false then
+        DebugSet(pathLabel .. "ReminderSettings.MRTNote", root.ReminderSettings.MRTNote, false)
+        root.ReminderSettings.MRTNote = false
+    end
+    if root.ReminderSettings.SpellTTS ~= true then
+        DebugSet(pathLabel .. "ReminderSettings.SpellTTS", root.ReminderSettings.SpellTTS, true)
+        root.ReminderSettings.SpellTTS = true
+    end
+    if root.ReminderSettings.TextTTS ~= true then
+        DebugSet(pathLabel .. "ReminderSettings.TextTTS", root.ReminderSettings.TextTTS, true)
+        root.ReminderSettings.TextTTS = true
+    end
+
+    if not root.Settings then
+        root.Settings = {}
+    end
+    if root.Settings["GlobalNickNames"] ~= true then
+        DebugSet(pathLabel .. "Settings.GlobalNickNames", root.Settings["GlobalNickNames"], true)
+        root.Settings["GlobalNickNames"] = true
+    end
+    for _, entry in ipairs(NickNameSettings) do
+        if root.Settings[entry.key] ~= entry.value then
+            DebugSet(pathLabel .. "Settings." .. entry.key, root.Settings[entry.key], entry.value)
+            root.Settings[entry.key] = entry.value
+        end
+    end
+
+    if battleTag then
+        local expectedNickname = Private.BattleTagToNickname[battleTag:lower()]
+        if expectedNickname and root.Settings["MyNickName"] ~= expectedNickname then
+            DebugSet(pathLabel .. "Settings.MyNickName", root.Settings["MyNickName"], expectedNickname)
+            root.Settings["MyNickName"] = expectedNickname
+        end
+    end
+end
+
+---Matches NSI:GetProfileKey() in vendor/NorthernSkyRaidTools/Profiles.lua; keep in sync.
+local function GetPlayerProfileKey()
+    local charName, realm = UnitFullName("player")
+    if not realm or realm == "" then
+        realm = GetNormalizedRealmName()
+    end
+    if not charName or not realm or realm == "" then
+        return nil
+    end
+    return charName .. "-" .. realm
+end
+
+---Mirror of NSI:LoadProfile's copy loop (vendor/NorthernSkyRaidTools/Profiles.lua); keep in sync.
+local function CopyProfileIntoActive(profileName)
+    local profile = NSRT and NSRT.Profiles and NSRT.Profiles[profileName]
+    if not profile then
+        return
+    end
+    for k, v in pairs(profile) do
+        if not PROFILE_IGNORED_KEYS[k] then
+            NSRT[k] = type(v) == "table" and CopyTable(v) or v
+        end
+    end
+end
+
+local function NSRTHasProfiles()
+    return NSRT and type(NSRT.Profiles) == "table"
+end
+
+local function EnforceNSRTPreProfile(battleTag)
+    EnforceOnRoot(NSRT, battleTag, "")
+end
+
+local function EnforceNSRTWithProfiles(battleTag)
+    local profiles = NSRT.Profiles
+    local coffee = profiles[COFFEE_PROFILE]
+    local isFirstInstall = coffee == nil
+
+    if isFirstInstall then
+        -- Seed from the user's currently active profile so we don't wipe their
+        -- existing nicknames / reminders / assignments.
+        local seedName = NSRT.CurrentProfile
+        local seed = (seedName and profiles[seedName]) or profiles["default"]
+        coffee = seed and CopyTable(seed) or {}
+        profiles[COFFEE_PROFILE] = coffee
+        Private:DebugPrint("CRT: created NSRT profile '" .. COFFEE_PROFILE .. "'")
+    end
+
+    EnforceOnRoot(coffee, battleTag, "Profiles." .. COFFEE_PROFILE .. ".")
+
+    if isFirstInstall then
+        NSRT.ProfileKeys = NSRT.ProfileKeys or {}
+        local key = GetPlayerProfileKey()
+        if key then
+            NSRT.ProfileKeys[key] = COFFEE_PROFILE
+        end
+        NSRT.MainProfile = COFFEE_PROFILE
+        NSRT.CurrentProfile = COFFEE_PROFILE
+        CopyProfileIntoActive(COFFEE_PROFILE)
+        EnforceOnRoot(NSRT, battleTag, "")
+    elseif NSRT.CurrentProfile == COFFEE_PROFILE then
+        EnforceOnRoot(NSRT, battleTag, "")
+    end
+end
+
 local function EnforceNSRT()
     if not NSRT then
         return
     end
 
-    if not NSRT.ReadyCheckSettings then
-        NSRT.ReadyCheckSettings = {}
-    end
-    for _, key in ipairs(ReadyCheckForceTrue) do
-        if NSRT.ReadyCheckSettings[key] ~= true then
-            Private:DebugPrint(
-                "NSRT ReadyCheckSettings." .. key .. ": " .. tostring(NSRT.ReadyCheckSettings[key]) .. " -> true"
-            )
-            NSRT.ReadyCheckSettings[key] = true
-        end
-    end
-
-    if not NSRT.EncounterAlerts then
-        NSRT.EncounterAlerts = {}
-    end
-    for _, id in ipairs(EncounterAlertIDs) do
-        if not NSRT.EncounterAlerts[id] then
-            NSRT.EncounterAlerts[id] = {}
-        end
-        if NSRT.EncounterAlerts[id].enabled ~= true then
-            Private:DebugPrint(
-                "NSRT EncounterAlerts["
-                    .. id
-                    .. "].enabled: "
-                    .. tostring(NSRT.EncounterAlerts[id].enabled)
-                    .. " -> true"
-            )
-            NSRT.EncounterAlerts[id].enabled = true
-        end
-    end
-
-    if not NSRT.QoL then
-        NSRT.QoL = {}
-    end
-    for _, key in ipairs(QoLForceTrue) do
-        if NSRT.QoL[key] ~= true then
-            Private:DebugPrint("NSRT QoL." .. key .. ": " .. tostring(NSRT.QoL[key]) .. " -> true")
-            NSRT.QoL[key] = true
-        end
-    end
-
-    if not NSRT.ReminderSettings then
-        NSRT.ReminderSettings = {}
-    end
-    if NSRT.ReminderSettings.enabled ~= true then
-        Private:DebugPrint("NSRT ReminderSettings.enabled: " .. tostring(NSRT.ReminderSettings.enabled) .. " -> true")
-        NSRT.ReminderSettings.enabled = true
-    end
-
-    if NSRT.ReminderSettings.UseTLReminders ~= false then
-        Private:DebugPrint(
-            "NSRT ReminderSettings.UseTLReminders: " .. tostring(NSRT.ReminderSettings.UseTLReminders) .. " -> false"
-        )
-        NSRT.ReminderSettings.UseTLReminders = false
-    end
-
-    if NSRT.ReminderSettings.MRTNote ~= false then
-        Private:DebugPrint("NSRT ReminderSettings.MRTNote: " .. tostring(NSRT.ReminderSettings.MRTNote) .. " -> false")
-        NSRT.ReminderSettings.MRTNote = false
-    end
-
-    if NSRT.ReminderSettings.SpellTTS ~= true then
-        Private:DebugPrint("NSRT ReminderSettings.SpellTTS: " .. tostring(NSRT.ReminderSettings.SpellTTS) .. " -> true")
-        NSRT.ReminderSettings.SpellTTS = true
-    end
-
-    if NSRT.ReminderSettings.TextTTS ~= true then
-        Private:DebugPrint("NSRT ReminderSettings.TextTTS: " .. tostring(NSRT.ReminderSettings.TextTTS) .. " -> true")
-        NSRT.ReminderSettings.TextTTS = true
-    end
-
-    -- Nickname enforcement
-    if not NSRT.Settings then
-        NSRT.Settings = {}
-    end
-    if NSRT.Settings["GlobalNickNames"] ~= true then
-        Private:DebugPrint(
-            "NSRT Settings.GlobalNickNames: " .. tostring(NSRT.Settings["GlobalNickNames"]) .. " -> true"
-        )
-        NSRT.Settings["GlobalNickNames"] = true
-    end
-
-    local nickNameSettings = {
-        { key = "ShareNickNames", value = 3 }, -- Both
-        { key = "AcceptNickNames", value = 3 }, -- Both
-        { key = "NickNamesSyncAccept", value = 4 }, -- None
-        { key = "NickNamesSyncSend", value = 3 }, -- None
-    }
-    for _, entry in ipairs(nickNameSettings) do
-        if NSRT.Settings[entry.key] ~= entry.value then
-            Private:DebugPrint(
-                "NSRT Settings." .. entry.key .. ": " .. tostring(NSRT.Settings[entry.key]) .. " -> " .. entry.value
-            )
-            NSRT.Settings[entry.key] = entry.value
-        end
-    end
-
     local battleTag = select(2, BNGetInfo())
-    if battleTag then
-        local expectedNickname = Private.BattleTagToNickname[battleTag:lower()]
-        if expectedNickname and NSRT.Settings["MyNickName"] ~= expectedNickname then
-            Private:DebugPrint(
-                "NSRT Settings.MyNickName: " .. tostring(NSRT.Settings["MyNickName"]) .. " -> " .. expectedNickname
-            )
-            NSRT.Settings["MyNickName"] = expectedNickname
-        end
+
+    if NSRTHasProfiles() then
+        EnforceNSRTWithProfiles(battleTag)
+    else
+        EnforceNSRTPreProfile(battleTag)
     end
 end
 
 -- Event handling
 
 Private.EnforceNSRT = EnforceNSRT
+Private.EnforceNSRTOnRoot = EnforceOnRoot
+Private.CopyNSRTProfileIntoActive = CopyProfileIntoActive
+Private.GetNSRTPlayerProfileKey = GetPlayerProfileKey
+Private.COFFEE_PROFILE = COFFEE_PROFILE
 
 local EnforceFunctions = {
     NorthernSkyRaidTools = EnforceNSRT,

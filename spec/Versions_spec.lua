@@ -95,8 +95,41 @@ describe("Versions", function()
         end)
     end)
 
+    describe("GetNSRTProfileName", function()
+        it("returns NONE when NSRT is not loaded", function()
+            Replace(C_AddOns, "IsAddOnLoaded", function()
+                return false
+            end)
+            assert.are.equal("NONE", Private.GetNSRTProfileName())
+        end)
+
+        it("returns NONE on pre-profile NSRT", function()
+            Replace(C_AddOns, "IsAddOnLoaded", function()
+                return true
+            end)
+            Replace("NSRT", {})
+            assert.are.equal("NONE", Private.GetNSRTProfileName())
+        end)
+
+        it("returns the current profile name when set", function()
+            Replace(C_AddOns, "IsAddOnLoaded", function()
+                return true
+            end)
+            Replace("NSRT", { Profiles = {}, CurrentProfile = "Coffee" })
+            assert.are.equal("Coffee", Private.GetNSRTProfileName())
+        end)
+
+        it("returns NONE when CurrentProfile is empty", function()
+            Replace(C_AddOns, "IsAddOnLoaded", function()
+                return true
+            end)
+            Replace("NSRT", { Profiles = {}, CurrentProfile = "" })
+            assert.are.equal("NONE", Private.GetNSRTProfileName())
+        end)
+    end)
+
     describe("CollectLocalVersionTable", function()
-        it("includes every tracked shortcode and NSRTHASH", function()
+        it("includes every tracked shortcode, NSRTHASH, and NSRTPROFILE", function()
             Replace(C_AddOns, "IsAddOnLoaded", function()
                 return true
             end)
@@ -109,6 +142,7 @@ describe("Versions", function()
                 assert.is_not_nil(versions[addon.shortcode])
             end
             assert.is_not_nil(versions["NSRTHASH"])
+            assert.is_not_nil(versions["NSRTPROFILE"])
         end)
     end)
 
