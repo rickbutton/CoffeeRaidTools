@@ -88,3 +88,56 @@ Run `pnpm run vendor` to clone or update all vendor repos. Do this before implem
 ### General
 - Never create duplicate/versioned files — edit in place
 - Ask clarifying questions if requirements are ambiguous
+
+## NSRT Watch — `@claude` Responder Policy
+
+A nightly Claude Code routine watches `Reloe/NorthernSkyRaidTools` and opens
+GitHub issues labeled `nsrt-watch` (plus one of `nsrt-sounds`, `nsrt-settings`,
+`nsrt-timers`) when upstream changes something we might want to replicate or
+respond to. Run state lives in a pinned issue labeled `nsrt-watch-state`.
+
+When invoked via `@claude` on an issue labeled `nsrt-watch`, follow these rules.
+
+### When to act
+Only respond if the comment is from the repo owner AND either:
+- mentions `@claude` directly, OR
+- starts a line with a directive keyword: `implement:`, `investigate:`,
+  `draft:`, `skip:`, `explain:`
+
+If neither applies, do nothing.
+
+### Per directive
+- `implement: <instruction>` — open a PR making the code change on branch
+  `claude/nsrt-watch-<issue-number>-<slug>`. PR body links the issue and
+  states what changed. Do NOT close the issue.
+- `investigate: <question>` — post a comment with file+line references from
+  both this repo and `vendor/NorthernSkyRaidTools`. No code changes.
+- `draft: <instruction>` — post a comment with a proposed patch as a fenced
+  diff block. Do not open a PR unless a later `implement:` comment arrives.
+- `skip: <reason>` — post a brief acknowledgment. Do nothing else.
+- `explain: <question>` — same as `investigate:` but for conceptual questions.
+- `@claude` with no directive keyword — treat as `investigate:` for the
+  natural-language request.
+
+### Hard rules
+- Never close `nsrt-watch` issues. The user decides when they're resolved.
+- Never edit the `nsrt-watch-state` issue — it belongs to the nightly routine.
+- If a `skip:` is followed by a later owner comment, the latest comment wins.
+- Scope code changes to the issue's original category (sounds/settings/timers).
+  If `implement:` asks for something outside that scope, refuse in a comment
+  and ask for a fresh issue.
+- When linking to NSRT code, pin to a specific commit SHA, not a branch.
+- Run `pnpm run vendor` before investigating — `vendor/NorthernSkyRaidTools`
+  must be present and current.
+
+### Context for investigations
+Our NSRT interop surfaces (useful for answering `investigate:` / `explain:`):
+- `Features/ForceAddonSettings.lua` — forces `NSRT.ReadyCheckSettings.*`,
+  `NSRT.EncounterAlerts[id].enabled` (IDs 3176–3183, 3306), `NSRT.QoL.*`,
+  `NSRT.ReminderSettings.*`, and `NSRT.Settings.*` nickname keys.
+- `scripts/private-aura-sounds.json` — source of truth for our private aura
+  sound overrides; compiled into `Features/PrivateAuraSoundsData.lua`.
+- `Features/BigWigsOverrides.lua` — disables BigWigs' built-in private aura
+  sounds for spellIDs we handle.
+- `Core/Versions.lua` — hashes `NSAPI:GetReminderString()` output to broadcast
+  note version changes; we do not override NSRT timers.
