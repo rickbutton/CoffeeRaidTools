@@ -48,6 +48,10 @@ if Private.db.memoryGamePicker == nil then
     Private.db.memoryGamePicker = false
 end
 
+if Private.db.memoryGameClockOpacity == nil then
+    Private.db.memoryGameClockOpacity = 0.75
+end
+
 if Private.db.memoryGamePositions == nil then
     Private.db.memoryGamePositions = {}
 end

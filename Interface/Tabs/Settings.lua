@@ -184,7 +184,33 @@ local function DrawTab(container)
     scrollFrame:AddChild(CreateSectionTitle("Memory Game (Midnight Falls)"))
     scrollFrame:AddChild(CreateSpacer())
 
-    scrollFrame:AddChild(CreateSettingsCheckbox("memoryGamePicker", "Show rune picker buttons during mechanic"))
+    do
+        ---@type AceGUICheckBox
+        local cb = AceGUI:Create("CheckBox")
+        cb:SetLabel("Show rune picker buttons during mechanic")
+        cb:SetValue(Private.db.memoryGamePicker)
+        cb:SetCallback("OnValueChanged", function(widget, event, value)
+            Private.db.memoryGamePicker = value
+            Private:MemoryGameSetPickerEnabled(value)
+        end)
+        cb:SetFullWidth(true)
+        scrollFrame:AddChild(cb)
+    end
+
+    do
+        ---@type AceGUISlider
+        local slider = AceGUI:Create("Slider")
+        slider:SetLabel("Clock opacity")
+        slider:SetSliderValues(0.1, 1.0, 0.05)
+        slider:SetValue(Private.db.memoryGameClockOpacity or 0.75)
+        slider:SetIsPercent(true)
+        slider:SetFullWidth(true)
+        slider:SetCallback("OnValueChanged", function(widget, event, value)
+            Private.db.memoryGameClockOpacity = value
+            Private:MemoryGameApplyClockOpacity()
+        end)
+        scrollFrame:AddChild(slider)
+    end
 
     do
         ---@type AceGUIButton

@@ -184,7 +184,10 @@ local function DisplayRune(slot, msg)
 end
 
 local function ShowPicker()
-    if pickerFrame and Private.db.memoryGamePicker then
+    if not Private.db.memoryGamePicker then
+        return
+    end
+    if pickerFrame then
         pickerFrame:SetAlpha(1)
     end
 end
@@ -192,6 +195,12 @@ end
 local function HidePicker()
     if pickerFrame then
         pickerFrame:SetAlpha(0)
+    end
+end
+
+local function ApplyClockOpacity()
+    if clockFrame then
+        clockFrame:SetAlpha(Private.db.memoryGameClockOpacity or 0.75)
     end
 end
 
@@ -297,11 +306,12 @@ local function BuildClockFrame()
     tankIcon:SetTexCoord(0, 66 / 256, 67 / 256, 132 / 256)
 
     SetFrameLocked(clockFrame, true)
+    ApplyClockOpacity()
     clockFrame:Hide()
 end
 
 local function BuildPickerFrame()
-    if pickerFrame then
+    if pickerFrame or InCombatLockdown() then
         return
     end
 
@@ -362,18 +372,13 @@ local function BuildPickerFrame()
     pickerFrame:Show()
 end
 
-local function BuildFrames()
-    BuildClockFrame()
-    BuildPickerFrame()
-end
-
 local function StartEncounter(difficultyID)
     if encounterActive then
         return
     end
     encounterActive = true
 
-    BuildFrames()
+    BuildClockFrame()
 
     local timers = MEMORY_GAME_TIMERS[difficultyID]
     if not timers then
@@ -434,17 +439,11 @@ Private:RegisterMessage("CRT_EncounterTools_SetTestMode", function(_, enabled)
     Private:MemoryGameSetTestMode(enabled)
 end)
 
-function Private:MemoryGameSetTestMode(enabled)
-    BuildFrames()
-    if not pickerFrame or not clockFrame then
+local function ApplyPickerTestMode(enabled)
+    if not pickerFrame then
         return
     end
-
-    testMode = enabled
     SetFrameLocked(pickerFrame, not enabled)
-    SetFrameLocked(clockFrame, not enabled)
-
-    -- Disable/enable picker button macros so they do nothing while unlocked
     for i = 1, #RUNES do
         if pickerButtons[i] then
             if enabled then
@@ -455,20 +454,70 @@ function Private:MemoryGameSetTestMode(enabled)
         end
     end
     if enabled then
-        ResetClock()
         pickerFrame:SetScript("OnDragStop", function()
             pickerFrame:StopMovingOrSizing()
             SavePosition("picker", pickerFrame)
         end)
+        pickerFrame:SetAlpha(1)
+    else
+        pickerFrame:SetAlpha(0)
+    end
+end
+
+function Private:MemoryGameApplyClockOpacity()
+    ApplyClockOpacity()
+end
+
+function Private:MemoryGameSetPickerEnabled(enabled)
+    if InCombatLockdown() then
+        return
+    end
+    if enabled then
+        BuildPickerFrame()
+        if pickerFrame then
+            pickerFrame:Show()
+            if testMode then
+                ApplyPickerTestMode(true)
+            else
+                pickerFrame:SetAlpha(0)
+            end
+        end
+    elseif pickerFrame then
+        pickerFrame:Hide()
+    end
+end
+
+function Private:MemoryGameSetTestMode(enabled)
+    if InCombatLockdown() then
+        return
+    end
+    BuildClockFrame()
+    if Private.db.memoryGamePicker then
+        BuildPickerFrame()
+    end
+    if not clockFrame then
+        return
+    end
+
+    testMode = enabled
+    SetFrameLocked(clockFrame, not enabled)
+    if Private.db.memoryGamePicker then
+        ApplyPickerTestMode(enabled)
+    end
+
+    if enabled then
+        ResetClock()
         clockFrame:SetScript("OnDragStop", function()
             clockFrame:StopMovingOrSizing()
             SavePosition("clock", clockFrame)
         end)
-        pickerFrame:SetAlpha(1)
         clockFrame:Show()
     else
-        pickerFrame:SetAlpha(0)
         clockFrame:Hide()
         ResetClock()
     end
+end
+
+if Private.db.memoryGamePicker then
+    BuildPickerFrame()
 end
