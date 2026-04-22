@@ -30,6 +30,12 @@ local EncounterAlertIDs = {
     3306,
 }
 
+-- Extra per-encounter sub-flags to force true alongside `.enabled`.
+local EncounterAlertExtraFlags = {
+    [3179] = { "CCAddsDisplay" }, -- Fallen King Salhadaar
+    [3180] = { "TauntAlerts", "HealAbsorbTicks" }, -- Lightblinded Vanguard
+}
+
 local QoLForceTrue = {
     "SoulwellDropped",
     "AutoInvite",
@@ -86,6 +92,19 @@ local function EnforceOnRoot(root, battleTag, pathLabel)
         if root.EncounterAlerts[id].enabled ~= true then
             DebugSet(pathLabel .. "EncounterAlerts[" .. id .. "].enabled", root.EncounterAlerts[id].enabled, true)
             root.EncounterAlerts[id].enabled = true
+        end
+        local extras = EncounterAlertExtraFlags[id]
+        if extras then
+            for _, flag in ipairs(extras) do
+                if root.EncounterAlerts[id][flag] ~= true then
+                    DebugSet(
+                        pathLabel .. "EncounterAlerts[" .. id .. "]." .. flag,
+                        root.EncounterAlerts[id][flag],
+                        true
+                    )
+                    root.EncounterAlerts[id][flag] = true
+                end
+            end
         end
     end
 
