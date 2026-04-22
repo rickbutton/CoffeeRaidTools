@@ -5,7 +5,7 @@ local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
 
 ---@alias AddonShortcode "CRT" | "BW" | "NSRT" | "RCLC"
----@alias TrackedShortcode AddonShortcode | "NSRTHASH"
+---@alias TrackedShortcode AddonShortcode | "NSRTHASH" | "NSRTPROFILE"
 
 local BROADCAST_INTERVAL = 3
 
@@ -105,6 +105,20 @@ local function GetNSRTNoteHash()
     return "NONE"
 end
 
+local function GetNSRTProfileName()
+    if not C_AddOns.IsAddOnLoaded("NorthernSkyRaidTools") then
+        return "NONE"
+    end
+    if type(NSRT) ~= "table" or type(NSRT.Profiles) ~= "table" then
+        return "NONE"
+    end
+    local name = NSRT.CurrentProfile
+    if type(name) ~= "string" or name == "" then
+        return "NONE"
+    end
+    return name
+end
+
 local function GetAddonVersion(name)
     if C_AddOns.IsAddOnLoaded(name) then
         return C_AddOns.GetAddOnMetadata(name, "Version") or "NONE"
@@ -137,6 +151,7 @@ local function CollectLocalVersionTable()
 
     -- hash notes
     versions["NSRTHASH"] = GetNSRTNoteHash()
+    versions["NSRTPROFILE"] = GetNSRTProfileName()
 
     return versions
 end
@@ -353,6 +368,7 @@ end
 
 Private.StringHash = StringHash
 Private.GetNSRTNoteHash = GetNSRTNoteHash
+Private.GetNSRTProfileName = GetNSRTProfileName
 Private.GetAddonVersion = GetAddonVersion
 Private.CollectLocalVersionTable = CollectLocalVersionTable
 Private.EncodeMessage = EncodeMessage

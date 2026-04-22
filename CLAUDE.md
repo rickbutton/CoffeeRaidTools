@@ -132,12 +132,22 @@ If neither applies, do nothing.
 
 ### Context for investigations
 Our NSRT interop surfaces (useful for answering `investigate:` / `explain:`):
-- `Features/ForceAddonSettings.lua` — forces `NSRT.ReadyCheckSettings.*`,
+- `Features/ForceAddonSettings.lua` — enforces `NSRT.ReadyCheckSettings.*`,
   `NSRT.EncounterAlerts[id].enabled` (IDs 3176–3183, 3306), `NSRT.QoL.*`,
-  `NSRT.ReminderSettings.*`, and `NSRT.Settings.*` nickname keys.
+  `NSRT.ReminderSettings.*`, and `NSRT.Settings.*` nickname keys. On
+  profile-capable NSRT (i.e. when `type(NSRT.Profiles) == "table"`) the
+  enforcement is applied to a dedicated `NSRT.Profiles["Coffee"]` profile
+  seeded from the user's active profile, with the flat `NSRT.*` tables
+  populated via a mirror of `NSI:LoadProfile`'s copy loop — keep
+  `PROFILE_IGNORED_KEYS` and `CopyProfileIntoActive` in sync with
+  `vendor/NorthernSkyRaidTools/Profiles.lua`. Users who switch away from
+  the Coffee profile are left alone (visible deviation only). On
+  pre-profile NSRT the legacy direct-mutation path runs instead.
 - `scripts/private-aura-sounds.json` — source of truth for our private aura
   sound overrides; compiled into `Features/PrivateAuraSoundsData.lua`.
 - `Features/BigWigsOverrides.lua` — disables BigWigs' built-in private aura
   sounds for spellIDs we handle.
-- `Core/Versions.lua` — hashes `NSAPI:GetReminderString()` output to broadcast
-  note version changes; we do not override NSRT timers.
+- `Core/Versions.lua` — hashes `NSAPI:GetReminderString()` output and
+  broadcasts it as `NSRTHASH`; also broadcasts `NSRT.CurrentProfile` as
+  `NSRTPROFILE` so the Raid tab flags users off the `Coffee` profile. We
+  do not override NSRT timers.
