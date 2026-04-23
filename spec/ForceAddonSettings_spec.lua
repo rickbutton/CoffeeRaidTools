@@ -409,7 +409,6 @@ describe("ForceAddonSettings", function()
 
             assert.are.equal("Coffee", NSRT.CurrentProfile)
             assert.is_not_nil(NSRT.Profiles.Coffee)
-            assert.are.equal("Coffee", Private.GetNSRTProfileName())
         end)
     end)
 

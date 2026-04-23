@@ -5,7 +5,6 @@ describe("RaidStatus", function()
         NSRT = "1.0",
         RCLC = "1.0",
         NSRTHASH = "def",
-        NSRTPROFILE = "Coffee",
     }
 
     describe("GeneratePlayerStatus", function()
@@ -16,7 +15,6 @@ describe("RaidStatus", function()
                 NSRT = "1.0",
                 RCLC = "1.0",
                 NSRTHASH = "def",
-                NSRTPROFILE = "Coffee",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
             assert.is_true(status.good)
@@ -37,7 +35,6 @@ describe("RaidStatus", function()
                 NSRT = "1.0",
                 RCLC = "1.0",
                 NSRTHASH = "def",
-                NSRTPROFILE = "Coffee",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
             assert.is_false(status.good)
@@ -52,7 +49,6 @@ describe("RaidStatus", function()
                 NSRT = "1.0",
                 RCLC = "1.0",
                 NSRTHASH = "def",
-                NSRTPROFILE = "Coffee",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
             assert.is_false(status.good)
@@ -66,7 +62,6 @@ describe("RaidStatus", function()
                 NSRT = "1.0",
                 RCLC = "1.0",
                 NSRTHASH = "def",
-                NSRTPROFILE = "Coffee",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
             assert.is_false(status.good)
@@ -80,38 +75,10 @@ describe("RaidStatus", function()
                 NSRT = "1.0",
                 RCLC = "1.0",
                 NSRTHASH = "different",
-                NSRTPROFILE = "Coffee",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
             assert.is_false(status.good)
             assert.are.equal("NSRTNOTE", status.failures[1])
-        end)
-
-        it("flags a non-Coffee NSRT profile", function()
-            local player = {
-                CRT = "1.0",
-                BW = "2.0",
-                NSRT = "1.0",
-                RCLC = "1.0",
-                NSRTHASH = "def",
-                NSRTPROFILE = "default",
-            }
-            local status = Private.GeneratePlayerStatus(player, baseExpected)
-            assert.is_false(status.good)
-            assert.are.equal("NSRTPROFILE=default", status.failures[1])
-        end)
-
-        it("does not flag NSRTPROFILE when the player reports NONE", function()
-            local player = {
-                CRT = "1.0",
-                BW = "2.0",
-                NSRT = "1.0",
-                RCLC = "1.0",
-                NSRTHASH = "def",
-                NSRTPROFILE = "NONE",
-            }
-            local status = Private.GeneratePlayerStatus(player, baseExpected)
-            assert.is_true(status.good)
         end)
     end)
 
@@ -150,13 +117,11 @@ describe("RaidStatus", function()
                 NSRT = "3.0",
                 RCLC = "5.0",
                 NSRTHASH = "def",
-                NSRTPROFILE = "Coffee",
             }
             local result = Private.GenerateTooltipText(player)
             assert.is_not_nil(result:find("CRT=1.0"))
             assert.is_not_nil(result:find("BW=2.0"))
             assert.is_not_nil(result:find("NSRTHASH=def"))
-            assert.is_not_nil(result:find("NSRTPROFILE=Coffee"))
         end)
 
         it("returns NO RESPONSE when player versions are nil", function()

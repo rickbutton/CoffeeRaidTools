@@ -55,11 +55,6 @@ local function GeneratePlayerStatus(playerVersions, expectedVersions)
         table.insert(failures, "NSRTNOTE")
     end
 
-    local playerProfile = playerVersions["NSRTPROFILE"]
-    if playerProfile and playerProfile ~= "NONE" and playerProfile ~= Private.COFFEE_PROFILE then
-        table.insert(failures, "NSRTPROFILE=" .. playerProfile)
-    end
-
     return { good = #failures == 0, failures = failures, noResponse = false }
 end
 
@@ -87,7 +82,6 @@ local function GenerateTooltipText(playerVersions)
     end
 
     table.insert(entries, "NSRTHASH=" .. (playerVersions["NSRTHASH"] or "NONE"))
-    table.insert(entries, "NSRTPROFILE=" .. (playerVersions["NSRTPROFILE"] or "NONE"))
 
     return table.concat(entries, "\n")
 end
@@ -169,10 +163,8 @@ local function GenerateMockPlayerData(expectedVersions, allGood)
 
         if scenario == 1 then
             playerVersions["NSRTHASH"] = expectedVersions["NSRTHASH"]
-            playerVersions["NSRTPROFILE"] = Private.COFFEE_PROFILE
         else
             playerVersions["NSRTHASH"] = math.random() > 0.6 and expectedVersions["NSRTHASH"] or "different_hash"
-            playerVersions["NSRTPROFILE"] = math.random() > 0.6 and Private.COFFEE_PROFILE or "default"
         end
 
         table.insert(players, { name = playerName, versions = playerVersions })
