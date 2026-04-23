@@ -181,6 +181,61 @@ local function DrawTab(container)
     end
 
     scrollFrame:AddChild(CreateSpacer())
+    scrollFrame:AddChild(CreateSectionTitle("Reminder Sounds"))
+    scrollFrame:AddChild(CreateSpacer())
+
+    do
+        local reminderNames = {}
+        local reminderOrder = {}
+        local seen = {}
+        for _, section in ipairs(Private.ReminderSoundSections or {}) do
+            for _, reminder in ipairs(section.reminders) do
+                if not seen[reminder.text] then
+                    seen[reminder.text] = true
+                    reminderNames[reminder.text] = reminder.text
+                    tinsert(reminderOrder, reminder.text)
+                end
+            end
+        end
+
+        ---@type AceGUISimpleGroup
+        local row = AceGUI:Create("SimpleGroup")
+        row:SetFullWidth(true)
+        row:SetLayout("Flow")
+
+        ---@type AceGUIDropdown
+        local dropdown = AceGUI:Create("Dropdown")
+        dropdown:SetLabel("Reminder")
+        dropdown:SetList(reminderNames, reminderOrder)
+        dropdown:SetRelativeWidth(0.6)
+        if reminderOrder[1] then
+            dropdown:SetValue(reminderOrder[1])
+        end
+        row:AddChild(dropdown)
+
+        ---@type AceGUIButton
+        local btn = AceGUI:Create("Button")
+        btn:SetText("Test")
+        btn:SetRelativeWidth(0.2)
+        btn:SetCallback("OnClick", function()
+            local selected = dropdown:GetValue()
+            if not selected then
+                return
+            end
+            local LSM = LibStub and LibStub("LibSharedMedia-3.0", true)
+            local path = LSM and LSM:Fetch("sound", selected)
+            if path and path ~= 1 then
+                PlaySoundFile(path, "Master")
+            else
+                CoffeeRaidTools:Print("No sound registered for: " .. selected)
+            end
+        end)
+        row:AddChild(btn)
+
+        scrollFrame:AddChild(row)
+    end
+
+    scrollFrame:AddChild(CreateSpacer())
     scrollFrame:AddChild(CreateSectionTitle("Memory Game (Midnight Falls)"))
     scrollFrame:AddChild(CreateSpacer())
 

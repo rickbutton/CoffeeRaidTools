@@ -1,0 +1,116 @@
+[
+  {
+    "boss": "Imperator Averzian",
+    "encounterID": 3176,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Soak", "phrase": "soak" }
+    ]
+  },
+  {
+    "boss": "Vorasius",
+    "encounterID": 3177,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Knock", "phrase": "knock" },
+      { "text": "Breath", "phrase": "breath" }
+    ]
+  },
+  {
+    "boss": "Fallen-King Salhadaar",
+    "encounterID": 3179,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Beams", "phrase": "beams" },
+      { "text": "Orbs", "phrase": "orbs" },
+      { "text": "CC Adds", "phrase": "cc adds" }
+    ]
+  },
+  {
+    "boss": "Vaelgor & Ezzorak",
+    "encounterID": 3178,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Spread", "phrase": "spread" },
+      { "text": "Tether", "phrase": "tether" },
+      { "text": "Breath", "phrase": "breath" },
+      { "text": "Soak", "phrase": "soak" },
+      { "text": "Don't soak", "phrase": "don't soak" },
+      { "text": "Gloom 1 Triangle", "phrase": "gloom 1 triangle" },
+      { "text": "Gloom 2 Star", "phrase": "gloom 2 star" },
+      { "text": "Gloom 1 Diamond", "phrase": "gloom 1 diamond" },
+      { "text": "Gloom 2 Circle", "phrase": "gloom 2 circle" },
+      { "text": "Breath Square", "phrase": "breath square" },
+      { "text": "Breath Circle", "phrase": "breath circle" },
+      { "text": "Mass Grip", "phrase": "mass grip" },
+      { "text": "Chains", "phrase": "chains" }
+    ]
+  },
+  {
+    "boss": "Lightblinded Vanguard",
+    "encounterID": 3180,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Sacred Toll", "phrase": "sacred toll" },
+      { "text": "Taunt", "phrase": "taunt" },
+      { "text": "Go to Star", "phrase": "go to star" },
+      { "text": "Go to Orange", "phrase": "go to orange" },
+      { "text": "Go to Purple", "phrase": "go to purple" },
+      { "text": "Go to Green", "phrase": "go to green" },
+      { "text": "Soak Star", "phrase": "soak star" },
+      { "text": "Soak Orange", "phrase": "soak orange" },
+      { "text": "Soak Purple", "phrase": "soak purple" },
+      { "text": "Soak Green", "phrase": "soak green" },
+      { "text": "Move General Out", "phrase": "move general out" },
+      { "text": "Move Commander Out", "phrase": "move commander out" },
+      { "text": "Move Chaplain Out", "phrase": "move chaplain out" },
+      { "text": "Group Soak", "phrase": "group soak" },
+      { "text": "Bait Charge", "phrase": "bait charge" }
+    ]
+  },
+  {
+    "boss": "Crown of the Cosmos",
+    "encounterID": 3181,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Stop Cast", "phrase": "stop cast" },
+      { "text": "Arrows", "phrase": "arrows" },
+      { "text": "Explosion", "phrase": "explosion" },
+      { "text": "Tether", "phrase": "tether" },
+      { "text": "Bait", "phrase": "bait" }
+    ]
+  },
+  {
+    "boss": "Chimaerus the Undreamt God",
+    "encounterID": 3306,
+    "raid": "The Dreamrift",
+    "reminders": [
+      { "text": "Soak", "phrase": "soak" },
+      { "text": "Don't soak", "phrase": "don't soak" }
+    ]
+  },
+  {
+    "boss": "Beloren",
+    "encounterID": 3182,
+    "raid": "The Dreamrift",
+    "reminders": [
+      { "text": "Gateway", "phrase": "gateway" }
+    ]
+  },
+  {
+    "boss": "Midnight Falls",
+    "encounterID": 3183,
+    "raid": "The Dreamrift",
+    "reminders": [
+      { "text": "Memory Game", "phrase": "memory game" },
+      { "text": "Glaives", "phrase": "glaives" },
+      { "text": "Interrupts", "phrase": "interrupts" },
+      { "text": "Beams", "phrase": "beams" },
+      { "text": "Orbs", "phrase": "orbs" },
+      { "text": "Crystal", "phrase": "crystal" },
+      { "text": "Soaks", "phrase": "soaks" },
+      { "text": "Blazes", "phrase": "blazes" },
+      { "text": "Move", "phrase": "move" }
+    ]
+  }
+]
