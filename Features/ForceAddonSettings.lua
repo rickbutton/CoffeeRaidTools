@@ -274,6 +274,14 @@ frame:SetScript("OnEvent", function(self, event, addonName)
         self:UnregisterEvent("ADDON_LOADED")
         self:UnregisterEvent("PLAYER_LOGIN")
 
+        -- Re-run after NSRT's own init finishes: pre-profile NSRT upgrades
+        -- haven't populated NSRT.Profiles by our ADDON_LOADED handler, so
+        -- the Coffee profile can't be created until NSRT bootstraps it here.
+        C_Timer.After(0, function()
+            EnforceNSRT()
+            Private:InvalidateLocalVersions()
+        end)
+
         -- Disable TimelineReminders if it is still enabled
         if C_AddOns.GetAddOnEnableState("TimelineReminders") > 0 then
             C_AddOns.DisableAddOn("TimelineReminders")

@@ -318,6 +318,100 @@ describe("ForceAddonSettings", function()
         end)
     end)
 
+    describe("pre-profile -> profile NSRT upgrade", function()
+        -- Minimal mirror of the vendor NSRT LoadMyProfile / CreateProfile flow
+        -- needed to exercise the ADDON_LOADED -> NSRT init -> re-enforce path.
+        local NSI_ignored = {
+            Profiles = true,
+            ProfileKeys = true,
+            CurrentProfile = true,
+            MainProfile = true,
+        }
+
+        local function NSI_SaveProfile()
+            if NSRT.CurrentProfile then
+                NSRT.Profiles[NSRT.CurrentProfile] = {}
+                for k, v in pairs(NSRT) do
+                    if not NSI_ignored[k] then
+                        NSRT.Profiles[NSRT.CurrentProfile][k] = type(v) == "table" and CopyTable(v) or v
+                    end
+                end
+            end
+        end
+
+        local function NSI_AddMissingDefaults()
+            if NSRT.Profiles == nil then
+                NSRT.Profiles = {}
+            end
+            if NSRT.ProfileKeys == nil then
+                NSRT.ProfileKeys = {}
+            end
+            if NSRT.CurrentProfile == nil then
+                NSRT.CurrentProfile = "default"
+            end
+            if NSRT.MainProfile == nil then
+                NSRT.MainProfile = "default"
+            end
+        end
+
+        local function NSI_LoadMyProfile()
+            NSI_AddMissingDefaults()
+            local ProfileToLoad = "default"
+            local key = "Tester-TestRealm"
+            if NSRT.ProfileKeys[key] then
+                ProfileToLoad = NSRT.ProfileKeys[key]
+            elseif NSRT.MainProfile then
+                ProfileToLoad = NSRT.MainProfile
+            end
+            if NSRT.Profiles[ProfileToLoad] then
+                for k, v in pairs(NSRT.Profiles[ProfileToLoad]) do
+                    if not NSI_ignored[k] then
+                        NSRT[k] = type(v) == "table" and CopyTable(v) or v
+                    end
+                end
+                NSRT.ProfileKeys[key] = ProfileToLoad
+                NSRT.CurrentProfile = ProfileToLoad
+            else
+                NSRT.Profiles[ProfileToLoad] = {}
+                NSI_SaveProfile()
+                NSRT.ProfileKeys[key] = ProfileToLoad
+                NSRT.CurrentProfile = ProfileToLoad
+                NSI_SaveProfile()
+            end
+        end
+
+        it("migrates the player onto Coffee when NSRT.Profiles is populated after ADDON_LOADED", function()
+            Replace(C_AddOns, "IsAddOnLoaded", function()
+                return true
+            end)
+            Replace("BNGetInfo", function()
+                return nil, nil
+            end)
+            -- Saved NSRT predates the Profiles feature.
+            Replace("NSRT", {
+                ReadyCheckSettings = { RaidBuffCheck = false },
+                NickNames = { ["Someone-Realm"] = "Some" },
+            })
+
+            -- Simulate CRT's ADDON_LOADED handler running first (takes
+            -- pre-profile path because NSRT.Profiles isn't set yet).
+            Private.EnforceNSRT()
+            assert.is_nil(NSRT.Profiles)
+
+            -- Simulate NSRT's ADDON_LOADED/PLAYER_LOGIN handler initializing
+            -- its profile system, which leaves the player on "default".
+            NSI_LoadMyProfile()
+            assert.are.equal("default", NSRT.CurrentProfile)
+
+            -- The deferred PLAYER_LOGIN re-enforcement should now pick up that
+            -- NSRT has Profiles and migrate the player to Coffee.
+            Private.EnforceNSRT()
+
+            assert.are.equal("Coffee", NSRT.CurrentProfile)
+            assert.is_not_nil(NSRT.Profiles.Coffee)
+        end)
+    end)
+
     describe("GetNSRTPlayerProfileKey", function()
         it("combines the character name and realm", function()
             Replace("UnitFullName", function()
