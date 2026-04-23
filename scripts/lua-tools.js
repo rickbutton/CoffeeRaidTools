@@ -40,8 +40,9 @@ function mergeGlobals(base) {
 // Read-only WoW API globals (luacheck needs these explicitly; LuaLS gets them from annotations)
 const readOnlyGlobals = [
   "tinsert", "wipe",
-  "BNGetInfo", "C_AddOns", "C_QuestLog", "C_Secrets", "C_Spell", "C_Timer", "C_UnitAuras", "C_VoiceChat", "CreateFrame",
+  "BNGetInfo", "C_AddOns", "C_QuestLog", "C_Secrets", "C_Spell", "C_SpellBook", "C_Timer", "C_UnitAuras", "C_VoiceChat", "CreateFrame",
   "GetGuildInfo", "GetGuildInfoText", "GetInstanceInfo", "GetNormalizedRealmName", "GetNumGroupMembers", "GetNumSubgroupMembers",
+  "GetSpecialization", "GetSpecializationInfo",
   "GetTime", "IsInGroup", "IsInRaid", "ReloadUI", "SendChatMessage",
   "StaticPopup_Hide", "StaticPopup_Show", "StaticPopup_Visible",
   "InCombatLockdown", "PixelUtil", "PlaySoundFile",
