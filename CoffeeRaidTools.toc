@@ -22,6 +22,8 @@ Features/ReadyCheck.lua
 Features/GearWarnings.lua
 Features/PrivateAuraSoundsData.lua
 Features/PrivateAuraSounds.lua
+Features/ReminderSoundsData.lua
+Features/ReminderSounds.lua
 Features/BigWigsOverrides.lua
 Features/MemoryGame.lua
 Features/RaidBuffReminder.lua
