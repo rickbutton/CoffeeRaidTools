@@ -35,7 +35,15 @@
       { "text": "Tether", "phrase": "tether" },
       { "text": "Breath", "phrase": "breath" },
       { "text": "Soak", "phrase": "soak" },
-      { "text": "Don't soak", "phrase": "don't soak" }
+      { "text": "Don't soak", "phrase": "don't soak" },
+      { "text": "Gloom 1 Triangle", "phrase": "gloom 1 triangle" },
+      { "text": "Gloom 2 Star", "phrase": "gloom 2 star" },
+      { "text": "Gloom 1 Diamond", "phrase": "gloom 1 diamond" },
+      { "text": "Gloom 2 Circle", "phrase": "gloom 2 circle" },
+      { "text": "Breath Square", "phrase": "breath square" },
+      { "text": "Breath Circle", "phrase": "breath circle" },
+      { "text": "Mass Grip", "phrase": "mass grip" },
+      { "text": "Chains", "phrase": "chains" }
     ]
   },
   {
