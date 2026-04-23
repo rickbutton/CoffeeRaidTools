@@ -60,7 +60,12 @@
       { "text": "Soak Star", "phrase": "soak star" },
       { "text": "Soak Orange", "phrase": "soak orange" },
       { "text": "Soak Purple", "phrase": "soak purple" },
-      { "text": "Soak Green", "phrase": "soak green" }
+      { "text": "Soak Green", "phrase": "soak green" },
+      { "text": "Move General Out", "phrase": "move general out" },
+      { "text": "Move Commander Out", "phrase": "move commander out" },
+      { "text": "Move Chaplain Out", "phrase": "move chaplain out" },
+      { "text": "Group Soak", "phrase": "group soak" },
+      { "text": "Bait Charge", "phrase": "bait charge" }
     ]
   },
   {
