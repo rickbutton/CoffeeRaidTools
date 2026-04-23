@@ -1,0 +1,103 @@
+[
+  {
+    "boss": "Imperator Averzian",
+    "encounterID": 3176,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Soak", "phrase": "soak", "comment": "Group Soaks (ImperatorAverzian.lua:10)" }
+    ]
+  },
+  {
+    "boss": "Vorasius",
+    "encounterID": 3177,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Knock", "phrase": "knock", "comment": "Knockback (Vorasius.lua:10)" },
+      { "text": "Breath", "phrase": "breath", "comment": "Breath attack (Vorasius.lua:22)" }
+    ]
+  },
+  {
+    "boss": "Fallen-King Salhadaar",
+    "encounterID": 3179,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Beams", "phrase": "beams", "comment": "Group soaks (FallenKingSalhadaar.lua:11)" },
+      { "text": "Orbs", "phrase": "orbs", "comment": "Dispel/soak (FallenKingSalhadaar.lua:20)" },
+      { "text": "CC Adds", "phrase": "cc adds", "comment": "Control adds (FallenKingSalhadaar.lua:29)" }
+    ]
+  },
+  {
+    "boss": "Vaelgor & Ezzorak",
+    "encounterID": 3178,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Spread", "phrase": "spread", "comment": "Spread out (VaelgorEzzorak.lua:11)" },
+      { "text": "Tether", "phrase": "tether", "comment": "Tether (VaelgorEzzorak.lua:19)" },
+      { "text": "Breath", "phrase": "breath", "comment": "Breath attack (VaelgorEzzorak.lua:26) — duplicates Vorasius Breath" },
+      { "text": "Soak", "phrase": "soak", "comment": "Gloom assignment (VaelgorEzzorak.lua:79,86) — duplicates Imperator Soak" },
+      { "text": "Don't soak", "phrase": "don't soak", "comment": "Gloom assignment (VaelgorEzzorak.lua:79,86)" }
+    ]
+  },
+  {
+    "boss": "Lightblinded Vanguard",
+    "encounterID": 3180,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Sacred Toll", "phrase": "sacred toll", "comment": "Main mechanic (LightblindedVanguard.lua:11)" },
+      { "text": "Taunt", "phrase": "taunt", "comment": "Taunt on mob cast (LightblindedVanguard.lua:97) — NOT LSM-overridable; direct NSAPI:TTS call" },
+      { "text": "Go to Star", "phrase": "go to star", "comment": "Healer soak assignment (LightblindedVanguard.lua:190)" },
+      { "text": "Go to Orange", "phrase": "go to orange", "comment": "Healer soak assignment (LightblindedVanguard.lua:190)" },
+      { "text": "Go to Purple", "phrase": "go to purple", "comment": "Healer soak assignment (LightblindedVanguard.lua:190)" },
+      { "text": "Go to Green", "phrase": "go to green", "comment": "Healer soak assignment (LightblindedVanguard.lua:190)" },
+      { "text": "Soak Star", "phrase": "soak star", "comment": "DPS soak assignment (LightblindedVanguard.lua:190)" },
+      { "text": "Soak Orange", "phrase": "soak orange", "comment": "DPS soak assignment (LightblindedVanguard.lua:190)" },
+      { "text": "Soak Purple", "phrase": "soak purple", "comment": "DPS soak assignment (LightblindedVanguard.lua:190)" },
+      { "text": "Soak Green", "phrase": "soak green", "comment": "DPS soak assignment (LightblindedVanguard.lua:190)" }
+    ]
+  },
+  {
+    "boss": "Crown of the Cosmos",
+    "encounterID": 3181,
+    "raid": "The Voidspire",
+    "reminders": [
+      { "text": "Stop Cast", "phrase": "stop cast", "comment": "Healer/ranged stop cast (CrownOfTheCosmos.lua:15)" },
+      { "text": "Arrows", "phrase": "arrows", "comment": "Ranged attacks (CrownOfTheCosmos.lua:22)" },
+      { "text": "Explosion", "phrase": "explosion", "comment": "Phase 1/3/5 (CrownOfTheCosmos.lua:32,37,46)" },
+      { "text": "Tether", "phrase": "tether", "comment": "Phase 5 (CrownOfTheCosmos.lua:60) — duplicates Vaelgor Tether" },
+      { "text": "Bait", "phrase": "bait", "comment": "Ranged-only, phases 1/3/5 (CrownOfTheCosmos.lua:69,76,83)" }
+    ]
+  },
+  {
+    "boss": "Chimaerus the Undreamt God",
+    "encounterID": 3306,
+    "raid": "The Dreamrift",
+    "reminders": [
+      { "text": "Soak", "phrase": "soak", "comment": "Alndust Upheaval assignment (Chimaerus.lua:76,79,82) — duplicates Imperator Soak" },
+      { "text": "Don't soak", "phrase": "don't soak", "comment": "Alndust Upheaval assignment (Chimaerus.lua:76,79,82) — duplicates Vaelgor Don't soak" }
+    ]
+  },
+  {
+    "boss": "Beloren",
+    "encounterID": 3182,
+    "raid": "The Dreamrift",
+    "reminders": [
+      { "text": "Gateway", "phrase": "gateway", "comment": "Gateway bar alert (Beloren.lua:17)" }
+    ]
+  },
+  {
+    "boss": "Midnight Falls",
+    "encounterID": 3183,
+    "raid": "The Dreamrift",
+    "reminders": [
+      { "text": "Memory Game", "phrase": "memory game", "comment": "Phase 1 + phase 4 LEFT/RIGHT (MidnightFalls.lua:24,146,175)" },
+      { "text": "Glaives", "phrase": "glaives", "comment": "Phase 1 (MidnightFalls.lua:32)" },
+      { "text": "Interrupts", "phrase": "interrupts", "comment": "Phase 1 (MidnightFalls.lua:39)" },
+      { "text": "Beams", "phrase": "beams", "comment": "Phase 1 (MidnightFalls.lua:47) — duplicates Salhadaar Beams" },
+      { "text": "Orbs", "phrase": "orbs", "comment": "Phase 3 (MidnightFalls.lua:110) — duplicates Salhadaar Orbs" },
+      { "text": "Crystal", "phrase": "crystal", "comment": "Phase 4 (MidnightFalls.lua:118)" },
+      { "text": "Soaks", "phrase": "soaks", "comment": "Phase 4 general + LEFT/RIGHT (MidnightFalls.lua:124,152,181) — plural, distinct from Soak" },
+      { "text": "Blazes", "phrase": "blazes", "comment": "Phase 5 (MidnightFalls.lua:131)" },
+      { "text": "Move", "phrase": "move", "comment": "Phase 5 + phase 4 (MidnightFalls.lua:137,211); TTSTimer=0 means fires at T-0" }
+    ]
+  }
+]
