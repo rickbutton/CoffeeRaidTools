@@ -4,6 +4,20 @@ local Private = select(2, ...)
 
 ---@type ReminderSoundBossSection[]
 Private.ReminderSoundSections = {
+    -- undefined
+    {
+        boss = "General",
+        reminders = {
+            { text = "Soulstone", soundFile = "Soulstone" },
+            { text = "Source of Magic", soundFile = "SourceOfMagic" },
+            { text = "Rebuff Battle Shout", soundFile = "RebuffBattleShout" },
+            { text = "Rebuff Power Word: Fortitude", soundFile = "RebuffPowerWordFortitude" },
+            { text = "Rebuff Skyfury", soundFile = "RebuffSkyfury" },
+            { text = "Rebuff Arcane Intellect", soundFile = "RebuffArcaneIntellect" },
+            { text = "Rebuff Mark of the Wild", soundFile = "RebuffMarkOfTheWild" },
+            { text = "Rebuff Blessing of the Bronze", soundFile = "RebuffBlessingOfTheBronze" },
+        },
+    },
     -- The Voidspire
     {
         boss = "Imperator Averzian",

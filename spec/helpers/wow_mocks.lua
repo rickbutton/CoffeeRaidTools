@@ -264,6 +264,12 @@ _G.C_VoiceChat = {
         return {}
     end,
 }
+_G.GetSpecialization = function()
+    return nil
+end
+_G.GetSpecializationInfo = function()
+    return nil
+end
 
 _G.GetInstanceInfo = function()
     return "TestInstance", "none"
@@ -300,7 +306,8 @@ local function makeFrame()
     local frame
     frame = setmetatable({}, {
         __index = function(_, key)
-            if key == "RegisterEvent"
+            if
+                key == "RegisterEvent"
                 or key == "UnregisterEvent"
                 or key == "SetScript"
                 or key == "Show"

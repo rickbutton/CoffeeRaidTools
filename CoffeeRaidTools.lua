@@ -194,6 +194,15 @@ local TestCommands = {
         end
         Private:TestPrivateAuraSound(spellID)
     end,
+    rebuff = function(args)
+        local key = args and args:trim():lower() or ""
+        local classID = Private.RaidBuffCheckClassIDForName(key)
+        if not classID then
+            CoffeeRaidTools:Print("Usage: /crt test rebuff <warrior|priest|shaman|mage|druid|evoker>")
+            return
+        end
+        Private:TestRaidBuffReminder(classID)
+    end,
 }
 
 local ChatCommands = {

@@ -73,11 +73,15 @@ loadAddonFile("Core/Util.lua")
 loadAddonFile("Core/Nicknames.lua")
 loadAddonFile("Core/Roster.lua")
 loadAddonFile("Core/Versions.lua")
+loadAddonFile("Core/SpecSync.lua")
 
 loadAddonFile("Features/ForceAddonSettings.lua")
 loadAddonFile("Features/ReadyCheck.lua")
 loadAddonFile("Features/PrivateAuraSoundsData.lua")
 loadAddonFile("Features/PrivateAuraSounds.lua")
+loadAddonFile("Features/ReminderSoundsData.lua")
+loadAddonFile("Features/ReminderSounds.lua")
+loadAddonFile("Features/RaidBuffCheck.lua")
 
 loadAddonFile("Interface/Tabs/Raid.lua")
 

@@ -11,11 +11,17 @@ local ReadyCheckForceTrue = {
     "RepairCheck",
     "GemCheck",
     "EnchantCheck",
-    "RaidBuffCheck",
     "CraftedCheck",
     "MissingItemCheck",
-    "SoulstoneCheck",
     "ItemLevelCheck",
+}
+
+-- Coffee owns these checks now (Features/RaidBuffCheck.lua), so disable
+-- NSRT's versions to avoid double-TTS on ready check.
+local ReadyCheckForceFalse = {
+    "RaidBuffCheck",
+    "SoulstoneCheck",
+    "SourceOfMagicCheck",
 }
 
 local EncounterAlertIDs = {
@@ -79,6 +85,12 @@ local function EnforceOnRoot(root, battleTag, pathLabel)
         if root.ReadyCheckSettings[key] ~= true then
             DebugSet(pathLabel .. "ReadyCheckSettings." .. key, root.ReadyCheckSettings[key], true)
             root.ReadyCheckSettings[key] = true
+        end
+    end
+    for _, key in ipairs(ReadyCheckForceFalse) do
+        if root.ReadyCheckSettings[key] ~= false then
+            DebugSet(pathLabel .. "ReadyCheckSettings." .. key, root.ReadyCheckSettings[key], false)
+            root.ReadyCheckSettings[key] = false
         end
     end
 

@@ -1,5 +1,18 @@
 [
   {
+    "boss": "General",
+    "reminders": [
+      { "text": "Soulstone", "phrase": "soulstone" },
+      { "text": "Source of Magic", "phrase": "source of magic" },
+      { "text": "Rebuff Battle Shout", "phrase": "re-buff battle shout" },
+      { "text": "Rebuff Power Word: Fortitude", "phrase": "re-buff power word fortitude" },
+      { "text": "Rebuff Skyfury", "phrase": "re-buff skyfury" },
+      { "text": "Rebuff Arcane Intellect", "phrase": "re-buff arcane intellect" },
+      { "text": "Rebuff Mark of the Wild", "phrase": "re-buff mark of the wild" },
+      { "text": "Rebuff Blessing of the Bronze", "phrase": "re-buff blessing of the bronze" }
+    ]
+  },
+  {
     "boss": "Imperator Averzian",
     "encounterID": 3176,
     "raid": "The Voidspire",

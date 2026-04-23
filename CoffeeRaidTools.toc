@@ -15,6 +15,7 @@ Core/Nicknames.lua
 Core/Roster.lua
 Core/Versions.lua
 Core/BigWigsBridge.lua
+Core/SpecSync.lua
 
 Features/ForceAddonSettings.lua
 Features/ReadyCheck.lua
@@ -27,6 +28,7 @@ Features/ReminderSounds.lua
 Features/BigWigsOverrides.lua
 Features/MemoryGame.lua
 Features/RaidBuffReminder.lua
+Features/RaidBuffCheck.lua
 
 Interface/Minimap.lua
 Interface/Frame.lua
