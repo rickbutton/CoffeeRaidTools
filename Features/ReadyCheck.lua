@@ -71,7 +71,7 @@ function Private:OpenReadyCheckPopup(useTestData, useTestDataAllGood)
     if readyCheckFrame then
         return
     end
-    if not useTestData and not useTestDataAllGood and Private:IsInCombat() then
+    if not useTestData and not useTestDataAllGood and Private:IsRestricted() then
         return
     end
 

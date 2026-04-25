@@ -457,7 +457,7 @@ Private.CheckGuildVersions = CheckGuildVersions
 
 local guildVersionChecked = false
 local function HandleGuildRosterUpdate()
-    if guildVersionChecked or InCombatLockdown() then
+    if guildVersionChecked or Private:IsRestricted() then
         return
     end
     local outdated = CheckGuildVersions()

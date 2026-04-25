@@ -26,8 +26,8 @@ function Private:IsSecretUnit(unit)
 end
 
 ---@return boolean
-function Private:IsInCombat()
-    return InCombatLockdown()
+function Private:IsRestricted()
+    return C_Secrets.ShouldAurasBeSecret()
 end
 
 ---@return boolean

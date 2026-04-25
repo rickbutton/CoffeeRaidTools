@@ -15,9 +15,9 @@ describe("PrivateAuraSounds", function()
         end)
     end
 
-    local function mockCombat(inCombat)
-        Replace(Private, "IsInCombat", function()
-            return inCombat
+    local function mockRestricted(restricted)
+        Replace(Private, "IsRestricted", function()
+            return restricted
         end)
     end
 
@@ -58,7 +58,7 @@ describe("PrivateAuraSounds", function()
 
     it("skips registration for disabled spells", function()
         Private.db.disabledPrivateAuras = { [1255612] = true }
-        mockCombat(false)
+        mockRestricted(false)
         local calls = {}
         mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
@@ -69,9 +69,9 @@ describe("PrivateAuraSounds", function()
         assert.are.equal(0, #countAddsForUnits(calls, { "raid1" }))
     end)
 
-    it("skips registration while in combat", function()
+    it("skips registration while restricted", function()
         Private.db.disabledPrivateAuras = {}
-        mockCombat(true)
+        mockRestricted(true)
         local calls = {}
         mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
@@ -84,7 +84,7 @@ describe("PrivateAuraSounds", function()
 
     it("uses the nickname-specific sound path for known nicknames", function()
         Private.db.disabledPrivateAuras = {}
-        mockCombat(false)
+        mockRestricted(false)
         local calls = {}
         mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
@@ -100,7 +100,7 @@ describe("PrivateAuraSounds", function()
 
     it("falls back to the Unknown sound for un-rostered nicknames", function()
         Private.db.disabledPrivateAuras = {}
-        mockCombat(false)
+        mockRestricted(false)
         local calls = {}
         mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })
@@ -116,7 +116,7 @@ describe("PrivateAuraSounds", function()
 
     it("silently skips units whose nickname is a secret value", function()
         Private.db.disabledPrivateAuras = {}
-        mockCombat(false)
+        mockRestricted(false)
         local calls = {}
         mockAuraAPIs(calls)
         Replace("issecretvalue", function(value)
@@ -132,7 +132,7 @@ describe("PrivateAuraSounds", function()
 
     it("registers sounds for every group member", function()
         Private.db.disabledPrivateAuras = {}
-        mockCombat(false)
+        mockRestricted(false)
         local calls = {}
         mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1", "raid2", "raid3" })
@@ -149,7 +149,7 @@ describe("PrivateAuraSounds", function()
 
     it("silently skips units with no nickname", function()
         Private.db.disabledPrivateAuras = {}
-        mockCombat(false)
+        mockRestricted(false)
         local calls = {}
         mockAuraAPIs(calls)
         mockIterateGroupMembers({ "raid1" })

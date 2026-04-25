@@ -232,11 +232,11 @@ function Private:DrawRaidContent(container, opts)
 
     container:SetLayout("Flow")
 
-    if not useTestData and Private:IsInCombat() then
+    if not useTestData and Private:IsRestricted() then
         container:AddChild(CreateSpacer())
         ---@type AceGUILabel
         local restricted = AceGUI:Create("Label")
-        restricted:SetText("|cffff8800Data unavailable during combat.|r")
+        restricted:SetText("|cffff8800Data unavailable during encounter, M+, or rated PvP.|r")
         restricted:SetFullWidth(true)
         restricted:SetFont(GameFontNormal:GetFont())
         container:AddChild(restricted)

@@ -34,6 +34,9 @@ end
 ---@param soundFile string
 local function RegisterSound(unit, spellID, soundFile)
     Private:DebugPrint("PrivateAuras: RegisterSound", unit, spellID, soundFile)
+    if Private:IsRestricted() then
+        return
+    end
     if not C_UnitAuras.AuraIsPrivate(spellID) then
         return
     end
@@ -73,7 +76,7 @@ end
 
 ---@param warnOnMissing? boolean
 local function RegisterPrivateAuraSounds(warnOnMissing)
-    if Private:IsInCombat() then
+    if Private:IsRestricted() then
         return
     end
 
