@@ -40,6 +40,10 @@ if Private.db.disabledPrivateAuras == nil then
     Private.db.disabledPrivateAuras = {}
 end
 
+if Private.db.disabledReminderSounds == nil then
+    Private.db.disabledReminderSounds = {}
+end
+
 if Private.db.disableConflictingBigWigsPrivateAuraSounds == nil then
     Private.db.disableConflictingBigWigsPrivateAuraSounds = true
 end

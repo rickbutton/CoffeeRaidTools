@@ -2,6 +2,10 @@
 local Private = select(2, ...)
 local AceGUI = LibStub("AceGUI-3.0")
 
+local ENCOUNTERS_VALUE = "encounters"
+local GENERAL_VALUE = "general"
+local DEVMODE_VALUE = "devmode"
+
 local function CreateSectionTitle(text)
     ---@type AceGUILabel
     local label = AceGUI:Create("Label")
@@ -49,199 +53,213 @@ local function CreateSettingsDropdown(key, label, values, order)
     return dropdown
 end
 
-local function DrawTab(container)
-    container:SetLayout("Fill")
+---@param container AceGUIContainer
+---@param config PrivateAuraSpellConfig
+local function AddPrivateAuraRow(container, config)
+    local primaryID = config.spellIDs[1]
 
-    ---@type AceGUIScrollFrame
-    local scrollFrame = AceGUI:Create("ScrollFrame")
-    scrollFrame:SetFullWidth(true)
-    scrollFrame:SetFullHeight(true)
-    scrollFrame:SetLayout("List")
-    container:AddChild(scrollFrame)
+    ---@type AceGUISimpleGroup
+    local row = AceGUI:Create("SimpleGroup")
+    row:SetFullWidth(true)
+    row:SetLayout("Flow")
 
-    scrollFrame:AddChild(CreateSpacer())
-    scrollFrame:AddChild(CreateSectionTitle("Ready Check"))
-    scrollFrame:AddChild(CreateSpacer())
+    ---@type AceGUICheckBox
+    local cb = AceGUI:Create("CheckBox")
+    cb:SetLabel(C_Spell.GetSpellName(primaryID) or tostring(primaryID))
+    cb:SetValue(not Private.db.disabledPrivateAuras[primaryID])
+    cb:SetCallback("OnValueChanged", function(widget, event, value)
+        Private.db.disabledPrivateAuras[primaryID] = (not value) or nil
+    end)
+    cb:SetCallback("OnEnter", function()
+        ---@diagnostic disable-next-line: invisible
+        GameTooltip:SetOwner(cb.frame, "ANCHOR_RIGHT")
+        GameTooltip:SetSpellByID(primaryID)
+        GameTooltip:Show()
+    end)
+    cb:SetCallback("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+    cb:SetRelativeWidth(config.perUnit and 0.35 or 0.6)
+    row:AddChild(cb)
 
-    scrollFrame:AddChild(CreateSettingsDropdown("readyCheckPopup", "Check Players on Ready Check", {
-        never = "Never",
-        always = "Always",
-        inraid = "In Raid",
-        inraidcoffee = "In Raid with Coffee Players",
-    }, { "never", "inraid", "inraidcoffee", "always" }))
+    if config.perUnit then
+        ---@type AceGUIButton
+        local btn = AceGUI:Create("Button")
+        btn:SetText("Test")
+        btn:SetRelativeWidth(0.2)
+        row:AddChild(btn)
 
-    scrollFrame:AddChild(CreateSpacer())
-    scrollFrame:AddChild(CreateSectionTitle("Private Aura Sounds"))
-    scrollFrame:AddChild(CreateSpacer())
+        local rosterNames = { Unknown = "Unknown" }
+        local rosterOrder = {}
+        for nickname in pairs(Private.RosterNicknames) do
+            rosterNames[nickname] = nickname
+            tinsert(rosterOrder, nickname)
+        end
+        table.sort(rosterOrder)
+        tinsert(rosterOrder, "Unknown")
 
-    do
-        ---@type AceGUICheckBox
-        local cb = AceGUI:Create("CheckBox")
-        cb:SetLabel("Disable BigWigs private aura sounds for CRT-managed spells")
-        cb:SetValue(Private.db.disableConflictingBigWigsPrivateAuraSounds)
-        cb:SetCallback("OnValueChanged", function(widget, event, value)
-            Private.db.disableConflictingBigWigsPrivateAuraSounds = value
-            Private:UpdateBigWigsPrivateAuras()
+        ---@type AceGUIDropdown
+        local dropdown = AceGUI:Create("Dropdown")
+        dropdown:SetList(rosterNames, rosterOrder)
+        dropdown:SetRelativeWidth(0.35)
+
+        local playerNickname = CoffeeRaidTools:GetNickname("player", true)
+        if playerNickname and rosterNames[playerNickname] then
+            dropdown:SetValue(playerNickname)
+        end
+
+        row:AddChild(dropdown)
+
+        btn:SetCallback("OnClick", function()
+            local selected = dropdown:GetValue()
+            if selected then
+                PlaySoundFile(Private:GetPrivateAuraSoundPath(config, selected), "master")
+            end
         end)
-        cb:SetFullWidth(true)
-        scrollFrame:AddChild(cb)
+    else
+        ---@type AceGUIButton
+        local btn = AceGUI:Create("Button")
+        btn:SetText("Test")
+        btn:SetRelativeWidth(0.2)
+        btn:SetCallback("OnClick", function()
+            PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
+        end)
+        row:AddChild(btn)
     end
 
-    scrollFrame:AddChild(CreateSpacer())
+    container:AddChild(row)
+end
 
-    for _, section in ipairs(Private.PrivateAuraSections) do
-        scrollFrame:AddChild(CreateSpacer())
-
-        ---@type AceGUILabel
-        local bossLabel = AceGUI:Create("Label")
-        bossLabel:SetText(section.boss)
-        bossLabel:SetFullWidth(true)
-        bossLabel:SetFont(GameFontNormal:GetFont())
-        bossLabel:SetColor(0.8, 0.8, 0.8)
-        scrollFrame:AddChild(bossLabel)
-
-        for i, config in ipairs(section.spells) do
-            if i > 1 then
-                scrollFrame:AddChild(CreateSpacer())
-            end
-
-            local primaryID = config.spellIDs[1]
-
-            ---@type AceGUISimpleGroup
-            local row = AceGUI:Create("SimpleGroup")
-            row:SetFullWidth(true)
-            row:SetLayout("Flow")
-
-            ---@type AceGUICheckBox
-            local cb = AceGUI:Create("CheckBox")
-            cb:SetLabel(C_Spell.GetSpellName(primaryID) or tostring(primaryID))
-            cb:SetValue(not Private.db.disabledPrivateAuras[primaryID])
-            cb:SetCallback("OnValueChanged", function(widget, event, value)
-                Private.db.disabledPrivateAuras[primaryID] = (not value) or nil
-            end)
-            cb:SetCallback("OnEnter", function()
-                ---@diagnostic disable-next-line: invisible
-                GameTooltip:SetOwner(cb.frame, "ANCHOR_RIGHT")
-                GameTooltip:SetSpellByID(primaryID)
-                GameTooltip:Show()
-            end)
-            cb:SetCallback("OnLeave", function()
-                GameTooltip:Hide()
-            end)
-            cb:SetRelativeWidth(0.35)
-            row:AddChild(cb)
-
-            if config.perUnit then
-                ---@type AceGUIButton
-                local btn = AceGUI:Create("Button")
-                btn:SetText("Test")
-                btn:SetRelativeWidth(0.2)
-                row:AddChild(btn)
-
-                local rosterNames = { Unknown = "Unknown" }
-                local rosterOrder = {}
-                for nickname in pairs(Private.RosterNicknames) do
-                    rosterNames[nickname] = nickname
-                    tinsert(rosterOrder, nickname)
-                end
-                table.sort(rosterOrder)
-                tinsert(rosterOrder, "Unknown")
-
-                ---@type AceGUIDropdown
-                local dropdown = AceGUI:Create("Dropdown")
-                dropdown:SetList(rosterNames, rosterOrder)
-                dropdown:SetRelativeWidth(0.35)
-
-                local playerNickname = CoffeeRaidTools:GetNickname("player", true)
-                if playerNickname and rosterNames[playerNickname] then
-                    dropdown:SetValue(playerNickname)
-                end
-
-                row:AddChild(dropdown)
-
-                btn:SetCallback("OnClick", function()
-                    local selected = dropdown:GetValue()
-                    if selected then
-                        PlaySoundFile(Private:GetPrivateAuraSoundPath(config, selected), "master")
-                    end
-                end)
-            else
-                ---@type AceGUIButton
-                local btn = AceGUI:Create("Button")
-                btn:SetText("Test")
-                btn:SetRelativeWidth(0.2)
-                btn:SetCallback("OnClick", function()
-                    PlaySoundFile(Private:GetPrivateAuraSoundPath(config), "master")
-                end)
-                row:AddChild(btn)
-            end
-
-            scrollFrame:AddChild(row)
+---@param container AceGUIContainer
+---@param reminderSection ReminderSoundBossSection
+local function AddReminderRows(container, reminderSection)
+    for i, reminder in ipairs(reminderSection.reminders) do
+        if i > 1 then
+            container:AddChild(CreateSpacer())
         end
-    end
 
-    scrollFrame:AddChild(CreateSpacer())
-    scrollFrame:AddChild(CreateSectionTitle("Reminder Sounds"))
-    scrollFrame:AddChild(CreateSpacer())
-
-    do
-        local reminderNames = {}
-        local reminderOrder = {}
-        local seen = {}
-        for _, section in ipairs(Private.ReminderSoundSections or {}) do
-            for _, reminder in ipairs(section.reminders) do
-                if not seen[reminder.text] then
-                    seen[reminder.text] = true
-                    reminderNames[reminder.text] = reminder.text
-                    tinsert(reminderOrder, reminder.text)
-                end
-            end
-        end
+        local text = reminder.text
 
         ---@type AceGUISimpleGroup
         local row = AceGUI:Create("SimpleGroup")
         row:SetFullWidth(true)
         row:SetLayout("Flow")
 
-        ---@type AceGUIDropdown
-        local dropdown = AceGUI:Create("Dropdown")
-        dropdown:SetLabel("Reminder")
-        dropdown:SetList(reminderNames, reminderOrder)
-        dropdown:SetRelativeWidth(0.6)
-        if reminderOrder[1] then
-            dropdown:SetValue(reminderOrder[1])
-        end
-        row:AddChild(dropdown)
+        ---@type AceGUICheckBox
+        local cb = AceGUI:Create("CheckBox")
+        cb:SetLabel(text)
+        cb:SetValue(not Private.db.disabledReminderSounds[text])
+        cb:SetCallback("OnValueChanged", function(widget, event, value)
+            Private.db.disabledReminderSounds[text] = (not value) or nil
+        end)
+        cb:SetRelativeWidth(0.6)
+        row:AddChild(cb)
 
         ---@type AceGUIButton
         local btn = AceGUI:Create("Button")
         btn:SetText("Test")
         btn:SetRelativeWidth(0.2)
         btn:SetCallback("OnClick", function()
-            local selected = dropdown:GetValue()
-            if not selected then
-                return
-            end
-            local LSM = LibStub and LibStub("LibSharedMedia-3.0", true)
-            local path = LSM and LSM:Fetch("sound", selected)
-            if path and path ~= 1 then
+            local path = Private:GetReminderSoundPath(text)
+            if path then
                 PlaySoundFile(path, "Master")
-            else
-                CoffeeRaidTools:Print("No sound registered for: " .. selected)
             end
         end)
         row:AddChild(btn)
 
-        scrollFrame:AddChild(row)
+        container:AddChild(row)
+    end
+end
+
+---@class EncounterEntry
+---@field boss string
+---@field value string
+---@field spellSection? PrivateAuraBossSection
+---@field reminderSection? ReminderSoundBossSection
+
+---@return EncounterEntry[], ReminderSoundBossSection?
+local function BuildEncounterEntries()
+    ---@type EncounterEntry[]
+    local entries = {}
+    ---@type table<string, EncounterEntry>
+    local byBoss = {}
+    ---@type ReminderSoundBossSection?
+    local generalReminder = nil
+
+    local function getOrCreate(boss)
+        local entry = byBoss[boss]
+        if not entry then
+            entry = { boss = boss, value = boss }
+            byBoss[boss] = entry
+            tinsert(entries, entry)
+        end
+        return entry
     end
 
-    scrollFrame:AddChild(CreateSpacer())
-    scrollFrame:AddChild(CreateSectionTitle("Memory Game (Midnight Falls)"))
-    scrollFrame:AddChild(CreateSpacer())
+    for _, section in ipairs(Private.PrivateAuraSections) do
+        getOrCreate(section.boss).spellSection = section
+    end
 
-    scrollFrame:AddChild(CreateSettingsCheckbox("memoryGamePicker", "Show rune picker buttons during mechanic"))
+    for _, section in ipairs(Private.ReminderSoundSections or {}) do
+        if section.encounterID then
+            getOrCreate(section.boss).reminderSection = section
+        elseif section.boss == "General" and not generalReminder then
+            generalReminder = section
+        end
+    end
 
-    do
+    return entries, generalReminder
+end
+
+---@param container AceGUIContainer
+---@param entry EncounterEntry
+local function RenderEncounterPage(container, entry)
+    container:AddChild(CreateSectionTitle(entry.boss))
+    container:AddChild(CreateSpacer())
+
+    if entry.spellSection then
+        ---@type AceGUILabel
+        local header = AceGUI:Create("Label")
+        header:SetText("Private Aura Sounds")
+        header:SetFullWidth(true)
+        header:SetFont(GameFontNormal:GetFont())
+        header:SetColor(0.8, 0.8, 0.8)
+        container:AddChild(header)
+
+        for i, config in ipairs(entry.spellSection.spells) do
+            if i > 1 then
+                container:AddChild(CreateSpacer())
+            end
+            AddPrivateAuraRow(container, config)
+        end
+
+        container:AddChild(CreateSpacer())
+    end
+
+    if entry.reminderSection then
+        ---@type AceGUILabel
+        local header = AceGUI:Create("Label")
+        header:SetText("Reminder Sounds")
+        header:SetFullWidth(true)
+        header:SetFont(GameFontNormal:GetFont())
+        header:SetColor(0.8, 0.8, 0.8)
+        container:AddChild(header)
+
+        AddReminderRows(container, entry.reminderSection)
+        container:AddChild(CreateSpacer())
+    end
+
+    if entry.boss == "Midnight Falls" then
+        ---@type AceGUILabel
+        local header = AceGUI:Create("Label")
+        header:SetText("Memory Game")
+        header:SetFullWidth(true)
+        header:SetFont(GameFontNormal:GetFont())
+        header:SetColor(0.8, 0.8, 0.8)
+        container:AddChild(header)
+
+        container:AddChild(CreateSettingsCheckbox("memoryGamePicker", "Show rune picker buttons during mechanic"))
+
         ---@type AceGUIButton
         local unlockBtn = AceGUI:Create("Button")
         unlockBtn:SetText("Unlock Frames")
@@ -253,16 +271,119 @@ local function DrawTab(container)
             Private:MemoryGameSetTestMode(unlocked)
             unlockBtn:SetText(unlocked and "Lock Frames" or "Unlock Frames")
         end)
-        scrollFrame:AddChild(unlockBtn)
+        container:AddChild(unlockBtn)
+    end
+end
+
+---@param container AceGUIContainer
+---@param generalReminder? ReminderSoundBossSection
+local function RenderGeneralPage(container, generalReminder)
+    container:AddChild(CreateSectionTitle("Ready Check"))
+    container:AddChild(CreateSpacer())
+
+    container:AddChild(CreateSettingsDropdown("readyCheckPopup", "Check Players on Ready Check", {
+        never = "Never",
+        always = "Always",
+        inraid = "In Raid",
+        inraidcoffee = "In Raid with Coffee Players",
+    }, { "never", "inraid", "inraidcoffee", "always" }))
+
+    if generalReminder then
+        container:AddChild(CreateSpacer())
+        container:AddChild(CreateSectionTitle("General Reminder Sounds"))
+        container:AddChild(CreateSpacer())
+        AddReminderRows(container, generalReminder)
+    end
+end
+
+---@param container AceGUIContainer
+local function RenderEncountersParentPage(container)
+    container:AddChild(CreateSectionTitle("Encounters"))
+    container:AddChild(CreateSpacer())
+
+    ---@type AceGUICheckBox
+    local cb = AceGUI:Create("CheckBox")
+    cb:SetLabel("Disable BigWigs private aura sounds for CRT-managed spells")
+    cb:SetValue(Private.db.disableConflictingBigWigsPrivateAuraSounds)
+    cb:SetCallback("OnValueChanged", function(widget, event, value)
+        Private.db.disableConflictingBigWigsPrivateAuraSounds = value
+        Private:UpdateBigWigsPrivateAuras()
+    end)
+    cb:SetFullWidth(true)
+    container:AddChild(cb)
+end
+
+---@param container AceGUIContainer
+local function RenderDevModePage(container)
+    container:AddChild(CreateSectionTitle("Dev Mode"))
+    container:AddChild(CreateSpacer())
+    container:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
+    container:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
+end
+
+local function DrawTab(container)
+    container:SetLayout("Fill")
+
+    local entries, generalReminder = BuildEncounterEntries()
+
+    local encounterChildren = {}
+    for _, entry in ipairs(entries) do
+        tinsert(encounterChildren, { value = entry.value, text = entry.boss })
     end
 
+    local tree = {
+        { value = GENERAL_VALUE, text = "General" },
+        { value = ENCOUNTERS_VALUE, text = "Encounters", children = encounterChildren },
+    }
     if Private.db.devMode then
-        scrollFrame:AddChild(CreateSpacer())
-        scrollFrame:AddChild(CreateSectionTitle("Dev Mode"))
-        scrollFrame:AddChild(CreateSpacer())
-        scrollFrame:AddChild(CreateSettingsCheckbox("debug", "Enable Debug Logs"))
-        scrollFrame:AddChild(CreateSettingsCheckbox("testGroupVersionList", "Test Group Version List"))
+        tinsert(tree, { value = DEVMODE_VALUE, text = "Dev Mode" })
     end
+
+    ---@type AceGUITreeGroup
+    local treeGroup = AceGUI:Create("TreeGroup")
+    treeGroup:SetFullWidth(true)
+    treeGroup:SetFullHeight(true)
+    treeGroup:SetLayout("Fill")
+    treeGroup:EnableButtonTooltips(false)
+    treeGroup:SetTree(tree)
+    container:AddChild(treeGroup)
+
+    local function RenderPage(pageContainer, uniqueValue)
+        ---@type AceGUIScrollFrame
+        local scrollFrame = AceGUI:Create("ScrollFrame")
+        scrollFrame:SetFullWidth(true)
+        scrollFrame:SetFullHeight(true)
+        scrollFrame:SetLayout("List")
+        pageContainer:AddChild(scrollFrame)
+
+        scrollFrame:AddChild(CreateSpacer())
+
+        if uniqueValue == GENERAL_VALUE then
+            RenderGeneralPage(scrollFrame, generalReminder)
+        elseif uniqueValue == ENCOUNTERS_VALUE then
+            RenderEncountersParentPage(scrollFrame)
+        elseif uniqueValue == DEVMODE_VALUE then
+            RenderDevModePage(scrollFrame)
+        else
+            local prefix = ENCOUNTERS_VALUE .. "\001"
+            if string.sub(uniqueValue, 1, #prefix) == prefix then
+                local bossValue = string.sub(uniqueValue, #prefix + 1)
+                for _, entry in ipairs(entries) do
+                    if entry.value == bossValue then
+                        RenderEncounterPage(scrollFrame, entry)
+                        break
+                    end
+                end
+            end
+        end
+    end
+
+    treeGroup:SetCallback("OnGroupSelected", function(widget, event, uniqueValue)
+        widget:ReleaseChildren()
+        RenderPage(widget, uniqueValue)
+    end)
+
+    treeGroup:SelectByValue(GENERAL_VALUE)
 end
 
 Private:RegisterTab("settings", "Settings", DrawTab)

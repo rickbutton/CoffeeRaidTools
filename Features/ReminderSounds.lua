@@ -22,35 +22,69 @@ for _, section in ipairs(Private.ReminderSoundSections or {}) do
     end
 end
 
-local LSM = LibStub and LibStub("LibSharedMedia-3.0", true)
-if LSM then
-    for text, path in pairs(soundPathByText) do
-        LSM:Register("sound", text, path)
+---Plays the CRT sound for `text` if we own it and the user hasn't disabled it.
+---@param text any
+---@return boolean played
+local function TryPlayOwnedSound(text)
+    if type(text) ~= "string" then
+        return false
     end
-else
-    Private:DebugPrint("ReminderSounds: LibSharedMedia-3.0 not available")
+    local path = soundPathByText[text]
+    if not path then
+        return false
+    end
+    if Private.db.disabledReminderSounds[text] then
+        return false
+    end
+    local willPlay = PlaySoundFile(path, "Master")
+    return willPlay
 end
 
----Play the sound registered for `text` if we have one; otherwise fall back to
----NSRT's TTS so callers always get something audible. Returns the playback
----channel used: "sound", "tts", or nil if neither was available.
 ---@param text string
----@return "sound"|"tts"|nil
-function Private:PlayReminderSound(text)
-    local path = soundPathByText[text]
-    if path then
-        PlaySoundFile(path, "Master")
-        return "sound"
-    end
-    if NSAPI and NSAPI.TTS then
-        NSAPI:TTS(text)
-        return "tts"
-    end
-    Private:DebugPrint("PlayReminderSound: no sound and no NSAPI:TTS for", text)
-    return nil
+---@return string?
+function Private:GetReminderSoundPath(text)
+    return soundPathByText[text]
 end
 
 ---@return boolean
 function Private:HasReminderSound(text)
     return soundPathByText[text] ~= nil
 end
+
+local originalNSAPITTS
+
+---Play the sound registered for `text` if we have one and it's enabled;
+---otherwise fall back to NSRT's TTS. Returns the playback channel used:
+---"sound", "tts", or nil if neither was available.
+---@param text string
+---@return "sound"|"tts"|nil
+function Private:PlayReminderSound(text)
+    if TryPlayOwnedSound(text) then
+        return "sound"
+    end
+    local fallback = originalNSAPITTS or (NSAPI and NSAPI.TTS)
+    if fallback then
+        fallback(NSAPI, text)
+        return "tts"
+    end
+    Private:DebugPrint("PlayReminderSound: no sound and no NSAPI:TTS for", text)
+    return nil
+end
+
+function Private:InstallNSAPITTSHook()
+    if not NSAPI or not NSAPI.TTS or originalNSAPITTS then
+        return
+    end
+    originalNSAPITTS = NSAPI.TTS
+    function NSAPI:TTS(sound, ...)
+        local ttsOn = not (NSRT and NSRT.Settings and NSRT.Settings["TTS"] == false)
+        if ttsOn and TryPlayOwnedSound(sound) then
+            return
+        end
+        return originalNSAPITTS(self, sound, ...)
+    end
+end
+
+Private:RegisterEvent("PLAYER_LOGIN", function()
+    Private:InstallNSAPITTSHook()
+end)
