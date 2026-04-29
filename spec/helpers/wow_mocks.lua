@@ -1,5 +1,6 @@
 -- WoW global API stubs needed by Ace3 libraries and the addon under test.
 -- Loaded before any addon or library code runs.
+---@diagnostic disable: duplicate-set-field, undefined-global, undefined-field
 
 _G.tinsert = table.insert
 _G.tremove = table.remove

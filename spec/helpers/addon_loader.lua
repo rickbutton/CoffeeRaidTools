@@ -1,5 +1,6 @@
 -- Loads Ace3 libraries and addon source files under busted.
 -- Libraries live under .release/CoffeeRaidTools/Libs/ after `pnpm run build:full`.
+---@diagnostic disable: undefined-global
 
 local LIBS_DIR = ".release/CoffeeRaidTools/Libs"
 

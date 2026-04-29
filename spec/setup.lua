@@ -1,4 +1,5 @@
 -- Busted helper loaded once before any spec files run.
+---@diagnostic disable: undefined-global
 
 -- 1. Mock WoW globals.
 dofile("spec/helpers/wow_mocks.lua")
