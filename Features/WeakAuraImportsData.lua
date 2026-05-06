@@ -31,6 +31,12 @@ Private.WeakAuraImportSections = {
     },
     {
         boss = "Crown of the Cosmos",
-        auras = {},
+        auras = {
+            {
+                name = "Alleria P1 Damage Amp",
+                description = "Shows stacks of the damage amp debuff on the nameplates of the three big adds.",
+                importString = "",
+            },
+        },
     },
 }
