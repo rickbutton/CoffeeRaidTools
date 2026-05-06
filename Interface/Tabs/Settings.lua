@@ -440,6 +440,16 @@ local function DrawTab(container)
     end
 
     treeGroup:SetCallback("OnGroupSelected", function(widget, event, uniqueValue)
+        -- Clicking the label of a parent node should expand it (the user can
+        -- still collapse via the +/- icon). Encounters is the only branch in
+        -- this tree, so handle it directly.
+        if uniqueValue == ENCOUNTERS_VALUE then
+            treeStatus.groups = treeStatus.groups or {}
+            if not treeStatus.groups[uniqueValue] then
+                treeStatus.groups[uniqueValue] = true
+                widget:RefreshTree()
+            end
+        end
         widget:ReleaseChildren()
         RenderPage(widget, uniqueValue)
     end)

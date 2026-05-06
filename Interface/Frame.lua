@@ -30,6 +30,11 @@ local function CreateFrame()
     frame:SetStatusText(Private.VERSION)
     frame:SetCallback("OnClose", DestroyFrame)
     frame:EnableResize(false)
+    -- AceGUI Frame defaults to FULLSCREEN_DIALOG, which sits above DIALOG-strata
+    -- popups (e.g. M33kAuras' WeakAura import dialog) and prevents the user
+    -- from raising them. Drop to HIGH so any DIALOG popup floats over us.
+    ---@diagnostic disable-next-line: invisible
+    frame.frame:SetFrameStrata("HIGH")
 
     local frameName = "CoffeeRaidToolsFrame"
     ---@diagnostic disable-next-line: invisible
