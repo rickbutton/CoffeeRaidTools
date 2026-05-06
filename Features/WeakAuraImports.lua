@@ -20,11 +20,11 @@ function Private:ImportWeakAura(importString)
         return false
     end
 
-    if not WeakAuras or type(WeakAuras.Import) ~= "function" then
+    if not M33kAuras or type(M33kAuras.Import) ~= "function" then
         CoffeeRaidTools:Print("|cffff4040M33kAuras is not loaded. Install M33kAuras to import.|r")
         return false
     end
 
-    WeakAuras.Import(importString)
+    M33kAuras.Import(importString)
     return true
 end

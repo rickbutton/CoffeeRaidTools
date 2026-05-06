@@ -62,7 +62,7 @@ const readOnlyGlobals = [
 const writableGlobals = [
   "CoffeeRaidTools", "CoffeeRaidToolsSaved", "StaticPopupDialogs",
   "NSAPI", "NSRT",
-  "WeakAuras",
+  "M33kAuras",
 ];
 
 module.exports = { projectRoot, luaFiles, run, readOnlyGlobals, writableGlobals, mergeGlobals };
