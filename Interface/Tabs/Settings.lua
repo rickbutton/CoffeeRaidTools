@@ -214,6 +214,54 @@ local function BuildEncounterEntries()
 end
 
 ---@param container AceGUIContainer
+---@param boss string
+local function AddWeakAuraImportRows(container, boss)
+    local section = Private:GetWeakAuraImportsForBoss(boss)
+    if not section or #section.auras == 0 then
+        return
+    end
+
+    ---@type AceGUILabel
+    local header = AceGUI:Create("Label")
+    header:SetText("WeakAura Imports")
+    header:SetFullWidth(true)
+    header:SetFont(GameFontNormal:GetFont())
+    header:SetColor(0.8, 0.8, 0.8)
+    container:AddChild(header)
+
+    for i, aura in ipairs(section.auras) do
+        if i > 1 then
+            container:AddChild(CreateSpacer())
+        end
+
+        ---@type AceGUISimpleGroup
+        local row = AceGUI:Create("SimpleGroup")
+        row:SetFullWidth(true)
+        row:SetLayout("Flow")
+
+        ---@type AceGUILabel
+        local nameLabel = AceGUI:Create("Label")
+        nameLabel:SetText(aura.description and (aura.name .. " — " .. aura.description) or aura.name)
+        nameLabel:SetRelativeWidth(0.75)
+        nameLabel:SetFont(GameFontNormal:GetFont())
+        row:AddChild(nameLabel)
+
+        ---@type AceGUIButton
+        local btn = AceGUI:Create("Button")
+        btn:SetText("Import")
+        btn:SetRelativeWidth(0.2)
+        btn:SetCallback("OnClick", function()
+            Private:ImportWeakAura(aura.importString)
+        end)
+        row:AddChild(btn)
+
+        container:AddChild(row)
+    end
+
+    container:AddChild(CreateSpacer())
+end
+
+---@param container AceGUIContainer
 ---@param entry EncounterEntry
 local function RenderEncounterPage(container, entry)
     container:AddChild(CreateSectionTitle(entry.boss))
@@ -250,6 +298,8 @@ local function RenderEncounterPage(container, entry)
         AddReminderRows(container, entry.reminderSection)
         container:AddChild(CreateSpacer())
     end
+
+    AddWeakAuraImportRows(container, entry.boss)
 
     if entry.boss == "Midnight Falls" then
         ---@type AceGUILabel
