@@ -11,6 +11,9 @@ end
 ---@type TabDescription?
 local currentTab = nil
 
+---@type string?
+local lastSelectedTabKey = nil
+
 ---@type AceGUITabGroup?
 local frameTabGroup = nil
 
@@ -53,13 +56,24 @@ local function CreateFrame()
 
         currentTab = Private:GetTabDescription(group)
         if currentTab then
+            lastSelectedTabKey = currentTab.key
             currentTab.draw(container)
         end
     end
 
     frame:AddChild(tabGroup)
     tabGroup:SetCallback("OnGroupSelected", SelectGroup)
-    tabGroup:SelectTab(tabs[1] and tabs[1].value or "")
+
+    local defaultTab
+    if lastSelectedTabKey then
+        for _, t in ipairs(tabs) do
+            if t.value == lastSelectedTabKey then
+                defaultTab = lastSelectedTabKey
+                break
+            end
+        end
+    end
+    tabGroup:SelectTab(defaultTab or (tabs[1] and tabs[1].value) or "")
 
     return frame
 end

@@ -6,6 +6,8 @@ local ENCOUNTERS_VALUE = "encounters"
 local GENERAL_VALUE = "general"
 local DEVMODE_VALUE = "devmode"
 
+local treeStatus = {}
+
 local function CreateSectionTitle(text)
     ---@type AceGUILabel
     local label = AceGUI:Create("Label")
@@ -346,7 +348,16 @@ local function DrawTab(container)
     treeGroup:SetLayout("Fill")
     treeGroup:EnableButtonTooltips(false)
     treeGroup:SetTree(tree)
+    treeGroup:SetStatusTable(treeStatus)
     container:AddChild(treeGroup)
+
+    local validValues = { [GENERAL_VALUE] = true, [ENCOUNTERS_VALUE] = true }
+    if Private.db.devMode then
+        validValues[DEVMODE_VALUE] = true
+    end
+    for _, entry in ipairs(entries) do
+        validValues[ENCOUNTERS_VALUE .. "\001" .. entry.value] = true
+    end
 
     local function RenderPage(pageContainer, uniqueValue)
         ---@type AceGUIScrollFrame
@@ -383,7 +394,11 @@ local function DrawTab(container)
         RenderPage(widget, uniqueValue)
     end)
 
-    treeGroup:SelectByValue(GENERAL_VALUE)
+    local toSelect = treeStatus.selected
+    if not toSelect or not validValues[toSelect] then
+        toSelect = GENERAL_VALUE
+    end
+    treeGroup:SelectByValue(toSelect)
 end
 
 Private:RegisterTab("settings", "Settings", DrawTab)
