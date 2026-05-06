@@ -4,6 +4,7 @@ describe("RaidStatus", function()
         BW = "2.0",
         NSRT = "1.0",
         RCLC = "1.0",
+        WA = "1.0",
         NSRTHASH = "def",
     }
 
@@ -14,6 +15,7 @@ describe("RaidStatus", function()
                 BW = "2.0",
                 NSRT = "1.0",
                 RCLC = "1.0",
+                WA = "1.0",
                 NSRTHASH = "def",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
@@ -34,6 +36,7 @@ describe("RaidStatus", function()
                 BW = "NONE",
                 NSRT = "1.0",
                 RCLC = "1.0",
+                WA = "1.0",
                 NSRTHASH = "def",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
@@ -48,6 +51,7 @@ describe("RaidStatus", function()
                 BW = "2.0",
                 NSRT = "1.0",
                 RCLC = "1.0",
+                WA = "1.0",
                 NSRTHASH = "def",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
@@ -61,6 +65,7 @@ describe("RaidStatus", function()
                 BW = "2.0",
                 NSRT = "1.0",
                 RCLC = "1.0",
+                WA = "1.0",
                 NSRTHASH = "def",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
@@ -74,6 +79,7 @@ describe("RaidStatus", function()
                 BW = "2.0",
                 NSRT = "1.0",
                 RCLC = "1.0",
+                WA = "1.0",
                 NSRTHASH = "different",
             }
             local status = Private.GeneratePlayerStatus(player, baseExpected)
