@@ -4,7 +4,7 @@ local Private = select(2, ...)
 local LibSerialize = LibStub("LibSerialize")
 local LibDeflate = LibStub("LibDeflate")
 
----@alias AddonShortcode "CRT" | "BW" | "NSRT" | "RCLC"
+---@alias AddonShortcode "CRT" | "BW" | "NSRT" | "WA" | "RCLC"
 ---@alias TrackedShortcode AddonShortcode | "NSRTHASH"
 
 local BROADCAST_INTERVAL = 3
@@ -43,6 +43,11 @@ Private.AddonsToTrack = {
         name = "NorthernSkyRaidTools",
         shortcode = "NSRT",
         matcher = Matchers.EQUAL,
+    },
+    {
+        name = "M33kAuras",
+        shortcode = "WA",
+        matcher = Matchers.EXISTS,
     },
     {
         name = "RCLootCouncil",
