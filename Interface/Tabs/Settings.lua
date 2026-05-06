@@ -267,6 +267,8 @@ local function RenderEncounterPage(container, entry)
     container:AddChild(CreateSectionTitle(entry.boss))
     container:AddChild(CreateSpacer())
 
+    AddWeakAuraImportRows(container, entry.boss)
+
     if entry.spellSection then
         ---@type AceGUILabel
         local header = AceGUI:Create("Label")
@@ -298,8 +300,6 @@ local function RenderEncounterPage(container, entry)
         AddReminderRows(container, entry.reminderSection)
         container:AddChild(CreateSpacer())
     end
-
-    AddWeakAuraImportRows(container, entry.boss)
 
     if entry.boss == "Midnight Falls" then
         ---@type AceGUILabel
