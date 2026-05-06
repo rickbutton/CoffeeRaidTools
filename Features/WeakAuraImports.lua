@@ -16,14 +16,12 @@ end
 ---@return boolean
 function Private:ImportWeakAura(importString)
     if type(importString) ~= "string" or importString == "" then
-        CoffeeRaidTools:Print("|cffff4040No import string is set for this WeakAura yet.|r")
+        CoffeeRaidTools:Print("|cffff4040No import string is set for this M33kAura yet.|r")
         return false
     end
 
     if not WeakAuras or type(WeakAuras.Import) ~= "function" then
-        CoffeeRaidTools:Print(
-            "|cffff4040WeakAuras is not loaded. Install the M33kAuras fork (or another WeakAuras build) to import.|r"
-        )
+        CoffeeRaidTools:Print("|cffff4040M33kAuras is not loaded. Install M33kAuras to import.|r")
         return false
     end
 
