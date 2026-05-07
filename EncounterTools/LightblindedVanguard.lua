@@ -6,8 +6,8 @@ local Private = select(2, ...)
 -- Four soak markers laid out in a 2×2 grid:
 --   1  2
 --   4  3
--- Each slot's marker icon and assigned healers are read from the NSRT
--- shared note (NSRT.SharedNotes) between
+-- Each slot's marker icon and assigned healers are read from the active
+-- NSRT shared reminder (NSAPI:GetReminderString) between
 --   coffee-paladins-soak-assign-start
 --   coffee-paladins-soak-assign-end
 -- Note line N maps to slot N.
@@ -73,11 +73,12 @@ local function AssignmentsFromLines(lines)
     return assignments
 end
 
----Read the NSRT shared notes and return parsed soak assignments. Returns
----nil if no note contains the soak block.
+---Read the active NSRT shared reminder and return parsed soak
+---assignments. Returns nil if the reminder is missing or doesn't
+---contain the soak block.
 ---@return SoakAssignment[]?
 function Private:GetLBVSoakAssignments()
-    local lines = Private:FindNSRTNoteBlock(SOAK_START_TAG, SOAK_END_TAG)
+    local lines = Private:GetNSRTSharedReminderBlock(SOAK_START_TAG, SOAK_END_TAG)
     if not lines then
         return nil
     end
@@ -267,7 +268,7 @@ local function StartEncounter()
 
     local assignments = Private:GetLBVSoakAssignments()
     if not assignments or #assignments == 0 then
-        Private:DebugPrint("LBVSoak: no soak assignment block in NSRT shared notes")
+        Private:DebugPrint("LBVSoak: no soak assignment block in NSRT shared reminder")
         ClearSlotVisuals()
         soakFrame:Show()
         return
@@ -304,7 +305,7 @@ Private:RegisterEvent("ENCOUNTER_END", function(_, encounterID)
 end)
 
 -- Test mode: unlock the frame for repositioning. Populates slots from the
--- current NSRT shared note (if present) so the user can sanity-check
+-- active NSRT shared reminder (if present) so the user can sanity-check
 -- assignments without an active encounter. No PA anchors are added.
 
 function Private:LBVSoakIsTestMode()

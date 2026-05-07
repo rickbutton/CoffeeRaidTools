@@ -98,14 +98,9 @@ local function StringHash(text)
 end
 
 local function GetNSRTNoteHash()
-    if C_AddOns.IsAddOnLoaded("NorthernSkyRaidTools") then
-        if NSAPI and NSAPI.GetReminderString then
-            local _, sharedReminder = NSAPI:GetReminderString()
-            if sharedReminder and sharedReminder ~= "" then
-                return StringHash(sharedReminder)
-            end
-        end
-        return "NONE"
+    local sharedReminder = Private:GetNSRTSharedReminder()
+    if sharedReminder then
+        return StringHash(sharedReminder)
     end
     return "NONE"
 end

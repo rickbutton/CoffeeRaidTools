@@ -119,43 +119,35 @@ function Private:ParseMarkerLine(line)
     return marker:lower(), names
 end
 
----Iterate the NSRT shared notes table (`NSRT.SharedNotes`), yielding the
----`text` field of each entry. Returns an empty iterator when NSRT isn't
----loaded or the table is missing/empty.
----@return fun(): string?
-function Private:IterateNSRTSharedNotes()
-    local notes = _G.NSRT and _G.NSRT.SharedNotes
-    if type(notes) ~= "table" then
-        return function()
-            return nil
-        end
-    end
-    local i = 0
-    return function()
-        i = i + 1
-        local entry = notes[i]
-        while entry ~= nil do
-            if type(entry) == "table" and type(entry.text) == "string" then
-                return entry.text
-            end
-            i = i + 1
-            entry = notes[i]
-        end
+---Return the active NSRT shared reminder text, or nil if NSRT isn't
+---loaded or hasn't published one. This is the same string the version
+---hash check feeds into StringHash, so consumers stay in sync with the
+---reminder that's actually broadcast raid-wide.
+---@return string?
+function Private:GetNSRTSharedReminder()
+    if not C_AddOns.IsAddOnLoaded("NorthernSkyRaidTools") then
         return nil
     end
+    if not NSAPI or not NSAPI.GetReminderString then
+        return nil
+    end
+    local _, shared = NSAPI:GetReminderString()
+    if type(shared) ~= "string" or shared == "" then
+        return nil
+    end
+    return shared
 end
 
----Search every NSRT shared note for the first one containing the given
----tag block and return its line list. Returns nil if no note matches.
+---Pull the active NSRT shared reminder and return the lines between the
+---given tags, or nil if the reminder is missing or the block isn't
+---present.
 ---@param startTag string
 ---@param endTag string
 ---@return string[]?
-function Private:FindNSRTNoteBlock(startTag, endTag)
-    for text in Private:IterateNSRTSharedNotes() do
-        local lines = Private:ExtractNoteBlock(text, startTag, endTag)
-        if lines then
-            return lines
-        end
+function Private:GetNSRTSharedReminderBlock(startTag, endTag)
+    local text = Private:GetNSRTSharedReminder()
+    if not text then
+        return nil
     end
-    return nil
+    return Private:ExtractNoteBlock(text, startTag, endTag)
 end
