@@ -1,10 +1,10 @@
 ---@class Private
 local Private = select(2, ...)
 
--- Parse blocks out of the MRT shared note (VMRT.Note.Text1). Each consumer
--- declares its own start/end sentinel; the helper below reads the raw note
--- and returns just the lines between them. Soak assignments use one such
--- block and pass each line through ParseMarkerLine.
+-- Generic helpers for parsing tagged blocks out of shared notes (MRT or
+-- NSRT) and translating raid-target marker names into texture paths /
+-- inline icon escapes. Encounter-specific consumers live in
+-- EncounterTools/ and call ExtractNoteBlock with their own sentinels.
 
 ---@type table<string, number>
 local MARKER_NAME_TO_INDEX = {
@@ -119,40 +119,43 @@ function Private:ParseMarkerLine(line)
     return marker:lower(), names
 end
 
-local SOAK_START_TAG = "coffee-paladins-soak-assign-start"
-local SOAK_END_TAG = "coffee-paladins-soak-assign-end"
-
----@class SoakAssignment
----@field marker string lowercase marker name (e.g. "star")
----@field names string[] healer names as written in the note
-
----Parse the soak assignment block from arbitrary note text. Returns up to
----four assignments in note order, or nil if the block is missing.
----@param text string
----@return SoakAssignment[]?
-function Private:ParseSoakAssignments(text)
-    local lines = Private:ExtractNoteBlock(text, SOAK_START_TAG, SOAK_END_TAG)
-    if not lines then
-        return nil
-    end
-    local assignments = {}
-    for _, line in ipairs(lines) do
-        local marker, names = Private:ParseMarkerLine(line)
-        if marker then
-            tinsert(assignments, { marker = marker, names = names or {} })
+---Iterate the NSRT shared notes table (`NSRT.SharedNotes`), yielding the
+---`text` field of each entry. Returns an empty iterator when NSRT isn't
+---loaded or the table is missing/empty.
+---@return fun(): string?
+function Private:IterateNSRTSharedNotes()
+    local notes = _G.NSRT and _G.NSRT.SharedNotes
+    if type(notes) ~= "table" then
+        return function()
+            return nil
         end
     end
-    return assignments
-end
-
----Convenience wrapper: read the MRT shared note (VMRT.Note.Text1) and
----return parsed soak assignments. Returns nil if MRT isn't loaded or the
----block isn't present.
----@return SoakAssignment[]?
-function Private:GetSoakAssignmentsFromMRT()
-    local note = _G.VMRT and _G.VMRT.Note and _G.VMRT.Note.Text1
-    if type(note) ~= "string" then
+    local i = 0
+    return function()
+        i = i + 1
+        local entry = notes[i]
+        while entry ~= nil do
+            if type(entry) == "table" and type(entry.text) == "string" then
+                return entry.text
+            end
+            i = i + 1
+            entry = notes[i]
+        end
         return nil
     end
-    return Private:ParseSoakAssignments(note)
+end
+
+---Search every NSRT shared note for the first one containing the given
+---tag block and return its line list. Returns nil if no note matches.
+---@param startTag string
+---@param endTag string
+---@return string[]?
+function Private:FindNSRTNoteBlock(startTag, endTag)
+    for text in Private:IterateNSRTSharedNotes() do
+        local lines = Private:ExtractNoteBlock(text, startTag, endTag)
+        if lines then
+            return lines
+        end
+    end
+    return nil
 end

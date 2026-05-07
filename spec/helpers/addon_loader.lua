@@ -85,7 +85,8 @@ loadAddonFile("Features/PrivateAuraSounds.lua")
 loadAddonFile("Features/ReminderSoundsData.lua")
 loadAddonFile("Features/ReminderSounds.lua")
 loadAddonFile("Features/RaidBuffCheck.lua")
-loadAddonFile("Features/LightblindedVanguard.lua")
+
+loadAddonFile("EncounterTools/LightblindedVanguard.lua")
 
 loadAddonFile("Interface/Tabs/Raid.lua")
 

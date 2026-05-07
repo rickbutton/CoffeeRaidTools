@@ -19,11 +19,12 @@ pnpm test              # Run busted unit tests (requires lua5.1 + busted on PATH
 ### File Structure (loading order from TOC)
 1. `externals.xml` — Ace3 and other libraries
 2. `CoffeeRaidTools.lua` — Entry point (AceAddon, AceConsole, AceComm)
-3. `Core/` — Shared infrastructure (Util, Nicknames, Versions)
+3. `Core/` — Shared infrastructure (Util, Nicknames, Versions, UnitMap, Note)
 4. `Features/` — Self-contained feature modules (ForceAddonSettings, ReadyCheck, Break, GearWarnings)
-5. `Interface/Minimap.lua` — Minimap button
-6. `Interface/Frame.lua` — Main frame controller (closes on ESC)
-7. `Interface/Tabs/` — Local, Raid, Settings
+5. `EncounterTools/` — Boss-specific modules (note parsing + widgets tightly coupled to one encounter)
+6. `Interface/Minimap.lua` — Minimap button
+7. `Interface/Frame.lua` — Main frame controller (closes on ESC)
+8. `Interface/Tabs/` — Local, Raid, Settings
 
 Unit tests live in `spec/` and run via [busted](https://lunarmodules.github.io/busted/); see the "Testing" section below.
 

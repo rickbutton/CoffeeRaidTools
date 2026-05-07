@@ -29,11 +29,12 @@ Features/ReminderSoundsData.lua
 Features/ReminderSounds.lua
 Features/BigWigsOverrides.lua
 Features/MemoryGame.lua
-Features/LightblindedVanguard.lua
 Features/RaidBuffReminder.lua
 Features/RaidBuffCheck.lua
 Features/WeakAuraImportsData.lua
 Features/WeakAuraImports.lua
+
+EncounterTools/LightblindedVanguard.lua
 
 Interface/Minimap.lua
 Interface/Frame.lua

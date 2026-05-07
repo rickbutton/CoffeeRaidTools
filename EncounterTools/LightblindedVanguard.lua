@@ -6,9 +6,11 @@ local Private = select(2, ...)
 -- Four soak markers laid out in a 2×2 grid:
 --   1  2
 --   4  3
--- Each slot's marker icon and assigned healers are read from the MRT
--- shared note between `coffee-paladins-soak-assign-start` and
--- `coffee-paladins-soak-assign-end`. Note line N maps to slot N.
+-- Each slot's marker icon and assigned healers are read from the NSRT
+-- shared note (NSRT.SharedNotes) between
+--   coffee-paladins-soak-assign-start
+--   coffee-paladins-soak-assign-end
+-- Note line N maps to slot N.
 --
 -- For each healer assigned to a slot we register two private aura anchors
 -- (auraIndex=1 and auraIndex=2) to that slot's frame. Per fight data, the
@@ -18,6 +20,9 @@ local Private = select(2, ...)
 -- to the soak icon — acceptable.
 
 local ENCOUNTER_ID = 3180
+
+local SOAK_START_TAG = "coffee-paladins-soak-assign-start"
+local SOAK_END_TAG = "coffee-paladins-soak-assign-end"
 
 local SLOT_SIZE = 64
 local ICON_SIZE = 48
@@ -48,6 +53,36 @@ local BACKDROP = {
     edgeSize = 1,
     insets = { left = 1, right = 1, top = 1, bottom = 1 },
 }
+
+---@class SoakAssignment
+---@field marker string lowercase marker name (e.g. "star")
+---@field names string[] healer names as written in the note
+
+---Parse soak assignment lines from a pre-extracted block. Each line is
+---passed through Private:ParseMarkerLine.
+---@param lines string[]
+---@return SoakAssignment[]
+local function AssignmentsFromLines(lines)
+    local assignments = {}
+    for _, line in ipairs(lines) do
+        local marker, names = Private:ParseMarkerLine(line)
+        if marker then
+            tinsert(assignments, { marker = marker, names = names or {} })
+        end
+    end
+    return assignments
+end
+
+---Read the NSRT shared notes and return parsed soak assignments. Returns
+---nil if no note contains the soak block.
+---@return SoakAssignment[]?
+function Private:GetLBVSoakAssignments()
+    local lines = Private:FindNSRTNoteBlock(SOAK_START_TAG, SOAK_END_TAG)
+    if not lines then
+        return nil
+    end
+    return AssignmentsFromLines(lines)
+end
 
 -- State
 local soakFrame = nil
@@ -230,9 +265,9 @@ local function StartEncounter()
 
     BuildFrame()
 
-    local assignments = Private:GetSoakAssignmentsFromMRT()
+    local assignments = Private:GetLBVSoakAssignments()
     if not assignments or #assignments == 0 then
-        Private:DebugPrint("LBVSoak: no soak assignment block in MRT note")
+        Private:DebugPrint("LBVSoak: no soak assignment block in NSRT shared notes")
         ClearSlotVisuals()
         soakFrame:Show()
         return
@@ -269,8 +304,8 @@ Private:RegisterEvent("ENCOUNTER_END", function(_, encounterID)
 end)
 
 -- Test mode: unlock the frame for repositioning. Populates slots from the
--- current MRT note (if present) so the user can sanity-check assignments
--- without an active encounter. No PA anchors are added in test mode.
+-- current NSRT shared note (if present) so the user can sanity-check
+-- assignments without an active encounter. No PA anchors are added.
 
 function Private:LBVSoakIsTestMode()
     return testMode
@@ -286,7 +321,7 @@ function Private:LBVSoakSetTestMode(enabled)
     SetFrameLocked(soakFrame, not enabled)
 
     if enabled then
-        local assignments = Private:GetSoakAssignmentsFromMRT()
+        local assignments = Private:GetLBVSoakAssignments()
         if assignments and #assignments > 0 then
             ApplyAssignmentsToSlots(assignments)
         else
