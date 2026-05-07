@@ -56,6 +56,10 @@ if Private.db.memoryGamePositions == nil then
     Private.db.memoryGamePositions = {}
 end
 
+if Private.db.lightblindedVanguardSoakWidget == nil then
+    Private.db.lightblindedVanguardSoakWidget = false
+end
+
 if Private.db.minimapIcon == nil then
     Private.db.minimapIcon = {}
 end

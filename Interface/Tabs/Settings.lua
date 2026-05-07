@@ -323,6 +323,29 @@ local function RenderEncounterPage(container, entry)
         end)
         container:AddChild(unlockBtn)
     end
+
+    if entry.boss == "Lightblinded Vanguard" then
+        ---@type AceGUILabel
+        local header = AceGUI:Create("Label")
+        header:SetText("Execution Sentence Soak Widget")
+        header:SetFullWidth(true)
+        header:SetFont(GameFontNormal:GetFont())
+        header:SetColor(0.8, 0.8, 0.8)
+        container:AddChild(header)
+
+        container:AddChild(CreateSettingsCheckbox("lightblindedVanguardSoakWidget", "Show soak widget during the encounter"))
+
+        ---@type AceGUIButton
+        local unlockBtn = AceGUI:Create("Button")
+        unlockBtn:SetRelativeWidth(0.4)
+        unlockBtn:SetText(Private:LBVSoakIsTestMode() and "Lock Frame" or "Unlock Frame")
+        unlockBtn:SetCallback("OnClick", function()
+            local nextState = not Private:LBVSoakIsTestMode()
+            Private:LBVSoakSetTestMode(nextState)
+            unlockBtn:SetText(nextState and "Lock Frame" or "Unlock Frame")
+        end)
+        container:AddChild(unlockBtn)
+    end
 end
 
 ---@param container AceGUIContainer
