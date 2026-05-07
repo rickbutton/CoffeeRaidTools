@@ -26,6 +26,11 @@ local function CreateSpacer()
     return spacer
 end
 
+local function AddSubsectionTitle(container, text)
+    container:AddChild(CreateSpacer())
+    container:AddChild(CreateSectionTitle(text))
+end
+
 local function CreateSettingsCheckbox(key, label)
     ---@type AceGUICheckBox
     local checkbox = AceGUI:Create("CheckBox")
@@ -221,13 +226,7 @@ local function AddWeakAuraImportRows(container, boss)
         return
     end
 
-    ---@type AceGUILabel
-    local header = AceGUI:Create("Label")
-    header:SetText("WeakAura Imports")
-    header:SetFullWidth(true)
-    header:SetFont(GameFontNormal:GetFont())
-    header:SetColor(0.8, 0.8, 0.8)
-    container:AddChild(header)
+    AddSubsectionTitle(container, "WeakAura Imports")
 
     for i, aura in ipairs(section.auras) do
         if i > 1 then
@@ -270,13 +269,7 @@ local function RenderEncounterPage(container, entry)
     AddWeakAuraImportRows(container, entry.boss)
 
     if entry.boss == "Lightblinded Vanguard" then
-        ---@type AceGUILabel
-        local header = AceGUI:Create("Label")
-        header:SetText("Execution Sentence Soak Widget")
-        header:SetFullWidth(true)
-        header:SetFont(GameFontNormal:GetFont())
-        header:SetColor(0.8, 0.8, 0.8)
-        container:AddChild(header)
+        AddSubsectionTitle(container, "Execution Sentence Soak Widget")
 
         container:AddChild(
             CreateSettingsCheckbox("lightblindedVanguardSoakWidget", "Show soak widget during the encounter")
@@ -297,13 +290,7 @@ local function RenderEncounterPage(container, entry)
     end
 
     if entry.spellSection then
-        ---@type AceGUILabel
-        local header = AceGUI:Create("Label")
-        header:SetText("Private Aura Sounds")
-        header:SetFullWidth(true)
-        header:SetFont(GameFontNormal:GetFont())
-        header:SetColor(0.8, 0.8, 0.8)
-        container:AddChild(header)
+        AddSubsectionTitle(container, "Private Aura Sounds")
 
         for i, config in ipairs(entry.spellSection.spells) do
             if i > 1 then
@@ -316,26 +303,14 @@ local function RenderEncounterPage(container, entry)
     end
 
     if entry.reminderSection then
-        ---@type AceGUILabel
-        local header = AceGUI:Create("Label")
-        header:SetText("Reminder Sounds")
-        header:SetFullWidth(true)
-        header:SetFont(GameFontNormal:GetFont())
-        header:SetColor(0.8, 0.8, 0.8)
-        container:AddChild(header)
+        AddSubsectionTitle(container, "Reminder Sounds")
 
         AddReminderRows(container, entry.reminderSection)
         container:AddChild(CreateSpacer())
     end
 
     if entry.boss == "Midnight Falls" then
-        ---@type AceGUILabel
-        local header = AceGUI:Create("Label")
-        header:SetText("Memory Game")
-        header:SetFullWidth(true)
-        header:SetFont(GameFontNormal:GetFont())
-        header:SetColor(0.8, 0.8, 0.8)
-        container:AddChild(header)
+        AddSubsectionTitle(container, "Memory Game")
 
         container:AddChild(CreateSettingsCheckbox("memoryGamePicker", "Show rune picker buttons during mechanic"))
 
