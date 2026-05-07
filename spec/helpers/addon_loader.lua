@@ -75,6 +75,8 @@ loadAddonFile("Core/Nicknames.lua")
 loadAddonFile("Core/Roster.lua")
 loadAddonFile("Core/Versions.lua")
 loadAddonFile("Core/SpecSync.lua")
+loadAddonFile("Core/UnitMap.lua")
+loadAddonFile("Core/Note.lua")
 
 loadAddonFile("Features/ForceAddonSettings.lua")
 loadAddonFile("Features/ReadyCheck.lua")

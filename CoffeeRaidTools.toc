@@ -16,6 +16,8 @@ Core/Roster.lua
 Core/Versions.lua
 Core/BigWigsBridge.lua
 Core/SpecSync.lua
+Core/UnitMap.lua
+Core/Note.lua
 
 Features/ForceAddonSettings.lua
 Features/ReadyCheck.lua

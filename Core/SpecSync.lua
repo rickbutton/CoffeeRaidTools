@@ -70,6 +70,30 @@ function Private:BroadcastOwnSpec()
     CoffeeRaidTools:SendCommMessage(COMM_PREFIX, encoded, target)
 end
 
+-- Healer specIDs (Restoration Druid, Holy/Disc Priest, Mistweaver, Holy Pala,
+-- Restoration Shaman, Preservation Evoker). Mirrors NSRT's healer list.
+local HEALER_SPECS = {
+    [105] = true, -- Druid: Restoration
+    [256] = true, -- Priest: Discipline
+    [257] = true, -- Priest: Holy
+    [264] = true, -- Shaman: Restoration
+    [270] = true, -- Monk: Mistweaver
+    [65] = true, -- Paladin: Holy
+    [1468] = true, -- Evoker: Preservation
+}
+
+---Return true if `unit` is a healer. Prefers spec sync data; falls back to
+---the assigned group role when we haven't received the unit's spec yet.
+---@param unit string
+---@return boolean
+function Private:IsHealer(unit)
+    local specID = Private:GetUnitSpec(unit)
+    if specID then
+        return HEALER_SPECS[specID] == true
+    end
+    return UnitGroupRolesAssigned(unit) == "HEALER"
+end
+
 ---Look up a peer's spec. Returns the specID we last received from them over
 ---the group comm, or nil if we never heard from them.
 ---@param unit string
