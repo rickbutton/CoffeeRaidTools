@@ -225,16 +225,6 @@ local ChatCommands = {
         Private.db.devMode = not Private.db.devMode
         CoffeeRaidTools:Print("Dev mode " .. (Private.db.devMode and "enabled" or "disabled"))
     end,
-    encountertools = function(args)
-        local sub = args and args:trim():lower() or ""
-        if sub == "unlock" then
-            Private.encounterToolsUnlocked = not Private.encounterToolsUnlocked
-            Private:SendMessage("CRT_EncounterTools_SetTestMode", Private.encounterToolsUnlocked)
-            CoffeeRaidTools:Print("Encounter tools " .. (Private.encounterToolsUnlocked and "unlocked" or "locked"))
-        else
-            CoffeeRaidTools:Print("Usage: /crt encountertools unlock")
-        end
-    end,
 }
 
 function CoffeeRaidTools:ChatCommandHandler(input)

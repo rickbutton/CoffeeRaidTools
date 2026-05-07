@@ -314,14 +314,12 @@ local function RenderEncounterPage(container, entry)
 
         ---@type AceGUIButton
         local unlockBtn = AceGUI:Create("Button")
-        unlockBtn:SetText("Unlock Frames")
         unlockBtn:SetRelativeWidth(0.4)
-
-        local unlocked = false
+        unlockBtn:SetText(Private:MemoryGameIsTestMode() and "Lock Frames" or "Unlock Frames")
         unlockBtn:SetCallback("OnClick", function()
-            unlocked = not unlocked
-            Private:MemoryGameSetTestMode(unlocked)
-            unlockBtn:SetText(unlocked and "Lock Frames" or "Unlock Frames")
+            local nextState = not Private:MemoryGameIsTestMode()
+            Private:MemoryGameSetTestMode(nextState)
+            unlockBtn:SetText(nextState and "Lock Frames" or "Unlock Frames")
         end)
         container:AddChild(unlockBtn)
     end

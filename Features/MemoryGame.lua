@@ -430,9 +430,9 @@ end)
 
 -- Test mode / unlock support
 
-Private:RegisterMessage("CRT_EncounterTools_SetTestMode", function(_, enabled)
-    Private:MemoryGameSetTestMode(enabled)
-end)
+function Private:MemoryGameIsTestMode()
+    return testMode
+end
 
 function Private:MemoryGameSetTestMode(enabled)
     BuildFrames()
