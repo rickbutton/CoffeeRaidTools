@@ -85,11 +85,26 @@ function Private:GetLBVSoakAssignments()
     return AssignmentsFromLines(lines)
 end
 
+-- Show/hide windows in seconds since ENCOUNTER_START. Each entry opens
+-- ~3s before the targeted debuff goes out and closes at the soak resolve
+-- (NSRT mythic "group soak" times {90, 146, 249, 305}; later soaks at
+-- 408/464 are intentionally omitted — kills end before then). The widget
+-- lingers WINDOW_TAIL seconds past the soak resolve so the soak icon
+-- stays visible briefly after the mechanic completes.
+local WINDOW_TAIL = 1
+local SOAK_WINDOWS = {
+    { open = 80, close = 91 },
+    { open = 135, close = 146 },
+    { open = 238, close = 249 },
+    { open = 295, close = 306 },
+}
+
 -- State
 local soakFrame = nil
 local slotFrames = {}
 local slotIcons = {}
 local activeAnchors = {}
+local windowTimers = {}
 local encounterActive = false
 local testMode = false
 
@@ -133,6 +148,19 @@ local function SetFrameLocked(frame, locked)
     end
 end
 
+local function ApplyChrome(visible)
+    if not soakFrame then
+        return
+    end
+    if visible then
+        soakFrame:SetBackdrop(BACKDROP)
+        soakFrame:SetBackdropColor(unpack(C.bg))
+        soakFrame:SetBackdropBorderColor(unpack(C.border))
+    else
+        soakFrame:SetBackdrop(nil)
+    end
+end
+
 local function BuildFrame()
     if soakFrame then
         return
@@ -142,18 +170,12 @@ local function BuildFrame()
     soakFrame:SetSize(FRAME_W, FRAME_H)
     soakFrame:SetClampedToScreen(true)
     soakFrame:SetFrameStrata("MEDIUM")
-    soakFrame:SetBackdrop(BACKDROP)
-    soakFrame:SetBackdropColor(unpack(C.bg))
-    soakFrame:SetBackdropBorderColor(unpack(C.border))
 
     for i = 1, 4 do
         local off = SLOT_OFFSETS[i]
-        local slot = CreateFrame("Frame", "CRTLBVSoakSlot" .. i, soakFrame, "BackdropTemplate")
+        local slot = CreateFrame("Frame", "CRTLBVSoakSlot" .. i, soakFrame)
         slot:SetSize(SLOT_SIZE, SLOT_SIZE)
         slot:SetPoint("CENTER", soakFrame, "CENTER", off.x, off.y)
-        slot:SetBackdrop(BACKDROP)
-        slot:SetBackdropColor(unpack(C.slotEmpty))
-        slot:SetBackdropBorderColor(unpack(C.slotBorder))
 
         local icon = slot:CreateTexture(nil, "ARTWORK")
         icon:SetSize(ICON_SIZE, ICON_SIZE)
@@ -236,7 +258,17 @@ end
 ---@param assignments SoakAssignment[]
 local function RegisterAnchors(assignments)
     RemoveAllAnchors()
-    for slotIndex = 1, math.min(4, #assignments) do
+
+    local slotCount = math.min(4, #assignments)
+    if slotCount == 0 then
+        return
+    end
+
+    -- Pass 1: explicit assignments from the note. Track which units we've
+    -- already anchored so the round-robin pass doesn't double-anchor a
+    -- healer who's both named in the note and present in the group.
+    local assignedUnits = {}
+    for slotIndex = 1, slotCount do
         local assignment = assignments[slotIndex]
         local slotFrame = slotFrames[slotIndex]
         if slotFrame then
@@ -249,9 +281,60 @@ local function RegisterAnchors(assignments)
                         Private:DebugPrint("LBVSoak: not a healer:", name, unit)
                     end
                     AddAnchorsForUnit(unit, slotFrame)
+                    assignedUnits[unit] = true
                 end
             end
         end
+    end
+
+    -- Pass 2: any group healer not named in the note gets round-robined into
+    -- the existing slots so the widget still covers them. Print a warning so
+    -- the raid leader notices the note is out of date.
+    local unassigned = {}
+    for unit in Private:IterateGroupMembers() do
+        if Private:IsHealer(unit) and not assignedUnits[unit] then
+            tinsert(unassigned, unit)
+        end
+    end
+
+    if #unassigned == 0 then
+        return
+    end
+
+    local warnNames = {}
+    for i, unit in ipairs(unassigned) do
+        local slotIndex = ((i - 1) % slotCount) + 1
+        AddAnchorsForUnit(unit, slotFrames[slotIndex])
+        local name = Private:GetNameForUnit(unit) or UnitName(unit) or unit
+        tinsert(warnNames, string.format("%s (slot %d)", name, slotIndex))
+    end
+    CoffeeRaidTools:Print("LBV soak: healers missing from note, auto-assigned: " .. table.concat(warnNames, ", "))
+end
+
+local function CancelWindowTimers()
+    for i, timer in ipairs(windowTimers) do
+        if timer and timer.Cancel then
+            timer:Cancel()
+        end
+        windowTimers[i] = nil
+    end
+end
+
+local function ScheduleWindows()
+    CancelWindowTimers()
+    for _, window in ipairs(SOAK_WINDOWS) do
+        local openTimer = C_Timer.NewTimer(window.open, function()
+            if encounterActive and soakFrame then
+                soakFrame:Show()
+            end
+        end)
+        local closeTimer = C_Timer.NewTimer(window.close + WINDOW_TAIL, function()
+            if encounterActive and soakFrame and not testMode then
+                soakFrame:Hide()
+            end
+        end)
+        tinsert(windowTimers, openTimer)
+        tinsert(windowTimers, closeTimer)
     end
 end
 
@@ -269,14 +352,16 @@ local function StartEncounter()
     local assignments = Private:GetLBVSoakAssignments()
     if not assignments or #assignments == 0 then
         Private:DebugPrint("LBVSoak: no soak assignment block in NSRT shared reminder")
-        ClearSlotVisuals()
-        soakFrame:Show()
+        encounterActive = false
         return
     end
 
     ApplyAssignmentsToSlots(assignments)
     RegisterAnchors(assignments)
-    soakFrame:Show()
+    if soakFrame then
+        soakFrame:Hide()
+    end
+    ScheduleWindows()
 end
 
 local function StopEncounter()
@@ -285,6 +370,7 @@ local function StopEncounter()
     end
     encounterActive = false
 
+    CancelWindowTimers()
     RemoveAllAnchors()
     ClearSlotVisuals()
     if soakFrame then
@@ -305,8 +391,15 @@ Private:RegisterEvent("ENCOUNTER_END", function(_, encounterID)
 end)
 
 -- Test mode: unlock the frame for repositioning. Populates slots from the
--- active NSRT shared reminder (if present) so the user can sanity-check
--- assignments without an active encounter. No PA anchors are added.
+-- active NSRT shared reminder (if present); otherwise falls back to icons
+-- 1-4 so the slot layout is always visible for positioning.
+
+local DEFAULT_TEST_ASSIGNMENTS = {
+    { marker = "star", names = {} },
+    { marker = "circle", names = {} },
+    { marker = "diamond", names = {} },
+    { marker = "triangle", names = {} },
+}
 
 function Private:LBVSoakIsTestMode()
     return testMode
@@ -320,14 +413,14 @@ function Private:LBVSoakSetTestMode(enabled)
 
     testMode = enabled
     SetFrameLocked(soakFrame, not enabled)
+    ApplyChrome(enabled)
 
     if enabled then
         local assignments = Private:GetLBVSoakAssignments()
-        if assignments and #assignments > 0 then
-            ApplyAssignmentsToSlots(assignments)
-        else
-            ClearSlotVisuals()
+        if not assignments or #assignments == 0 then
+            assignments = DEFAULT_TEST_ASSIGNMENTS
         end
+        ApplyAssignmentsToSlots(assignments)
         soakFrame:Show()
     else
         if not encounterActive then
