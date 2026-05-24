@@ -72,6 +72,15 @@ local function DebugSet(path, before, after)
     Private:DebugPrint("NSRT " .. path .. ": " .. tostring(before) .. " -> " .. tostring(after))
 end
 
+-- Detects the post-rework NSRT (vendor 0d96865+). NSAPI:ImportAlertsString is
+-- a public API function introduced with the rework, so its presence is a stable
+-- signal that doesn't depend on NSRT having run its own AddMissingDefaults yet.
+-- We can't gate on `NSRT.Alerts` because NSRT only populates that at PLAYER_LOGIN
+-- (via NSI:LoadMyProfile), which is *after* our ADDON_LOADED handler runs.
+local function IsNewNSRT()
+    return type(_G.NSAPI) == "table" and type(NSAPI.ImportAlertsString) == "function"
+end
+
 ---Apply enforced settings to a root table shaped like NSRT.
 ---
 ---@param root table
@@ -94,27 +103,48 @@ local function EnforceOnRoot(root, battleTag, pathLabel)
         end
     end
 
-    if not root.EncounterAlerts then
-        root.EncounterAlerts = {}
-    end
-    for _, id in ipairs(EncounterAlertIDs) do
-        if not root.EncounterAlerts[id] then
-            root.EncounterAlerts[id] = {}
+    if IsNewNSRT() then
+        -- Post-rework NSRT: single opt-in toggle gates Reloe's import.
+        -- Per-encounter `.enabled` and the legacy extra flags don't exist.
+        -- NSRT only populates root.Alerts at PLAYER_LOGIN, so we pre-seed the
+        -- table here (at ADDON_LOADED) with ReloeReminders=true. NSRT's later
+        -- AddMissingTableDefaults is fill-missing-only, so it preserves our
+        -- value and ImportReloeReminders (line 1942 of Reminders.lua) sees true
+        -- on the very first login post-update.
+        Private:DebugPrint("NSRT " .. pathLabel .. "alerts schema: new (NSAPI.ImportAlertsString present)")
+        if type(root.Alerts) ~= "table" then
+            DebugSet(pathLabel .. "Alerts", root.Alerts, "{}")
+            root.Alerts = {}
         end
-        if root.EncounterAlerts[id].enabled ~= true then
-            DebugSet(pathLabel .. "EncounterAlerts[" .. id .. "].enabled", root.EncounterAlerts[id].enabled, true)
-            root.EncounterAlerts[id].enabled = true
+        if root.Alerts.ReloeReminders ~= true then
+            DebugSet(pathLabel .. "Alerts.ReloeReminders", root.Alerts.ReloeReminders, true)
+            root.Alerts.ReloeReminders = true
         end
-        local extras = EncounterAlertExtraFlags[id]
-        if extras then
-            for _, flag in ipairs(extras) do
-                if root.EncounterAlerts[id][flag] ~= true then
-                    DebugSet(
-                        pathLabel .. "EncounterAlerts[" .. id .. "]." .. flag,
-                        root.EncounterAlerts[id][flag],
-                        true
-                    )
-                    root.EncounterAlerts[id][flag] = true
+    else
+        Private:DebugPrint("NSRT " .. pathLabel .. "alerts schema: legacy (no NSAPI.ImportAlertsString)")
+        -- Pre-rework NSRT (current production): legacy behavior, untouched.
+        if not root.EncounterAlerts then
+            root.EncounterAlerts = {}
+        end
+        for _, id in ipairs(EncounterAlertIDs) do
+            if not root.EncounterAlerts[id] then
+                root.EncounterAlerts[id] = {}
+            end
+            if root.EncounterAlerts[id].enabled ~= true then
+                DebugSet(pathLabel .. "EncounterAlerts[" .. id .. "].enabled", root.EncounterAlerts[id].enabled, true)
+                root.EncounterAlerts[id].enabled = true
+            end
+            local extras = EncounterAlertExtraFlags[id]
+            if extras then
+                for _, flag in ipairs(extras) do
+                    if root.EncounterAlerts[id][flag] ~= true then
+                        DebugSet(
+                            pathLabel .. "EncounterAlerts[" .. id .. "]." .. flag,
+                            root.EncounterAlerts[id][flag],
+                            true
+                        )
+                        root.EncounterAlerts[id][flag] = true
+                    end
                 end
             end
         end
@@ -242,6 +272,55 @@ local function EnforceNSRTWithProfiles(battleTag)
     end
 end
 
+local alertCallbacksRegistered = false
+
+local function RegisterAlertOverrideCallbacks()
+    if alertCallbacksRegistered then
+        return
+    end
+    if not IsNewNSRT() then
+        return
+    end
+    if type(NSAPI.RegisterCallback) ~= "function" then
+        Private:DebugPrint("NSRT alert callbacks: NSAPI:RegisterCallback unavailable, skipping")
+        return
+    end
+
+    NSAPI:RegisterCallback("NSRT_ALERT_FULL_UPDATE", function()
+        local encs, alerts = 0, 0
+        if type(NSRT.EncounterAlerts) == "table" then
+            for _, enc in pairs(NSRT.EncounterAlerts) do
+                if type(enc) == "table" then
+                    encs = encs + 1
+                    for _, diff in pairs(enc) do
+                        if type(diff) == "table" then
+                            for _ in pairs(diff) do
+                                alerts = alerts + 1
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        Private:DebugPrint(
+            "NSRT_ALERT_FULL_UPDATE: " .. encs .. " encounters / " .. alerts .. " alerts -> ApplyAlertOverrides()"
+        )
+        if Private.ApplyAlertOverrides then
+            Private.ApplyAlertOverrides()
+        end
+    end, "CoffeeRaidTools")
+
+    NSAPI:RegisterCallback("NSRT_ALERT_ENCOUNTER_UPDATE", function(_, encID)
+        Private:DebugPrint("NSRT_ALERT_ENCOUNTER_UPDATE: encID=" .. tostring(encID) .. " -> ApplyAlertOverrides")
+        if Private.ApplyAlertOverrides then
+            Private.ApplyAlertOverrides(encID)
+        end
+    end, "CoffeeRaidTools")
+
+    Private:DebugPrint("NSRT alert callbacks registered (NSRT_ALERT_FULL_UPDATE, NSRT_ALERT_ENCOUNTER_UPDATE)")
+    alertCallbacksRegistered = true
+end
+
 local function EnforceNSRT()
     if not NSRT then
         return
@@ -254,6 +333,8 @@ local function EnforceNSRT()
     else
         EnforceNSRTPreProfile(battleTag)
     end
+
+    RegisterAlertOverrideCallbacks()
 end
 
 -- Event handling
@@ -263,6 +344,11 @@ Private.EnforceNSRTOnRoot = EnforceOnRoot
 Private.CopyNSRTProfileIntoActive = CopyProfileIntoActive
 Private.GetNSRTPlayerProfileKey = GetPlayerProfileKey
 Private.COFFEE_PROFILE = COFFEE_PROFILE
+
+-- Test-only: lets specs reset the one-shot registration guard between cases.
+Private.ResetAlertOverrideCallbacks = function()
+    alertCallbacksRegistered = false
+end
 
 local EnforceFunctions = {
     NorthernSkyRaidTools = EnforceNSRT,

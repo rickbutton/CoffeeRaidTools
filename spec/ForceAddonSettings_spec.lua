@@ -1,5 +1,10 @@
 describe("ForceAddonSettings", function()
-    after_each(Restore)
+    after_each(function()
+        Restore()
+        if Private.ResetAlertOverrideCallbacks then
+            Private.ResetAlertOverrideCallbacks()
+        end
+    end)
 
     it("is a no-op when NSRT is not present", function()
         Replace("NSRT", nil)
@@ -500,6 +505,134 @@ describe("ForceAddonSettings", function()
             assert.are_not.equal(source.nested, NSRT.ReadyCheckSettings.nested)
             assert.is_true(NSRT.ReadyCheckSettings.RepairCheck)
             assert.are.equal(1, NSRT.ReadyCheckSettings.nested.value)
+        end)
+    end)
+
+    describe("post-rework NSRT (NSAPI.ImportAlertsString present)", function()
+        local function makeNSAPISpy()
+            local calls = {}
+            Replace("NSAPI", {
+                -- IsNewNSRT() heuristic: presence of ImportAlertsString.
+                ImportAlertsString = function() end,
+                RegisterCallback = function(_, event, callback, owner)
+                    table.insert(calls, { event = event, callback = callback, owner = owner })
+                end,
+            })
+            return calls
+        end
+
+        it("pre-seeds NSRT.Alerts={ReloeReminders=true} when missing (first login post-update)", function()
+            makeNSAPISpy()
+            Replace("NSRT", {}) -- NSRT hasn't run AddMissingDefaults yet
+
+            Private.EnforceNSRT()
+
+            assert.is_table(NSRT.Alerts)
+            assert.is_true(NSRT.Alerts.ReloeReminders)
+            assert.is_nil(NSRT.EncounterAlerts) -- legacy path didn't run
+        end)
+
+        it("forces NSRT.Alerts.ReloeReminders true when already set false (subsequent logins)", function()
+            makeNSAPISpy()
+            Replace("NSRT", { Alerts = { ReloeReminders = false } })
+
+            Private.EnforceNSRT()
+
+            assert.is_true(NSRT.Alerts.ReloeReminders)
+        end)
+
+        it("registers NSAPI callbacks for full + per-encounter updates", function()
+            local calls = makeNSAPISpy()
+            Replace("NSRT", {})
+
+            Private.EnforceNSRT()
+
+            assert.are.equal(2, #calls)
+            local events = { [calls[1].event] = calls[1], [calls[2].event] = calls[2] }
+            assert.is_not_nil(events["NSRT_ALERT_FULL_UPDATE"])
+            assert.is_not_nil(events["NSRT_ALERT_ENCOUNTER_UPDATE"])
+            assert.are.equal("CoffeeRaidTools", events["NSRT_ALERT_FULL_UPDATE"].owner)
+            assert.are.equal("CoffeeRaidTools", events["NSRT_ALERT_ENCOUNTER_UPDATE"].owner)
+        end)
+
+        it("only registers callbacks once across multiple EnforceNSRT calls", function()
+            local calls = makeNSAPISpy()
+            Replace("NSRT", {})
+
+            Private.EnforceNSRT()
+            Private.EnforceNSRT()
+            Private.EnforceNSRT()
+
+            assert.are.equal(2, #calls)
+        end)
+
+        it("does not register callbacks on the legacy branch (no NSAPI.ImportAlertsString)", function()
+            local calls = {}
+            Replace("NSAPI", {
+                RegisterCallback = function(_, event, callback, owner)
+                    table.insert(calls, { event = event, callback = callback, owner = owner })
+                end,
+                -- no ImportAlertsString → IsNewNSRT() returns false
+            })
+            Replace("NSRT", {})
+
+            Private.EnforceNSRT()
+
+            assert.are.equal(0, #calls)
+        end)
+
+        it("invokes ApplyAlertOverrides when alerts callback fires", function()
+            local calls = makeNSAPISpy()
+            Replace("NSRT", {
+                EncounterAlerts = {
+                    [3180] = {
+                        [16] = {
+                            ["Test Alert"] = { enabled = true, name = "Test" },
+                        },
+                    },
+                },
+            })
+            Replace(Private, "AlertOverrides", {
+                [3180] = {
+                    { diff = 16, internalID = "Test Alert", fields = { enabled = false } },
+                },
+            })
+
+            Private.EnforceNSRT()
+
+            -- Fire the registered full-update callback.
+            for _, c in ipairs(calls) do
+                if c.event == "NSRT_ALERT_FULL_UPDATE" then
+                    c.callback()
+                end
+            end
+
+            assert.is_false(NSRT.EncounterAlerts[3180][16]["Test Alert"].enabled)
+        end)
+
+        it("forwards encID to ApplyAlertOverrides for per-encounter updates", function()
+            local calls = makeNSAPISpy()
+            Replace("NSRT", {
+                EncounterAlerts = {
+                    [3180] = { [16] = { ["A"] = { enabled = true } } },
+                    [3183] = { [16] = { ["B"] = { enabled = true } } },
+                },
+            })
+            Replace(Private, "AlertOverrides", {
+                [3180] = { { diff = 16, internalID = "A", fields = { enabled = false } } },
+                [3183] = { { diff = 16, internalID = "B", fields = { enabled = false } } },
+            })
+
+            Private.EnforceNSRT()
+
+            for _, c in ipairs(calls) do
+                if c.event == "NSRT_ALERT_ENCOUNTER_UPDATE" then
+                    c.callback("NSRT_ALERT_ENCOUNTER_UPDATE", 3180)
+                end
+            end
+
+            assert.is_false(NSRT.EncounterAlerts[3180][16]["A"].enabled)
+            assert.is_true(NSRT.EncounterAlerts[3183][16]["B"].enabled) -- not targeted
         end)
     end)
 end)

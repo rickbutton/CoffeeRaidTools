@@ -22,6 +22,30 @@ for _, section in ipairs(Private.ReminderSoundSections or {}) do
     end
 end
 
+-- LSM exposure: register every CRT reminder sound under "|cffff0000Coffee:|r <text>"
+-- so the new-schema NSRT alert overlay (Features/AlertOverrides.lua) can reference
+-- them by LSM key. NSRT strips color codes during lookup, so the colored key still
+-- resolves at fire time. Idempotent across reloads.
+local COFFEE_LSM_PREFIX = "|cffff0000Coffee:|r "
+
+local function CoffeeLSMKey(text)
+    return COFFEE_LSM_PREFIX .. text
+end
+
+Private.CoffeeLSMKey = CoffeeLSMKey
+
+local LSM = LibStub and LibStub("LibSharedMedia-3.0", true)
+if LSM then
+    local registered = {}
+    for text, path in pairs(soundPathByText) do
+        local key = CoffeeLSMKey(text)
+        if not registered[key] then
+            registered[key] = true
+            LSM:Register("sound", key, path)
+        end
+    end
+end
+
 ---Plays the CRT sound for `text` if we own it and the user hasn't disabled it.
 ---@param text any
 ---@return boolean played
