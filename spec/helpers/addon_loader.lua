@@ -78,6 +78,7 @@ loadAddonFile("Core/SpecSync.lua")
 loadAddonFile("Core/UnitMap.lua")
 loadAddonFile("Core/Note.lua")
 
+loadAddonFile("Features/AlertOverrides.lua")
 loadAddonFile("Features/ForceAddonSettings.lua")
 loadAddonFile("Features/ReadyCheck.lua")
 loadAddonFile("Features/PrivateAuraSoundsData.lua")

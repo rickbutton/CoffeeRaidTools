@@ -99,7 +99,8 @@
     "raid": "The Dreamrift",
     "reminders": [
       { "text": "Soak", "phrase": "soak" },
-      { "text": "Don't soak", "phrase": "don't soak" }
+      { "text": "Don't soak", "phrase": "don't soak" },
+      { "text": "Debuffs", "phrase": "debuffs" }
     ]
   },
   {
@@ -123,7 +124,9 @@
       { "text": "Crystal", "phrase": "crystal" },
       { "text": "Soaks", "phrase": "soaks" },
       { "text": "Blazes", "phrase": "blazes" },
-      { "text": "Move", "phrase": "move" }
+      { "text": "Move", "phrase": "move" },
+      { "text": "Soak Skull", "phrase": "soak skull" },
+      { "text": "Soak X", "phrase": "soak x" }
     ]
   }
 ]

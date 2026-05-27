@@ -101,6 +101,7 @@ Private.ReminderSoundSections = {
         reminders = {
             { text = "Soak", soundFile = "Soak" },
             { text = "Don't soak", soundFile = "DontSoak" },
+            { text = "Debuffs", soundFile = "Debuffs" },
         },
     },
     {
@@ -123,6 +124,8 @@ Private.ReminderSoundSections = {
             { text = "Soaks", soundFile = "Soaks" },
             { text = "Blazes", soundFile = "Blazes" },
             { text = "Move", soundFile = "Move" },
+            { text = "Soak Skull", soundFile = "SoakSkull" },
+            { text = "Soak X", soundFile = "SoakX" },
         },
     },
 }

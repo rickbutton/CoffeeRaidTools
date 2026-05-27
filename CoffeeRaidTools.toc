@@ -19,6 +19,7 @@ Core/SpecSync.lua
 Core/UnitMap.lua
 Core/Note.lua
 
+Features/AlertOverrides.lua
 Features/ForceAddonSettings.lua
 Features/ReadyCheck.lua
 #Features/Break.lua
