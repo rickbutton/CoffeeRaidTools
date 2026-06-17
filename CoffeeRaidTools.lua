@@ -48,14 +48,6 @@ if Private.db.disableConflictingBigWigsPrivateAuraSounds == nil then
     Private.db.disableConflictingBigWigsPrivateAuraSounds = true
 end
 
-if Private.db.memoryGamePicker == nil then
-    Private.db.memoryGamePicker = false
-end
-
-if Private.db.memoryGamePositions == nil then
-    Private.db.memoryGamePositions = {}
-end
-
 if Private.db.lightblindedVanguardSoakWidget == nil then
     Private.db.lightblindedVanguardSoakWidget = false
 end

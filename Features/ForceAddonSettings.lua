@@ -34,6 +34,7 @@ local EncounterAlertIDs = {
     3182,
     3183,
     3306,
+    3159, -- Rotmire
 }
 
 -- Extra per-encounter sub-flags to force true alongside `.enabled`.

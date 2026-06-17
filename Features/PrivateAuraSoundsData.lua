@@ -78,4 +78,27 @@ Private.PrivateAuraSections = {
             { spellIDs = {1257087}, soundFile = "Clear", perUnit = false },
         },
     },
+    {
+        boss = "Midnight Falls",
+        bigwigsModule = "BigWigs_Bosses_Midnight Falls",
+        spells = {
+            -- Starsplinter
+            { spellIDs = {1279512, 1285510}, soundFile = "Starsplinter", perUnit = false },
+            -- Grim Symphony (Blue)
+            { spellIDs = {1284984}, soundFile = "Blue", perUnit = false },
+            -- Grim Symphony (Red)
+            { spellIDs = {1286294}, soundFile = "Red", perUnit = false },
+        },
+    },
+    -- Sporefall
+    {
+        boss = "Rotmire",
+        bigwigsModule = "BigWigs_Bosses_Rotmire",
+        spells = {
+            -- Shroomling Fixate
+            { spellIDs = {1221639}, soundFile = "GoToBoss", perUnit = false },
+            -- Fungling Fixate
+            { spellIDs = {1299508}, soundFile = "GoToRanged", perUnit = false },
+        },
+    },
 }

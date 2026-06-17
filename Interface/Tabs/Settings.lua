@@ -308,23 +308,6 @@ local function RenderEncounterPage(container, entry)
         AddReminderRows(container, entry.reminderSection)
         container:AddChild(CreateSpacer())
     end
-
-    if entry.boss == "Midnight Falls" then
-        AddSubsectionTitle(container, "Memory Game")
-
-        container:AddChild(CreateSettingsCheckbox("memoryGamePicker", "Show rune picker buttons during mechanic"))
-
-        ---@type AceGUIButton
-        local unlockBtn = AceGUI:Create("Button")
-        unlockBtn:SetRelativeWidth(0.4)
-        unlockBtn:SetText(Private:MemoryGameIsTestMode() and "Lock Frames" or "Unlock Frames")
-        unlockBtn:SetCallback("OnClick", function()
-            local nextState = not Private:MemoryGameIsTestMode()
-            Private:MemoryGameSetTestMode(nextState)
-            unlockBtn:SetText(nextState and "Lock Frames" or "Unlock Frames")
-        end)
-        container:AddChild(unlockBtn)
-    end
 end
 
 ---@param container AceGUIContainer

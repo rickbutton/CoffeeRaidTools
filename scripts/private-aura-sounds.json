@@ -68,5 +68,24 @@
       { "spellIDs": [1264756], "comment": "Rift Madness", "phrase": "swap" },
       { "spellIDs": [1257087], "comment": "Consuming Miasma", "phrase": "clear" }
     ]
+  },
+  {
+    "boss": "Midnight Falls",
+    "bigwigsModule": "BigWigs_Bosses_Midnight Falls",
+    "raid": "The Dreamrift",
+    "spells": [
+      { "spellIDs": [1279512, 1285510], "comment": "Starsplinter", "phrase": "starsplinter" },
+      { "spellIDs": [1284984], "comment": "Grim Symphony (Blue)", "phrase": "blue" },
+      { "spellIDs": [1286294], "comment": "Grim Symphony (Red)", "phrase": "red" }
+    ]
+  },
+  {
+    "boss": "Rotmire",
+    "bigwigsModule": "BigWigs_Bosses_Rotmire",
+    "raid": "Sporefall",
+    "spells": [
+      { "spellIDs": [1221639], "comment": "Shroomling Fixate", "phrase": "go to boss" },
+      { "spellIDs": [1299508], "comment": "Fungling Fixate", "phrase": "go to ranged" }
+    ]
   }
 ]

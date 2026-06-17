@@ -125,8 +125,14 @@
       { "text": "Soaks", "phrase": "soaks" },
       { "text": "Blazes", "phrase": "blazes" },
       { "text": "Move", "phrase": "move" },
+      { "text": "Soak Star", "phrase": "soak star" },
       { "text": "Soak Skull", "phrase": "soak skull" },
-      { "text": "Soak X", "phrase": "soak x" }
+      { "text": "Soak X", "phrase": "soak x" },
+      { "text": "Soak Circle", "phrase": "soak circle" },
+      { "text": "Grip Adds", "phrase": "grip adds" },
+      { "text": "Knock Adds", "phrase": "knock adds" },
+      { "text": "Grip Crystal", "phrase": "grip crystal" },
+      { "text": "Pick up Crystal", "phrase": "pick up crystal" }
     ]
   }
 ]

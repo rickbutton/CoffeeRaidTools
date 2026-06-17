@@ -29,7 +29,6 @@ Features/PrivateAuraSounds.lua
 Features/ReminderSoundsData.lua
 Features/ReminderSounds.lua
 Features/BigWigsOverrides.lua
-Features/MemoryGame.lua
 Features/RaidBuffReminder.lua
 Features/RaidBuffCheck.lua
 Features/WeakAuraImportsData.lua
